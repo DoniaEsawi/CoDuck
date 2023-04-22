@@ -1,14 +1,10 @@
-
+# CoDuck
 <div align="center">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/56982963/233787589-c550a7b7-4e1f-4d9d-b199-db0cffb75dba.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/56982963/233787586-246790d4-dbe6-4306-a32c-4e6d5ae76aef.svg">
-  <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://user-images.githubusercontent.com/56982963/233787589-c550a7b7-4e1f-4d9d-b199-db0cffb75dba.svg" height = 400>
-</picture>
+    <img src="https://user-images.githubusercontent.com/56982963/233788964-1a881eeb-e670-4486-9ba7-3656643ae470.svg#gh-dark-mode-only" />
+    <img src="https://user-images.githubusercontent.com/56982963/233788975-185492c4-0fe7-4110-9de1-4a4e78df3b80#gh-light-mode-only"/>
 </div>
 
-## CoDuck
-
+# Language specs
 ## Tokens
 ### types keywords
 
