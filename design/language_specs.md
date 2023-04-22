@@ -1,7 +1,4 @@
-# CoDuck 
-
-
-
+# CoDuck Specs
 
 ## Tokens
 

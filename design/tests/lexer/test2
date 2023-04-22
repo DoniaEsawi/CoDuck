@@ -1,0 +1,7 @@
+func add(op1 integer, op2 float) integer {
+
+	return op1 + op2
+
+}
+
+

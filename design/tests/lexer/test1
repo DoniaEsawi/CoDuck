@@ -1,0 +1,31 @@
+/* this is a simple program to test our code*/
+
+integer x; // this is an integer variable
+
+float y; // this is a float variable
+
+char z; // this is a char variable
+
+f = "a"; // this is a character
+
+S = "hello, world !"; // this is a string
+
+S2 = 'hii !' // this is also a string
+
+_S = 5; // invalid indentifier
+
+float_number = 0.6 // float
+
+    float_number2 = .6 // invalid float
+
+    float_number3 = 0. // valid float
+
+    float_number4 = 00.6 // invalid float
+
+    float_number5 = 0.006 // valid float
+
+    integer x = 000 // invalid integer
+
+    bool = true
+
+    bool = True // valid in lexer, but returns an identifier not a "true"!

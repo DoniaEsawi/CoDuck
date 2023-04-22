@@ -1,0 +1,19 @@
+while (x > 5){
+
+  if (y == x){
+    break
+  }elif(y>= x ){
+    continue
+  }
+
+}
+
+do{
+
+x++;
+
+}until(x > 10)
+
+for (x= 1; x < 5; x++){
+  
+}
