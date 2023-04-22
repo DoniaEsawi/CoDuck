@@ -100,25 +100,25 @@
 #### Variables
 
 <center>
-<img src="assets/declarations.png" width="400px"/>
+<img src="design/assets/declarations.png" width="400px"/>
 </center>
 
 #### Constants
 
 <center>
-<img src="assets/const.png" width="400px"/>
+<img src="design/assets/const.png" width="400px"/>
 </center>
 
 ### Expressions
 
 <center>
-<img src="assets/expressions.png" width="400px"/>
+<img src="design/assets/expressions.png" width="400px"/>
 </center>
 
 ### Assignments
 
 <center>
-<img src="assets/assignments.png" width="400px"/>
+<img src="design/assets/assignments.png" width="400px"/>
 </center>
 
 ### If-statement
