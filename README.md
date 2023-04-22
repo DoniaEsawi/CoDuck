@@ -1,7 +1,7 @@
 # CoDuck
 <div align="center">
     <img src="https://user-images.githubusercontent.com/56982963/233788964-1a881eeb-e670-4486-9ba7-3656643ae470.svg#gh-dark-mode-only" />
-    <img src="https://user-images.githubusercontent.com/56982963/233788975-185492c4-0fe7-4110-9de1-4a4e78df3b80#gh-light-mode-only"/>
+    <img src="https://user-images.githubusercontent.com/56982963/233789407-d3b3fea9-8e90-4e1b-b3d5-7ecd84d6b850.svg#gh-light-mode-only"/>
 </div>
 
 # Language specs
