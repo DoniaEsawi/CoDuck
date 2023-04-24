@@ -12,7 +12,7 @@ S = "hello, world !"; // this is a string
 
 S2 = 'hii !' // this is also a string
 
-_S = 5; // invalid indentifier
+    _S = 5; // invalid indentifier
 
 float_number = 0.6 // float
 

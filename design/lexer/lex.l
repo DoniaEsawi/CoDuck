@@ -9,6 +9,9 @@
    #include <stdio.h>
    #include <stdlib.h>
    #include <string.h>
+   #include"../symbol_table/symbol_table.c"
+   extern FILE *yyin;
+   extern FILE *yyout;
    int lineno = 1; /* for keeping track of the line number we are on,
                       this will be used later on in the symbol table 
                       as well as helping us debug.  */
@@ -85,7 +88,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 "case"|"CASE" {ret("CASE");}
 
-"default"|"default" {RET("DEFAULT");}
+"default"|"default" {ret("DEFAULT");}
 
 "for"|"FOR" {ret("FOR");}
 
@@ -150,7 +153,11 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 "?" {ret("QUESTION_MARK");}
 
 
-{ident} {ret("IDENT");}
+{ident} {
+    insert(yytext,lineno, strlen(yytext), UNDEF);
+    ret("IDENT");
+    
+    }
 {CONST_INT} {ret("CONST_INT");}
 {CONST_FLOAT} {ret("CONST_FLOAT");}
 {CONST_CHAR} {ret("CONST_CHAR");}
@@ -179,6 +186,9 @@ void yyerror(char *s)
 
 int main(int argc, char **argv)
 {
+    // initialize the symbol table
+    init_symbol_table();
+   
     if (argc > 1)
     {
         yyin = fopen(argv[1], "r");
@@ -190,7 +200,12 @@ int main(int argc, char **argv)
         yyin = stdin;
         yylex();
     }
-    
+
+    //dump the symbol table
+    yyout = fopen("symtab_dump.out", "w");
+	dump_symboltable(yyout);
+	fclose(yyout);
+
     return 0;
 }
 
