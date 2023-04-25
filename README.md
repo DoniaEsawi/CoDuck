@@ -181,7 +181,6 @@ for(var; cond; postfix;){
 ```golang
 
 func function_name(type name, ...) return_type{ 
-
 return value;
 }
 
