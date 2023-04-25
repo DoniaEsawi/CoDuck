@@ -125,16 +125,16 @@
 ### If-statement
 
 ```golang
-if(expression logical_operator expression){ /* the curly-bracket must be in the same line of the if-statement condition */
-}elif(expression logical_operator expression){/* the curly-bracket must be in the same line of the elif */
-}else{ /* the curly-bracket must be in the same line of the else */
+if(expression logical_operator expression){ // the parenthesis are optional
+}elif(expression logical_operator expression){// the parenthesis are optional
+}else{
 }
 ```
 
 ### Swicth...case
 
 ```c
-switch (expression){ // the parenthesis are optional​ and the curly-brackets must be in the same line of switch expression
+switch (expression){ // the parenthesis are optional
     case constant1:
       // statements
       break;
@@ -153,7 +153,7 @@ switch (expression){ // the parenthesis are optional​ and the curly-brackets m
 ### while-loops
 
 ```c
-while(condition){ // parenthesis are optional and curly braces must be in the same line of the while condition
+while(condition){ // parenthesis are optional
 
 
 }
@@ -163,7 +163,7 @@ while(condition){ // parenthesis are optional and curly braces must be in the sa
 
 ```c
 for(var; cond; postfix;){
-// parenthesis are optional and curly braces must be in the same line of the for declaration
+// parenthesis are optional
 }
 ```
 
@@ -180,7 +180,7 @@ for(var; cond; postfix;){
 
 ```golang
 
-func function_name(type name, ...) return_type{ // curly_braces must be in the same line of function parameters
+func function_name(type name, ...) return_type{ 
 
 return value;
 }
