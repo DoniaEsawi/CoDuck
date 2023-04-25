@@ -92,7 +92,7 @@
 ## Comments
 
 - Single line: // this is a single line comment
-- Multi-line: /_ This is a Multi-line Comment _/
+- Multi-line: /* This is a Multi-line Comment */
 
 ## Grammar design
 
