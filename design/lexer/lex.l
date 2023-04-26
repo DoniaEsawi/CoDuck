@@ -15,8 +15,8 @@
    int lineno = 1; /* for keeping track of the line number we are on,
                       this will be used later on in the symbol table 
                       as well as helping us debug.  */
-   void ret(char *token_type);
-   void yyerror();
+   char* ret(char *token_type);
+   /*void yyerror();*/
 
 %}
 
@@ -130,7 +130,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 ">=" {ret("GE_OP");}
 "=" {ret("ASSIGN_OP");}
 "|" {ret("BIT_OR_OP");}
-"&" {ret("&");}
+"&" {ret("AND");}
 "^" {ret("BIT_XOR_OP");}
 "<<" {ret("BIT_LSHIFT_OP");}
 ">>" {ret("BIT_RSHIFT_OP");}
@@ -154,7 +154,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 
 {ident} {
-    insert(yytext,lineno, strlen(yytext), UNDEF);
+    // insert(yytext,lineno, strlen(yytext), UNDEF);
     ret("IDENT");
     
     }
@@ -174,12 +174,13 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 %%
 
 
-void ret(char *token_type)
+char* ret(char *token_type)
 {
     printf("Found %s at line %d \n", token_type, lineno);
+    return token_type;
 }
 
-void yyerror(char *s)
+/* void yyerror(char *s)
 {
     fprintf(stderr, "%s in token %s at line %d \n", s, yytext ,lineno);
 }
@@ -208,7 +209,7 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
+*/
 
 
 

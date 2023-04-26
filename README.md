@@ -284,3 +284,11 @@ y= 1
 38. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-2-c-flex-bison
 
 39. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-3-c-flex-bison
+
+## Links
+
+#### C Operator Precedence
+https://en.cppreference.com/w/c/language/operator_precedence
+
+#### C Grammar
+http://marvin.cs.uidaho.edu/Teaching/CS445/c-Grammar.pdf
