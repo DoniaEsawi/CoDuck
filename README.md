@@ -95,7 +95,7 @@
 ## Comments
 
 - Single line: // this is a single line comment
-- Multi-line: /_ This is a Multi-line Comment _/
+- Multi-line: /* This is a Multi-line Comment */
 
 ## Grammar design
 
@@ -128,16 +128,16 @@
 ### If-statement
 
 ```golang
-if(expression logical_operator expression){ /* the curly-bracket must be in the same line of the if-statement condition */
-}elif(expression logical_operator expression){/* the curly-bracket must be in the same line of the elif */
-}else{ /* the curly-bracket must be in the same line of the else */
+if(expression logical_operator expression){ // the parenthesis are optional
+}elif(expression logical_operator expression){// the parenthesis are optional
+}else{
 }
 ```
 
 ### Swicth...case
 
 ```c
-switch (expression){ // the parenthesis are optional​ and the curly-brackets must be in the same line of switch expression
+switch (expression){ // the parenthesis are optional
     case constant1:
       // statements
       break;
@@ -156,7 +156,7 @@ switch (expression){ // the parenthesis are optional​ and the curly-brackets m
 ### while-loops
 
 ```c
-while(condition){ // parenthesis are optional and curly braces must be in the same line of the while condition
+while(condition){ // parenthesis are optional
 
 
 }
@@ -166,7 +166,7 @@ while(condition){ // parenthesis are optional and curly braces must be in the sa
 
 ```c
 for(var; cond; postfix;){
-// parenthesis are optional and curly braces must be in the same line of the for declaration
+// parenthesis are optional
 }
 ```
 
@@ -183,8 +183,7 @@ for(var; cond; postfix;){
 
 ```golang
 
-func function_name(type name, ...) return_type{ // curly_braces must be in the same line of function parameters
-
+func function_name(type name, ...) return_type{ 
 return value;
 }
 
@@ -300,3 +299,11 @@ gcc lex.yy.c  -o lexer
 38. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-2-c-flex-bison
 
 39. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-3-c-flex-bison
+
+## Links
+
+#### C Operator Precedence
+https://en.cppreference.com/w/c/language/operator_precedence
+
+#### C Grammar
+http://marvin.cs.uidaho.edu/Teaching/CS445/c-Grammar.pdf

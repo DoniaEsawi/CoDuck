@@ -630,8 +630,8 @@ char *yytext;
    int lineno = 1; /* for keeping track of the line number we are on,
                       this will be used later on in the symbol table 
                       as well as helping us debug.  */
-   void ret(char *token_type);
-   void yyerror();
+   char* ret(char *token_type);
+   /*void yyerror();*/
 
 #line 636 "lex.yy.c"
 /*********** start states ************/
@@ -1165,7 +1165,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 133 "lex.l"
-{ret("&");}
+{ret("AND");}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -1246,7 +1246,7 @@ case 65:
 YY_RULE_SETUP
 #line 156 "lex.l"
 {
-    insert(yytext,lineno, strlen(yytext), UNDEF);
+    // insert(yytext,lineno, strlen(yytext), UNDEF);
     ret("IDENT");
     
     }
@@ -2302,12 +2302,13 @@ void yyfree (void * ptr )
 
 
 
-void ret(char *token_type)
+char* ret(char *token_type)
 {
     printf("Found %s at line %d \n", token_type, lineno);
+    return token_type;
 }
 
-void yyerror(char *s)
+/* void yyerror(char *s)
 {
     fprintf(stderr, "%s in token %s at line %d \n", s, yytext ,lineno);
 }
@@ -2336,7 +2337,7 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
+*/
 
 
 
