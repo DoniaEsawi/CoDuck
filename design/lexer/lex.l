@@ -10,6 +10,7 @@
    #include <stdlib.h>
    #include <string.h>
    #include"../symbol_table/symbol_table.c"
+/* #include"../parser/parser.tab.h" */
    extern FILE *yyin;
    extern FILE *yyout;
    int lineno = 1; /* for keeping track of the line number we are on,
@@ -158,10 +159,10 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
     ret("IDENT");
     
     }
-{CONST_INT} {ret("CONST_INT");}
-{CONST_FLOAT} {ret("CONST_FLOAT");}
-{CONST_CHAR} {ret("CONST_CHAR");}
-{STRING_LITERAL} {ret("STRING_LITERAL");}
+{CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); }
+{CONST_FLOAT} { yylval.double_val = atof(yytext); ret("CONST_FLOAT"); }
+{CONST_CHAR} { yylval.char_val = yytext[0]; ret("CONST_CHAR"); }
+{STRING_LITERAL} { yylval.str_val = malloc(yyleng * sizeof(char)); strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); }
 
 "\n" {lineno++;}
 
@@ -169,10 +170,10 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 [ \t\r\f]+ 
 
 
-. { yyerror("Unknown character"); }
 
 %%
 
+// . { yyerror("Unknown character"); }
 
 char* ret(char *token_type)
 {
@@ -180,36 +181,36 @@ char* ret(char *token_type)
     return token_type;
 }
 
-/* void yyerror(char *s)
-{
-    fprintf(stderr, "%s in token %s at line %d \n", s, yytext ,lineno);
-}
+// void yyerror(char *s)
+// {
+//     fprintf(stderr, "%s in token %s at line %d \n", s, yytext ,lineno);
+// }
 
-int main(int argc, char **argv)
-{
-    // initialize the symbol table
-    init_symbol_table();
+// int main(int argc, char **argv)
+// {
+//     // initialize the symbol table
+//     init_symbol_table();
    
-    if (argc > 1)
-    {
-        yyin = fopen(argv[1], "r");
-        yylex();
-        fclose(yyin);
-    }
-    else
-    {
-        yyin = stdin;
-        yylex();
-    }
+//     if (argc > 1)
+//     {
+//         yyin = fopen(argv[1], "r");
+//         yylex();
+//         fclose(yyin);
+//     }
+//     else
+//     {
+//         yyin = stdin;
+//         yylex();
+//     }
 
-    //dump the symbol table
-    yyout = fopen("symtab_dump.out", "w");
-	dump_symboltable(yyout);
-	fclose(yyout);
+//     //dump the symbol table
+//     yyout = fopen("symtab_dump.out", "w");
+// 	dump_symboltable(yyout);
+// 	fclose(yyout);
 
-    return 0;
-}
-*/
+//     return 0;
+// }
+
 
 
 

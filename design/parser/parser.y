@@ -2,22 +2,36 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include"../symbol_table/symbol_table.c"
     extern FILE *yyin;
     extern int lineno;
     extern int yylex();
     void yyerror();
 %}
 
-%token IDENT INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST
-%token CONST_INT CONST_FLOAT CONST_CHAR STRING_LITERAL
-%token IF ELSE ELIF WHILE FOR DO SWITCH CASE DEFAULT RETURN BREAK CONTINUE
-%token TRUE FALSE
-%token ENUM FUNC UNTIL
-%token LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
-%token SEMICOLON COMMA COLON QUESTION_MARK DOT
-%token ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
-%token OR_OP AND_OP NOT_OP BIT_OR_OP AND BIT_XOR_OP BIT_NOT_OP BIT_LSHIFT_OP BIT_RSHIFT_OP
-%token EQ_OP NE_OP GT_OP LT_OP GE_OP LE_OP ASSIGN_OP
+
+%union {
+char char_val;
+int int_val;
+double double_val;
+char* str_val;
+ListNode* ident_val;
+}
+
+%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST
+%token<ident_val> IDENT
+%token<int_val> CONST_INT
+%token<double_val> CONST_FLOAT
+%token<char_val> CONST_CHAR
+%token<str_val> STRING_LITERAL
+%token<int_val> IF ELSE ELIF WHILE FOR DO SWITCH CASE DEFAULT RETURN BREAK CONTINUE
+%token<int_val> TRUE FALSE
+%token<int_val> ENUM FUNC UNTIL
+%token<int_val> LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
+%token<int_val> SEMICOLON COMMA COLON QUESTION_MARK DOT
+%token<int_val> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
+%token<int_val> OR_OP AND_OP NOT_OP BIT_OR_OP AND BIT_XOR_OP BIT_NOT_OP BIT_LSHIFT_OP BIT_RSHIFT_OP
+%token<int_val> EQ_OP NE_OP GT_OP LT_OP GE_OP LE_OP ASSIGN_OP
 %%
 
 %start program;
