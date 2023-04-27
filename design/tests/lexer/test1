@@ -22,9 +22,9 @@ float_number = 0.6 // float
 
     float_number4 = 00.6 // invalid float
 
-    float_number5 = 0.006 // valid float
+    float_number5 = -0.006 // valid float
 
-    integer x = 000 // invalid integer
+                    integer x = 000 // invalid integer
 
     bool = true
 

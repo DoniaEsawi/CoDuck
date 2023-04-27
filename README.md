@@ -1,11 +1,14 @@
 # CoDuck
+
 <div align="center">
     <img src="https://user-images.githubusercontent.com/56982963/233788964-1a881eeb-e670-4486-9ba7-3656643ae470.svg#gh-dark-mode-only" />
     <img src="https://user-images.githubusercontent.com/56982963/233789407-d3b3fea9-8e90-4e1b-b3d5-7ecd84d6b850.svg#gh-light-mode-only"/>
 </div>
 
 # Language specs
+
 ## Tokens
+
 ### types keywords
 
 1. CHAR
@@ -200,6 +203,18 @@ enum a{
 x = 0,
 y= 1
 }
+```
+
+## How To Run
+
+- to run the lexer you can run the lexer using:
+
+```bash
+flex lex.l
+
+gcc lex.yy.c  -o lexer
+
+.\lexer input_file
 ```
 
 ## Resources

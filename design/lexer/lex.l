@@ -36,8 +36,8 @@ print          [ -~]
 
 /* identifier: must start with letter, followed by any alpha, digit or underscore */
 ident            {alpha}{alphanum}*
-CONST_INT        ([1-9]{digit}*)|"0"
-CONST_FLOAT      ([1-9]{digit}*|"0")"."{digit}*
+CONST_INT        -?([1-9]{digit}*)|"0"
+CONST_FLOAT      -?([1-9]{digit}*|"0")"."{digit}*
 CONST_CHAR        (\'{print}\')|(\'\\[nftrbv]\')|(\"{print}\")|(\"\\[nftrbv]\")
 STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
