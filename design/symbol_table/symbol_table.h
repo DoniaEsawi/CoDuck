@@ -12,15 +12,13 @@
 #define STRING 3
 #define BOOL 4
 #define ARRAY 5
-#define FUNC 6
+#define FUNCTION 6
 
 /* parameter passing method */
 #define VALUE 1
 #define REFERENCE 2
 
-/* current scope */
 
-int current_scope = 0;
 
 // parameter node
 

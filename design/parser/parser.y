@@ -2,8 +2,10 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <math.h>
     #include"../symbol_table/symbol_table.c"
     extern FILE *yyin;
+    extern FILE *yyout;
     extern int lineno;
     extern int yylex();
     void yyerror();
@@ -159,12 +161,30 @@ void yyerror ()
 }
 
 int main (int argc, char *argv[]){
+    
+    init_symbol_table();
+
+    // if (argc > 1)
+    // {
+    //     yyin = fopen(argv[1], "r");
+    //     yylex();
+    //     fclose(yyin);
+    // }
+    // else
+    // {
+    //     yyin = stdin;
+    //     yylex();
+    // }
 
     // parsing
     int flag;
     yyin = fopen(argv[1], "r");
     flag = yyparse();
     fclose(yyin);
+
+    yyout = fopen("symtab_dump.out", "w");
+    dump_symboltable(yyout);
+    fclose(yyout);
     
     return flag;
 }

@@ -9,15 +9,16 @@
    #include <stdio.h>
    #include <stdlib.h>
    #include <string.h>
-   #include"../symbol_table/symbol_table.c"
-/* #include"../parser/parser.tab.h" */
+   #include <math.h>
+   #include"../symbol_table/symbol_table.h"
+   #include"../parser/parser.tab.h"
    extern FILE *yyin;
    extern FILE *yyout;
    int lineno = 1; /* for keeping track of the line number we are on,
                       this will be used later on in the symbol table 
                       as well as helping us debug.  */
    char* ret(char *token_type);
-   /*void yyerror();*/
+   void yyerror();
 
 %}
 
@@ -155,7 +156,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 
 {ident} {
-    // insert(yytext,lineno, strlen(yytext), UNDEF);
+    insert(yytext,lineno, strlen(yytext), UNDEF);
     ret("IDENT");
     
     }
@@ -169,11 +170,11 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 [ \t\r\f]+ 
 
+. { yyerror("Unknown character"); }
 
 
 %%
 
-// . { yyerror("Unknown character"); }
 
 char* ret(char *token_type)
 {

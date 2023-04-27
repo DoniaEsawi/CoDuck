@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
 #include "symbol_table.h"
+
+/* current scope */
+
+int current_scope = 0;
 
 void init_symbol_table()
 {
@@ -134,7 +137,7 @@ void dump_symboltable(FILE *output)
                                                                                  : list->stype == 3   ? "STRING"
                                                                                  : list->stype == 4   ? "BOOL"
                                                                                  : list->stype == 5   ? "ARRAY"
-                                                                                                      : "FUNC");
+                                                                                                      : "FUNCTION");
             Ref *temp = list->lines;
             while (temp != NULL)
             {
