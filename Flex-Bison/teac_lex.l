@@ -5,7 +5,8 @@ void yyerror();
 #include <stdio.h>
 #include <string.h>
 #include "teac_parser.tab.h"
-#include "cgen.h"
+void yyerror();
+//#include "cgen.h"
 
 int lineno = 1;
 char* ret(char *token_type);
