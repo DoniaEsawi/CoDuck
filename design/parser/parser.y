@@ -12,43 +12,42 @@
 %}
 
 
-%union {
-char char_val;
-int int_val;
-double double_val;
-char* str_val;
-ListNode* ident_val;
+%union{
+  char char_val;
+  int int_val;
+  double double_val;
+  char* str_val;
+  ListNode* symbol_table_item;
 }
 
 %token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST
-%token<ident_val> IDENT
+%token<symbol_table_item> IDENT
 %token<int_val> CONST_INT
 %token<double_val> CONST_FLOAT
 %token<char_val> CONST_CHAR
 %token<str_val> STRING_LITERAL
 %token<int_val> IF ELSE ELIF WHILE FOR DO SWITCH CASE DEFAULT RETURN BREAK CONTINUE
-%token<int_val> TRUE FALSE
+%token<int_val> TRUE_TOKEN FALSE_TOKEN
 %token<int_val> ENUM FUNC UNTIL
 %token<int_val> LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
 %token<int_val> SEMICOLON COMMA COLON QUESTION_MARK DOT
 %token<int_val> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
 %token<int_val> OR_OP AND_OP NOT_OP BIT_OR_OP AND BIT_XOR_OP BIT_NOT_OP BIT_LSHIFT_OP BIT_RSHIFT_OP
 %token<int_val> EQ_OP NE_OP GT_OP LT_OP GE_OP LE_OP ASSIGN_OP
-%%
 
-%start program;
-
+%start program
 
 /* expression priorities and rules */
+%%
 
-program: program function | function | /*empty*/ ;
+program: program function | function | IDENT;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR ;
 
-beforedecl: /*empty*/ | CONST ;
+beforedecl: CONST | /*empty*/;
 
 /* bool x; | const double x; | const integer x = 5; */
-declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP expression SEMICOLON ;
+declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
 declarations: declaration | declarations declaration ;
@@ -58,13 +57,13 @@ tail: statements | LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 tail_inloop: statements_inloop | LEFT_CURLY_BRACKET statements_inloop RIGHT_CURLY_BRACKET ;
 
 bool_expression: relExp
-                | TRUE 
-                | FALSE;
+                | TRUE_TOKEN 
+                | FALSE_TOKEN;
 
 
-assign: IDENT ASSIGN_OP expression
+assign: IDENT ASSIGN_OP expression;
 
-expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp ;
+expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT ;
 simpleExp: simpleExp OR_OP andExp | andExp ;
 andExp: andExp AND_OP  | bitRelExp ;
 bitRelExp: bitRelExp BIT_OR_OP relExp | bitRelExp AND relExp | bitRelExp BIT_XOR_OP relExp | relExp ;
@@ -83,16 +82,16 @@ mulExp: mulExp mul_div unaryExp | unaryExp ;
 unaryExp: INC_OP IDENT | DEC_OP IDENT | NOT_OP IDENT |  IDENT | value | LEFT_PAREN expression RIGHT_PAREN ;
 
 
-value: CONST_INT | CONST_FLOAT | CONST_CHAR | STRING_LITERAL ;
+value: CONST_INT {printf("%d\n", yylval.int_val);} | CONST_FLOAT {printf("%lf\n", yylval.double_val);} |
+       CONST_CHAR | STRING_LITERAL;
 
 
-else_if: /*empty*/  
-        | ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail
-        | else_if ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail;
+else_if: ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail
+        | else_if ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail | /*empty*/;
 
-else: /*empty*/ | ELSE tail ;        
+else_part: ELSE tail | /*empty*/ ;        
 
-if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail else_if else;
+if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail else_if else_part;
 
 while_statement: WHILE LEFT_PAREN bool_expression RIGHT_PAREN tail_inloop ;
 
@@ -108,7 +107,7 @@ default: DEFAULT COLON statements BREAK SEMICOLON ;
 
 case: CASE expression COLON statements BREAK SEMICOLON ;
 
-return_val: /*empty*/ | expression ;
+return_val: expression | /*empty*/ ;
 return_statement: RETURN return_val SEMICOLON ;
 
 break_statement: BREAK SEMICOLON ;
@@ -127,7 +126,7 @@ statement: if_statement
           | return_statement 
           | expression_statement
           | declarations
-          | enum 
+          | enum_statement
           | func_call ;
 
 statement_inloop: statement | break_statement | continue_statement ;   
@@ -136,21 +135,18 @@ statements_inloop: statement_inloop | statements_inloop statement_inloop ;
 
 function: FUNC IDENT LEFT_PAREN parameters RIGHT_PAREN type LEFT_CURLY_BRACKET tail return_statement RIGHT_CURLY_BRACKET;
 
-parameters: /*empty*/ | parameter | parameters COMMA parameter ;
+parameters: parameter | parameters COMMA parameter | /*empty*/ ;
 parameter: type IDENT ;
 
-enum : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET ;
+enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET ;
 
 enum_list: one_val | enum_list COMMA one_val ;
 
 one_val: IDENT | IDENT ASSIGN_OP value ;
 
 func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN | IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN ;
-arguments: /*empty*/ | argument | arguments COMMA argument ;
+arguments: argument | arguments COMMA argument | /*empty*/;
 argument: expression ;
-
-
-
 
 %%
 
@@ -163,18 +159,6 @@ void yyerror ()
 int main (int argc, char *argv[]){
     
     init_symbol_table();
-
-    // if (argc > 1)
-    // {
-    //     yyin = fopen(argv[1], "r");
-    //     yylex();
-    //     fclose(yyin);
-    // }
-    // else
-    // {
-    //     yyin = stdin;
-    //     yylex();
-    // }
 
     // parsing
     int flag;

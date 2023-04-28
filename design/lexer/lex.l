@@ -1,33 +1,28 @@
 /* flex will read only one input file */
 %option noyywrap 
 
-
-
 /* First Part: Declarations */
-%{    
- 
-   #include <stdio.h>
-   #include <stdlib.h>
-   #include <string.h>
-   #include <math.h>
-   #include"../symbol_table/symbol_table.h"
-   #include"../parser/parser.tab.h"
-   extern FILE *yyin;
-   extern FILE *yyout;
-   int lineno = 1; /* for keeping track of the line number we are on,
-                      this will be used later on in the symbol table 
-                      as well as helping us debug.  */
-   char* ret(char *token_type);
-   void yyerror();
-
+%{
+	#include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include <math.h>
+    #include"../symbol_table/symbol_table.h"
+    #include"../parser/parser.tab.h"
+    extern FILE *yyin;
+    extern FILE *yyout;
+    int yydebug = 0;
+    int lineno = 1; /* for keeping track of the line number we are on,
+                        this will be used later on in the symbol table 
+                        as well as helping us debug.  */
+    char* ret(char *token_type);
+    void yyerror();
 %}
 
 
 /*********** start states ************/
 /* for a multi line comment */
 %x MULTILINE_COMMENT 
-
-
 
 /* basic definitions */
 alpha          [a-zA-Z]
@@ -36,14 +31,12 @@ alphanum       [a-zA-Z0-9_]
 /* all printable characters (from space to ~)*/
 print          [ -~]  
 
-/* identifier: must start with letter, followed by any alpha, digit or underscore */
+/* identifier: mustTRUE start with letter, followed by any alpha, digit or underscore */
 ident            {alpha}{alphanum}*
 CONST_INT        -?([1-9]{digit}*)|"0"
 CONST_FLOAT      -?([1-9]{digit}*|"0")"."{digit}*
 CONST_CHAR        (\'{print}\')|(\'\\[nftrbv]\')|(\"{print}\")|(\"\\[nftrbv]\")
 STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
-
-
 
 
 /***********************/
@@ -110,8 +103,8 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 "enum"|"ENUM" {ret("ENUM");}
 
-"true" {ret("TRUE");}
-"false" {ret("FALSE");}
+"true" {ret("TRUE_TOKEN");}
+"false" {ret("FALSE_TOKE");}
 
 
 "+" {ret("ADD_OP");}
@@ -157,13 +150,15 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 {ident} {
     insert(yytext,lineno, strlen(yytext), UNDEF);
+    yylval.symbol_table_item = lookup(yytext);
     ret("IDENT");
     
     }
 {CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); }
 {CONST_FLOAT} { yylval.double_val = atof(yytext); ret("CONST_FLOAT"); }
 {CONST_CHAR} { yylval.char_val = yytext[0]; ret("CONST_CHAR"); }
-{STRING_LITERAL} { yylval.str_val = malloc(yyleng * sizeof(char)); strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); }
+{STRING_LITERAL} { yylval.str_val = malloc(yyleng * sizeof(char)); 
+                   strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); }
 
 "\n" {lineno++;}
 
