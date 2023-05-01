@@ -63,7 +63,7 @@ bool_expression: relExp
 
 assign: IDENT ASSIGN_OP expression;
 
-expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression;
+expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression | func_call;
 simpleExp: simpleExp OR_OP andExp | andExp ;
 andExp: andExp AND_OP  | bitRelExp ;
 bitRelExp: bitRelExp BIT_OR_OP relExp | bitRelExp AND relExp | bitRelExp BIT_XOR_OP relExp | relExp ;
@@ -128,8 +128,8 @@ statement: if_statement
           | return_statement 
           | expression_statement
           | declarations
-          | enum_statement
-          | func_call ;
+          | enum_statement;
+          // | func_call ;
 
 statement_inloop: statement | break_statement | continue_statement ;   
 statements_inloop: statement_inloop | statements_inloop statement_inloop ;       

@@ -14,4 +14,35 @@ Found RETURN at line 4
 Found IDENT at line 4 
 Found SEMICOLON at line 4 
 Found RIGHT_CURLY_BRACKET at line 5 
+Found FUNC at line 7 
+Found IDENT at line 7 
+Found LEFT_PAREN at line 7 
+Found RIGHT_PAREN at line 7 
+Found VOID at line 7 
+Found LEFT_CURLY_BRACKET at line 7 
+Found INTEGER at line 8 
+Found IDENT at line 8 
+Found ASSIGN_OP at line 8 
+Found CONST_INT at line 8 
+1
+Found SEMICOLON at line 8 
+Found INTEGER at line 9 
+Found IDENT at line 9 
+Found ASSIGN_OP at line 9 
+Found CONST_INT at line 9 
+2
+Found SEMICOLON at line 9 
+Found INTEGER at line 10 
+Found IDENT at line 10 
+Found SEMICOLON at line 10 
+Found IDENT at line 11 
+Found ASSIGN_OP at line 11 
+Found IDENT at line 11 
+Found LEFT_PAREN at line 11 
+Found IDENT at line 11 
+Found COMMA at line 11 
+Found IDENT at line 11 
+Found RIGHT_PAREN at line 11 
+Found SEMICOLON at line 11 
+Found RIGHT_CURLY_BRACKET at line 12 
 /*--------------Your program is syntactically correct!-------*/
