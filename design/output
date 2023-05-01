@@ -1,19 +1,29 @@
 initialized symbol table 
-Found ENUM at line 1 
-hash value is 365 
-Inserted Level for the first time with linenumber 1!
+Found FUNC at line 1 
+hash value is 211 
+Inserted main for the first time with linenumber 1!
 Found IDENT at line 1 
+Found LEFT_PAREN at line 1 
+Found RIGHT_PAREN at line 1 
+Found VOID at line 1 
 Found LEFT_CURLY_BRACKET at line 1 
-hash value is 198 
-Inserted LOW for the first time with linenumber 2!
-Found IDENT at line 2 
-Found COMMA at line 2 
-hash value is 162 
-Inserted MEDIUM for the first time with linenumber 3!
+Found DO at line 2 
+Found LEFT_CURLY_BRACKET at line 2 
+Found INTEGER at line 3 
+hash value is 105 
+Inserted i for the first time with linenumber 3!
 Found IDENT at line 3 
-Found COMMA at line 3 
-hash value is 44 
-Inserted HIGH for the first time with linenumber 4!
+Found ASSIGN_OP at line 3 
+Found CONST_INT at line 3 
+1
+Found SEMICOLON at line 3 
+Found RIGHT_CURLY_BRACKET at line 4 
+Found UNTIL at line 4 
+Found LEFT_PAREN at line 4 
+hash value is 49 
+Inserted condition for the first time with linenumber 4!
 Found IDENT at line 4 
+Found RIGHT_PAREN at line 4 
+Found SEMICOLON at line 4 
 Found RIGHT_CURLY_BRACKET at line 5 
-Found FUNC at line 6 
+/*--------------Your program is syntactically correct!-------*/
