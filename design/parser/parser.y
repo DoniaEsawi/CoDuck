@@ -63,7 +63,7 @@ bool_expression: relExp
 
 assign: IDENT ASSIGN_OP expression;
 
-expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression | func_call;
+expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression ;
 simpleExp: simpleExp OR_OP andExp | andExp ;
 andExp: andExp AND_OP  | bitRelExp ;
 bitRelExp: bitRelExp BIT_OR_OP relExp | bitRelExp AND relExp | bitRelExp BIT_XOR_OP relExp | relExp ;
@@ -129,7 +129,7 @@ statement: if_statement
           | expression_statement
           | declarations
           | enum_statement;
-          // | func_call ;
+          | func_call ;
 
 statement_inloop: statement | break_statement | continue_statement ;   
 statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
@@ -158,7 +158,7 @@ enum_list: one_val | enum_list COMMA one_val ;
 
 one_val: IDENT | IDENT ASSIGN_OP value ;
 
-func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN | IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN ;
+func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON | IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
 arguments: argument | arguments COMMA argument | /*empty*/;
 argument: expression ;
 
