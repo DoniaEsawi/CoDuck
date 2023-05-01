@@ -16,6 +16,7 @@
 3. FLOAT
 4. BOOL
 5. VOID
+6. STRING
 
 ### conditional statement keywords
 
