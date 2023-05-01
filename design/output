@@ -1,34 +1,3 @@
-Found FUNC at line 1 
 Found IDENT at line 1 
-Found LEFT_PAREN at line 1 
-Found INTEGER at line 1 
-Found IDENT at line 1 
-Found COMMA at line 1 
-Found INTEGER at line 1 
-Found IDENT at line 1 
-Found RIGHT_PAREN at line 1 
-Found INTEGER at line 1 
-Found LEFT_CURLY_BRACKET at line 1 
-Found INTEGER at line 2 
-  matched dec
-Found IDENT at line 2 
-Found SEMICOLON at line 2 
-Found INTEGER at line 3 
-Found IDENT at line 3 
-Found SEMICOLON at line 3 
-Found IDENT at line 4 
-  matched statement
-Found ASSIGN_OP at line 4 
-Found CONST_INT at line 4 
-1
-Found SEMICOLON at line 4 
-Found IDENT at line 5 
-Found ASSIGN_OP at line 5 
-Found CONST_INT at line 5 
-2
-Found SEMICOLON at line 5 
-Found RETURN at line 6 
-Found IDENT at line 6 
-Found SEMICOLON at line 6 
-Found RIGHT_CURLY_BRACKET at line 7 
-/*--------------Your program is syntactically correct!-------*/
+  ENTER declartions
+  matched declaration

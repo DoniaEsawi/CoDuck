@@ -39,19 +39,18 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions | IDENT | declaration;
+program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations statements;
 // program: declarations statements functions;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR ;
 
-// beforedecl: CONST | /*empty*/{printf("  %s\n", "ENTER declartions empty");};
+beforedecl: CONST | /*empty*/;
 
 /* bool x; | const double x; | const integer x = 5; */
-declaration: type IDENT SEMICOLON | type IDENT ASSIGN_OP expression SEMICOLON |
-             CONST type IDENT SEMICOLON | CONST type IDENT ASSIGN_OP expression SEMICOLON;
+declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
-declarations:  {printf("  %s\n", "matched dec");} declaration |  declarations declaration ;
+declarations:  {printf("  %s\n", "matched declaration");} declaration |  declarations declaration ;
 
 tail: statements | LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
@@ -64,7 +63,7 @@ bool_expression: relExp
 
 assign: IDENT ASSIGN_OP expression;
 
-expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT ;
+expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression;
 simpleExp: simpleExp OR_OP andExp | andExp ;
 andExp: andExp AND_OP  | bitRelExp ;
 bitRelExp: bitRelExp BIT_OR_OP relExp | bitRelExp AND relExp | bitRelExp BIT_XOR_OP relExp | relExp ;
@@ -139,7 +138,7 @@ statements_inloop: statement_inloop | statements_inloop statement_inloop ;
 
 functions: functions function | function;
 
-function:function_head function_tail | /* empty */ ;
+function:function_head function_tail;
 
 param_empty: parameters | /* empty */;
 
