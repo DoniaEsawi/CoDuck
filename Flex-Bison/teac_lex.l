@@ -1,26 +1,23 @@
-/* flex will read only one input file */
+/* char* ret(char *token_type); */
+/* void yyerror(); */
 %option noyywrap 
-/* First Part: Declarations */
 %{
     #include <assert.h>
-	#include <stdio.h>
-    #include <stdlib.h>
+    #include <stdio.h>
     #include <string.h>
-    #include <math.h>
-    // #include"../symbol_table/symbol_table.h"
-    #include"../parser/parser.tab.h"
+    #include "teac_parser.tab.h"
+    void yyerror();
+    //#include "cgen.h"
     extern FILE *yyin;
     extern FILE *yyout;
     int yydebug = 0;
-    int lineno = 1; /* for keeping track of the line number we are on,
-                        this will be used later on in the symbol table 
-                        as well as helping us debug.  */
+    int lineno = 1;
     char* ret(char *token_type);
-    void yyerror();
 %}
 /*********** start states ************/
 /* for a multi line comment */
 %x MULTILINE_COMMENT 
+
 /* basic definitions */
 alpha          [a-zA-Z]
 digit          [0-9]
@@ -35,18 +32,15 @@ CONST_FLOAT      -?([1-9]{digit}*|"0")"."{digit}*
 CONST_CHAR        (\'{print}\')|(\'\\[nftrbv]\')|(\"{print}\")|(\"\\[nftrbv]\")
 STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
-
 /***********************/
 /* second part: Rules */
 /**********************/
-
 %%
 
 "//".*          {printf("Found single-line comment at line %d\n", lineno);}
 
 
 "/*"            {printf("Found start of a multi-line comment at line %d\n", lineno); BEGIN(MULTILINE_COMMENT);}
-
 <MULTILINE_COMMENT>\n {lineno++;}
 
 <MULTILINE_COMMENT>"*"
@@ -57,11 +51,9 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 "const"|"CONST" {ret("CONST"); return CONST;}
 "char"|"CHAR" {ret("CHAR"); return CHAR;}
-"string"|"STRING" {ret("STRING"); return STRING;}
 "integer"|"INTEGER" {ret("INTEGER"); return INTEGER;}
 "float"|"FLOAT" {ret("FLOAT"); return FLOAT;}
 "double"|"DOUBLE" {ret("DOUBLE"); return DOUBLE;}
-"string"|"STRING" {ret("STRING"); return STRING;}
 "bool"|"BOOL" {ret("BOOLEAN"); return BOOLEAN;}
 "void"|"VOID" {ret("VOID"); return VOID;}
 "if"|"IF" {ret("IF"); return IF;}
@@ -115,75 +107,24 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 ":" {ret("COLON"); return COLON;}
 ";" {ret("SEMICOLON"); return SEMICOLON;}
 "?" {ret("QUESTION_MARK"); return QUESTION_MARK;}
-
-
 {ident} {
-    // insert(yytext,lineno, strlen(yytext), UNDEF);
-    // yylval.symbol_table_item = lookup(yytext);
+    //insert(yytext,lineno, strlen(yytext), UNDEF);
+    //yylval.symbol_table_item = lookup(yytext);
     ret("IDENT");
     return IDENT;
     
     }
-{CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); return CONST_INT; }
+{CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); return CONST_INT;}
 {CONST_FLOAT} { yylval.double_val = atof(yytext); ret("CONST_FLOAT"); return CONST_FLOAT; }
 {CONST_CHAR} { yylval.char_val = yytext[0]; ret("CONST_CHAR"); return CONST_CHAR; }
 {STRING_LITERAL} { yylval.str_val = malloc(yyleng * sizeof(char)); 
                    strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); return STRING_LITERAL; }
-
 "\n" {lineno++;}
-
-
 [ \t\r\f]+ 
-
 . { yyerror("Unknown character"); }
-
-
 %%
-
-
 char* ret(char *token_type)
 {
     printf("Found %s at line %d \n", token_type, lineno);
-    //return token_type;
+    //return IDENT;
 }
-
-// void yyerror(char *s)
-// {
-//     fprintf(stderr, "%s in token %s at line %d \n", s, yytext ,lineno);
-// }
-
-// int main(int argc, char **argv)
-// {
-//     // initialize the symbol table
-//     init_symbol_table();
-   
-//     if (argc > 1)
-//     {
-//         yyin = fopen(argv[1], "r");
-//         yylex();
-//         fclose(yyin);
-//     }
-//     else
-//     {
-//         yyin = stdin;
-//         yylex();
-//     }
-
-//     //dump the symbol table
-//     yyout = fopen("symtab_dump.out", "w");
-// 	dump_symboltable(yyout);
-// 	fclose(yyout);
-
-//     return 0;
-// }
-
-
-
-
-
-
-
-
-
-
-

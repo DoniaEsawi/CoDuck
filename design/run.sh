@@ -1,8 +1,8 @@
 cd parser
-bison -d parser.y  
+bison -d -v -r all parser.y  
 cd ..
 cd lexer
 flex lex.l  
 cd .. 
-gcc -o compiler parser/parser.tab.c lexer/lex.yy.c -lm
-./compiler example
+gcc -o compiler parser/parser.tab.c lexer/lex.yy.c -lfl
+./compiler <example> output
