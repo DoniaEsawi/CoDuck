@@ -1,14 +1,15 @@
-func main() void{
-    switch (x){ 
-        case constant1:
-        char c = 'B';
-        break;
+// This version is a correction 
 
-        case constant2:
-        char c = 'B';
-        break;
-
-        default:
-        char c = 'B';
-    }
+float i = 0.05;
+string hello = 'hello, world {ddd} ';
+if (True){
+    i = 0.1;
+}
+else if (y){
+}
+else if (hello == "menna"){
+    hello = "a4tar katakeet";
+}
+else{
+    hello = "will be a4tar katakeet isa";
 }

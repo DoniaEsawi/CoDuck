@@ -1,8 +1,7 @@
 ------------------------ ------------ ------------------
 Name                     Type         Line Number       
 ------------------------ ------------ ------------------
-constant2                UNDEF        7      
-c                        UNDEF        4      8      12     
-x                        UNDEF        2      
-main                     UNDEF        1      
-constant1                UNDEF        3      
+True                     UNDEF        5      
+hello                    UNDEF        4      10     11     14     
+i                        UNDEF        3      6      
+y                        UNDEF        8      
