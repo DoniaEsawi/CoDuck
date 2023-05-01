@@ -6,10 +6,29 @@ Found ASSIGN_OP at line 1
 Found CONST_FLOAT at line 1 
 0.050000
 Found SEMICOLON at line 1 
-Found STRING at line 3 
+Found STRING at line 2 
+Found IDENT at line 2 
+Found ASSIGN_OP at line 2 
+Found STRING_LITERAL at line 2 
+Found SEMICOLON at line 2 
+Found IF at line 3 
+Found LEFT_PAREN at line 3 
 Found IDENT at line 3 
-Found ASSIGN_OP at line 3 
-Found STRING_LITERAL at line 3 
-Found SEMICOLON at line 3 
-Found IF at line 5 
-Found IDENT at line 5 
+Found RIGHT_PAREN at line 3 
+Found LEFT_CURLY_BRACKET at line 3 
+Found IDENT at line 4 
+Found ASSIGN_OP at line 4 
+Found CONST_FLOAT at line 4 
+0.100000
+Found SEMICOLON at line 4 
+Found RIGHT_CURLY_BRACKET at line 5 
+Found ELSE at line 6 
+Found IF at line 6 
+Found LEFT_PAREN at line 6 
+Found IDENT at line 6 
+Found RIGHT_PAREN at line 6 
+Found LEFT_CURLY_BRACKET at line 6 
+Found RIGHT_CURLY_BRACKET at line 7 
+Found ELSE at line 8 
+Found SEMICOLON at line 8 
+  matched declaration
