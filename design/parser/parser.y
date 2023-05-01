@@ -40,8 +40,11 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions | declarations statements;
+program: program | functions | globals ;
 
+globals: declarations | enum_statements;
+
+enum_statements: enum_statements enum_statement | enum_statement;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
 
@@ -53,9 +56,9 @@ declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP e
 /* bool x; const double x; const integer x = 5; */
 declarations: declaration |  declarations declaration ;
 
-tail: statements | LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
+tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
-tail_inloop: statements_inloop | LEFT_CURLY_BRACKET statements_inloop RIGHT_CURLY_BRACKET ;
+tail_inloop: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
 bool_expression: relExp
                 | TRUE_TOKEN 
@@ -96,7 +99,9 @@ if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail else_if else_part;
 
 while_statement: WHILE LEFT_PAREN bool_expression RIGHT_PAREN tail_inloop ;
 
-for_statement: FOR LEFT_PAREN assign SEMICOLON bool_expression SEMICOLON expression RIGHT_PAREN tail_inloop ;
+optional_type: /* empty */ | type;
+
+for_statement: FOR LEFT_PAREN optional_type assign SEMICOLON bool_expression SEMICOLON expression RIGHT_PAREN tail_inloop ;
 
 do_statement: DO tail_inloop WHILE LEFT_PAREN bool_expression RIGHT_PAREN SEMICOLON ;
 
@@ -129,11 +134,13 @@ statement: if_statement
           | return_statement 
           | expression_statement
           | declarations
-          | enum_statement;
-          | func_call ;
+          | enum_statement
+          | func_call
+          | break_statement
+          | continue_statement;
 
-statement_inloop: statement | break_statement | continue_statement ;   
-statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
+// statement_inloop: statement | /* empty */;   
+// statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
 
 /* Function */
 

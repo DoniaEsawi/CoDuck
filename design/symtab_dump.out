@@ -1,7 +1,9 @@
 ------------------------ ------------ ------------------
 Name                     Type         Line Number       
 ------------------------ ------------ ------------------
-True                     UNDEF        5      
-hello                    UNDEF        4      10     11     14     
-i                        UNDEF        3      6      
-y                        UNDEF        8      
+HIGH                     UNDEF        4      
+a                        UNDEF        7      
+x                        UNDEF        8      
+MEDIUM                   UNDEF        3      
+LOW                      UNDEF        2      
+Level                    UNDEF        1      

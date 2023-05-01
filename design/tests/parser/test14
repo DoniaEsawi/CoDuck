@@ -6,6 +6,7 @@ enum Level {
 func main()void{
 
 }
+
 enum a{
 x = 0,
 y= 1

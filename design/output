@@ -1,68 +1,19 @@
 initialized symbol table 
-Found single-line comment at line 1
-Found FLOAT at line 3 
-hash value is 105 
-Inserted i for the first time with linenumber 3!
+Found ENUM at line 1 
+hash value is 365 
+Inserted Level for the first time with linenumber 1!
+Found IDENT at line 1 
+Found LEFT_CURLY_BRACKET at line 1 
+hash value is 198 
+Inserted LOW for the first time with linenumber 2!
+Found IDENT at line 2 
+Found COMMA at line 2 
+hash value is 162 
+Inserted MEDIUM for the first time with linenumber 3!
 Found IDENT at line 3 
-Found ASSIGN_OP at line 3 
-Found CONST_FLOAT at line 3 
-0.050000
-Found SEMICOLON at line 3 
-Found STR at line 4 
-hash value is 85 
-Inserted hello for the first time with linenumber 4!
+Found COMMA at line 3 
+hash value is 44 
+Inserted HIGH for the first time with linenumber 4!
 Found IDENT at line 4 
-Found ASSIGN_OP at line 4 
-Found STRING_LITERAL at line 4 
-Found SEMICOLON at line 4 
-Found IF at line 5 
-Found LEFT_PAREN at line 5 
-hash value is 60 
-Inserted True for the first time with linenumber 5!
-Found IDENT at line 5 
-Found RIGHT_PAREN at line 5 
-Found LEFT_CURLY_BRACKET at line 5 
-hash value is 105 
-found i again in line number 6!
-Found IDENT at line 6 
-Found ASSIGN_OP at line 6 
-Found CONST_FLOAT at line 6 
-0.100000
-Found SEMICOLON at line 6 
-Found RIGHT_CURLY_BRACKET at line 7 
-Found ELSE at line 8 
-Found IF at line 8 
-Found LEFT_PAREN at line 8 
-hash value is 121 
-Inserted y for the first time with linenumber 8!
-Found IDENT at line 8 
-Found RIGHT_PAREN at line 8 
-Found LEFT_CURLY_BRACKET at line 8 
-Found RIGHT_CURLY_BRACKET at line 9 
-Found ELSE at line 10 
-Found IF at line 10 
-Found LEFT_PAREN at line 10 
-hash value is 85 
-found hello again in line number 10!
-Found IDENT at line 10 
-Found EQ_OP at line 10 
-Found STRING_LITERAL at line 10 
-Found RIGHT_PAREN at line 10 
-Found LEFT_CURLY_BRACKET at line 10 
-hash value is 85 
-found hello again in line number 11!
-Found IDENT at line 11 
-Found ASSIGN_OP at line 11 
-Found STRING_LITERAL at line 11 
-Found SEMICOLON at line 11 
-Found RIGHT_CURLY_BRACKET at line 12 
-Found ELSE at line 13 
-Found LEFT_CURLY_BRACKET at line 13 
-hash value is 85 
-found hello again in line number 14!
-Found IDENT at line 14 
-Found ASSIGN_OP at line 14 
-Found STRING_LITERAL at line 14 
-Found SEMICOLON at line 14 
-Found RIGHT_CURLY_BRACKET at line 15 
-/*--------------Your program is syntactically correct!-------*/
+Found RIGHT_CURLY_BRACKET at line 5 
+Found FUNC at line 6 
