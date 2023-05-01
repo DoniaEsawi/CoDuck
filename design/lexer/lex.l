@@ -7,7 +7,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    // #include"../symbol_table/symbol_table.h"
+    #include"../symbol_table/symbol_table.h"
     #include"../parser/parser.tab.h"
     extern FILE *yyin;
     extern FILE *yyout;
@@ -57,11 +57,10 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 "const"|"CONST" {ret("CONST"); return CONST;}
 "char"|"CHAR" {ret("CHAR"); return CHAR;}
-"string"|"STRING" {ret("STRING"); return STRING;}
 "integer"|"INTEGER" {ret("INTEGER"); return INTEGER;}
 "float"|"FLOAT" {ret("FLOAT"); return FLOAT;}
 "double"|"DOUBLE" {ret("DOUBLE"); return DOUBLE;}
-"string"|"STRING" {ret("STRING"); return STRING;}
+"string"|"STRING" {ret("STR"); return STR;}
 "bool"|"BOOL" {ret("BOOLEAN"); return BOOLEAN;}
 "void"|"VOID" {ret("VOID"); return VOID;}
 "if"|"IF" {ret("IF"); return IF;}
@@ -118,8 +117,8 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 
 {ident} {
-    // insert(yytext,lineno, strlen(yytext), UNDEF);
-    // yylval.symbol_table_item = lookup(yytext);
+    insert(yytext,lineno, strlen(yytext), UNDEF);
+    yylval.symbol_table_item = lookup(yytext);
     ret("IDENT");
     return IDENT;
     

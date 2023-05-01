@@ -49,7 +49,7 @@ Grammar
     7     | VOID
     8     | BOOLEAN
     9     | CHAR
-   10     | STRING
+   10     | STR
 
    11 beforedecl: CONST
    12           | %empty
@@ -236,7 +236,7 @@ Terminals, with rules where they appear
     BOOLEAN <int_val> (262) 8
     CHAR <int_val> (263) 9
     CONST <int_val> (264) 11
-    STRING <int_val> (265) 10
+    STR <int_val> (265) 10
     IDENT <symbol_table_item> (266) 13 14 24 26 27 29 61 62 63 64 115 120 121 124 125 126 127
     CONST_INT <int_val> (267) 67
     CONST_FLOAT <double_val> (268) 68
@@ -470,7 +470,7 @@ State 0
     2        | . functions
     3        | . declarations statements
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -530,7 +530,7 @@ State 4
     7     | . VOID
     8     | . BOOLEAN
     9     | . CHAR
-   10     | . STRING
+   10     | . STR
    13 declaration: beforedecl . type IDENT SEMICOLON
    14            | beforedecl . type IDENT ASSIGN_OP expression SEMICOLON
 
@@ -540,7 +540,7 @@ State 4
     VOID     shift, and go to state 16
     BOOLEAN  shift, and go to state 17
     CHAR     shift, and go to state 18
-    STRING   shift, and go to state 19
+    STR      shift, and go to state 19
 
     type  go to state 20
 
@@ -556,7 +556,7 @@ State 6
 
     3 program: declarations . statements
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -606,7 +606,7 @@ State 6
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -657,8 +657,8 @@ State 6
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 92 (statements)]
     CONST           [reduce using rule 92 (statements)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 92 (statements)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 92 (statements)]
     IDENT           [reduce using rule 92 (statements)]
     CONST_INT       [reduce using rule 92 (statements)]
     CONST_FLOAT     [reduce using rule 92 (statements)]
@@ -806,7 +806,7 @@ State 18
 
 State 19
 
-   10 type: STRING .
+   10 type: STR .
 
     $default  reduce using rule 10 (type)
 
@@ -891,7 +891,7 @@ State 28
 State 29
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -1211,8 +1211,8 @@ State 38
 
 State 39
 
-   15 declarations: declaration .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
-   16             | declarations declaration .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
+   15 declarations: declaration .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
+   16             | declarations declaration .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
 
     $end            reduce using rule 15 (declarations)
     $end            [reduce using rule 16 (declarations)]
@@ -1230,8 +1230,8 @@ State 39
     CHAR            [reduce using rule 16 (declarations)]
     CONST           reduce using rule 15 (declarations)
     CONST           [reduce using rule 16 (declarations)]
-    STRING          reduce using rule 15 (declarations)
-    STRING          [reduce using rule 16 (declarations)]
+    STR             reduce using rule 15 (declarations)
+    STR             [reduce using rule 16 (declarations)]
     IDENT           reduce using rule 15 (declarations)
     IDENT           [reduce using rule 16 (declarations)]
     CONST_INT       reduce using rule 15 (declarations)
@@ -1276,11 +1276,11 @@ State 39
 State 40
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    16 declarations: declarations . declaration
-  102 statement: declarations .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+  102 statement: declarations .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
 
     CONST  shift, and go to state 1
 
@@ -1297,8 +1297,8 @@ State 40
     CHAR      reduce using rule 12 (beforedecl)
     CHAR      [reduce using rule 102 (statement)]
     CONST     [reduce using rule 102 (statement)]
-    STRING    reduce using rule 12 (beforedecl)
-    STRING    [reduce using rule 102 (statement)]
+    STR       reduce using rule 12 (beforedecl)
+    STR       [reduce using rule 102 (statement)]
     $default  reduce using rule 102 (statement)
 
     beforedecl   go to state 4
@@ -1512,7 +1512,7 @@ State 60
 
     3 program: declarations statements .  [$end, FUNC]
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -1658,7 +1658,7 @@ State 64
 State 65
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -1707,7 +1707,7 @@ State 65
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -1758,8 +1758,8 @@ State 65
     CHAR                 reduce using rule 12 (beforedecl)
     CHAR                 [reduce using rule 92 (statements)]
     CONST                [reduce using rule 92 (statements)]
-    STRING               reduce using rule 12 (beforedecl)
-    STRING               [reduce using rule 92 (statements)]
+    STR                  reduce using rule 12 (beforedecl)
+    STR                  [reduce using rule 92 (statements)]
     IDENT                [reduce using rule 92 (statements)]
     CONST_INT            [reduce using rule 92 (statements)]
     CONST_FLOAT          [reduce using rule 92 (statements)]
@@ -1824,7 +1824,7 @@ State 67
     7     | . VOID
     8     | . BOOLEAN
     9     | . CHAR
-   10     | . STRING
+   10     | . STR
   113 param_empty: . parameters
   114            | . %empty  [RIGHT_PAREN]
   115 function_head: FUNC IDENT LEFT_PAREN . param_empty RIGHT_PAREN type
@@ -1839,7 +1839,7 @@ State 67
     VOID     shift, and go to state 16
     BOOLEAN  shift, and go to state 17
     CHAR     shift, and go to state 18
-    STRING   shift, and go to state 19
+    STR      shift, and go to state 19
 
     RIGHT_PAREN  reduce using rule 114 (param_empty)
     RIGHT_PAREN  [reduce using rule 119 (parameters)]
@@ -2139,7 +2139,7 @@ State 77
 State 78
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -2303,12 +2303,12 @@ State 83
 State 84
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
    16             | . declarations declaration
-   19 tail_inloop: statements_inloop .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   19 tail_inloop: statements_inloop .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    21 bool_expression: . relExp
    22                | . TRUE_TOKEN
    23                | . FALSE_TOKEN
@@ -2409,8 +2409,8 @@ State 84
     CHAR                 reduce using rule 12 (beforedecl)
     CHAR                 [reduce using rule 19 (tail_inloop)]
     CONST                [reduce using rule 19 (tail_inloop)]
-    STRING               reduce using rule 12 (beforedecl)
-    STRING               [reduce using rule 19 (tail_inloop)]
+    STR                  reduce using rule 12 (beforedecl)
+    STR                  [reduce using rule 19 (tail_inloop)]
     IDENT                [reduce using rule 19 (tail_inloop)]
     CONST_INT            [reduce using rule 19 (tail_inloop)]
     CONST_FLOAT          [reduce using rule 19 (tail_inloop)]
@@ -3067,7 +3067,7 @@ State 119
 State 120
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -3415,7 +3415,7 @@ State 139
 State 140
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -3870,7 +3870,7 @@ State 160
     7     | . VOID
     8     | . BOOLEAN
     9     | . CHAR
-   10     | . STRING
+   10     | . STR
   115 function_head: FUNC IDENT LEFT_PAREN param_empty RIGHT_PAREN . type
 
     INTEGER  shift, and go to state 13
@@ -3879,7 +3879,7 @@ State 160
     VOID     shift, and go to state 16
     BOOLEAN  shift, and go to state 17
     CHAR     shift, and go to state 18
-    STRING   shift, and go to state 19
+    STR      shift, and go to state 19
 
     type  go to state 175
 
@@ -3892,7 +3892,7 @@ State 161
     7     | . VOID
     8     | . BOOLEAN
     9     | . CHAR
-   10     | . STRING
+   10     | . STR
   118 parameters: parameters COMMA . parameter
   120 parameter: . type IDENT
 
@@ -3902,7 +3902,7 @@ State 161
     VOID     shift, and go to state 16
     BOOLEAN  shift, and go to state 17
     CHAR     shift, and go to state 18
-    STRING   shift, and go to state 19
+    STR      shift, and go to state 19
 
     type       go to state 121
     parameter  go to state 176
@@ -4069,7 +4069,7 @@ State 165
 State 166
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -4121,7 +4121,7 @@ State 166
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -4172,8 +4172,8 @@ State 166
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 92 (statements)]
     CONST           [reduce using rule 92 (statements)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 92 (statements)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 92 (statements)]
     IDENT           [reduce using rule 92 (statements)]
     CONST_INT       [reduce using rule 92 (statements)]
     CONST_FLOAT     [reduce using rule 92 (statements)]
@@ -4226,7 +4226,7 @@ State 166
 State 167
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -4537,7 +4537,7 @@ State 180
 State 181
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -4587,7 +4587,7 @@ State 181
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -4637,8 +4637,8 @@ State 181
     CHAR                 reduce using rule 12 (beforedecl)
     CHAR                 [reduce using rule 92 (statements)]
     CONST                [reduce using rule 92 (statements)]
-    STRING               reduce using rule 12 (beforedecl)
-    STRING               [reduce using rule 92 (statements)]
+    STR                  reduce using rule 12 (beforedecl)
+    STR                  [reduce using rule 92 (statements)]
     IDENT                [reduce using rule 92 (statements)]
     CONST_INT            [reduce using rule 92 (statements)]
     CONST_FLOAT          [reduce using rule 92 (statements)]
@@ -4692,7 +4692,7 @@ State 182
 
    71 else_if: . ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail
    72        | . else_if ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail
-   73        | . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   73        | . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    76 if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail . else_if else_part
 
     ELIF  shift, and go to state 193
@@ -4706,12 +4706,12 @@ State 182
 State 183
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
    16             | . declarations declaration
-   17 tail: statements .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   17 tail: statements .  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    21 bool_expression: . relExp
    22                | . TRUE_TOKEN
    23                | . FALSE_TOKEN
@@ -4804,8 +4804,8 @@ State 183
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 17 (tail)]
     CONST           [reduce using rule 17 (tail)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 17 (tail)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 17 (tail)]
     IDENT           [reduce using rule 17 (tail)]
     CONST_INT       [reduce using rule 17 (tail)]
     CONST_FLOAT     [reduce using rule 17 (tail)]
@@ -4932,7 +4932,7 @@ State 191
 State 192
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -5058,7 +5058,7 @@ State 194
 
    72 else_if: else_if . ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail
    74 else_part: . ELSE tail
-   75          | . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   75          | . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    76 if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail else_if . else_part
 
     ELSE  shift, and go to state 205
@@ -5313,7 +5313,7 @@ State 204
 State 205
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -5365,7 +5365,7 @@ State 205
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -5416,8 +5416,8 @@ State 205
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 92 (statements)]
     CONST           [reduce using rule 92 (statements)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 92 (statements)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 92 (statements)]
     IDENT           [reduce using rule 92 (statements)]
     CONST_INT       [reduce using rule 92 (statements)]
     CONST_FLOAT     [reduce using rule 92 (statements)]
@@ -5594,7 +5594,7 @@ State 217
 State 218
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -5727,7 +5727,7 @@ State 218
 State 219
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -5777,7 +5777,7 @@ State 219
    85 case: CASE expression COLON . statements BREAK SEMICOLON
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, BREAK, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, RETURN, BREAK, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -5827,8 +5827,8 @@ State 219
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 92 (statements)]
     CONST           [reduce using rule 92 (statements)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 92 (statements)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 92 (statements)]
     IDENT           [reduce using rule 92 (statements)]
     CONST_INT       [reduce using rule 92 (statements)]
     CONST_FLOAT     [reduce using rule 92 (statements)]
@@ -5881,7 +5881,7 @@ State 219
 State 220
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -5931,7 +5931,7 @@ State 220
    84 default: DEFAULT COLON . statements
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, TRUE_TOKEN, FALSE_TOKEN, ENUM, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -5981,8 +5981,8 @@ State 220
     CHAR                 reduce using rule 12 (beforedecl)
     CHAR                 [reduce using rule 92 (statements)]
     CONST                [reduce using rule 92 (statements)]
-    STRING               reduce using rule 12 (beforedecl)
-    STRING               [reduce using rule 92 (statements)]
+    STR                  reduce using rule 12 (beforedecl)
+    STR                  [reduce using rule 92 (statements)]
     IDENT                [reduce using rule 92 (statements)]
     CONST_INT            [reduce using rule 92 (statements)]
     CONST_FLOAT          [reduce using rule 92 (statements)]
@@ -6037,7 +6037,7 @@ State 220
 State 221
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -6089,7 +6089,7 @@ State 221
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -6140,8 +6140,8 @@ State 221
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 92 (statements)]
     CONST           [reduce using rule 92 (statements)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 92 (statements)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 92 (statements)]
     IDENT           [reduce using rule 92 (statements)]
     CONST_INT       [reduce using rule 92 (statements)]
     CONST_FLOAT     [reduce using rule 92 (statements)]
@@ -6208,7 +6208,7 @@ State 223
 State 224
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -6326,7 +6326,7 @@ State 224
 State 225
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -6453,7 +6453,7 @@ State 226
 State 227
 
    11 beforedecl: . CONST
-   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STRING]
+   12           | . %empty  [INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, STR]
    13 declaration: . beforedecl type IDENT SEMICOLON
    14            | . beforedecl type IDENT ASSIGN_OP expression SEMICOLON
    15 declarations: . declaration
@@ -6505,7 +6505,7 @@ State 227
    80 switch_statement: . SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET
    88 return_statement: . RETURN return_val SEMICOLON
    91 expression_statement: . expression SEMICOLON
-   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STRING, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
+   92 statements: . %empty  [$end, INTEGER, FLOAT, DOUBLE, VOID, BOOLEAN, CHAR, CONST, STR, IDENT, CONST_INT, CONST_FLOAT, CONST_CHAR, STRING_LITERAL, IF, ELSE, ELIF, WHILE, FOR, DO, SWITCH, CASE, DEFAULT, RETURN, BREAK, CONTINUE, TRUE_TOKEN, FALSE_TOKEN, ENUM, FUNC, LEFT_PAREN, RIGHT_CURLY_BRACKET, INC_OP, DEC_OP, NOT_OP]
    93           | . statement
    94           | . statements statement
    95 statement: . if_statement
@@ -6556,8 +6556,8 @@ State 227
     CHAR            reduce using rule 12 (beforedecl)
     CHAR            [reduce using rule 92 (statements)]
     CONST           [reduce using rule 92 (statements)]
-    STRING          reduce using rule 12 (beforedecl)
-    STRING          [reduce using rule 92 (statements)]
+    STR             reduce using rule 12 (beforedecl)
+    STR             [reduce using rule 92 (statements)]
     IDENT           [reduce using rule 92 (statements)]
     CONST_INT       [reduce using rule 92 (statements)]
     CONST_FLOAT     [reduce using rule 92 (statements)]

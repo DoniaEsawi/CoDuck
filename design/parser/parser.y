@@ -1,9 +1,9 @@
 %{
+    #include"../symbol_table/symbol_table.c"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include <math.h>
-    // #include"../symbol_table/symbol_table.c"
+    // #include <math.h>
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -17,9 +17,10 @@
   int int_val;
   double double_val;
   char* str_val;
+  ListNode* symbol_table_item;
 }
 
-%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STRING
+%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STR
 %token<symbol_table_item> IDENT
 %token<int_val> CONST_INT
 %token<double_val> CONST_FLOAT
@@ -42,7 +43,7 @@
 program: program function | functions | declarations statements;
 
 
-type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
+type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
 
 beforedecl: CONST | /*empty*/;
 
@@ -170,9 +171,9 @@ void yyerror ()
   exit(1);
 }
 
-int main (){
-    
-
+int main (int argc, char *argv[]){
+    init_symbol_table();
+    yyin = fopen(argv[1], "r");
     // parsing
     int flag;
     flag = yyparse();
@@ -183,6 +184,11 @@ int main (){
       printf("/*-------------------------Rejected!---------------------------*/\n");
       //printf("/* Unrecognized token %s in line %d: ",yytext,lineno);
     }
+    fclose(yyin);
+
+    yyout = fopen("symtab_dump.out", "w");
+    dump_symboltable(yyout);
+    fclose(yyout);
 
     return flag;
 }

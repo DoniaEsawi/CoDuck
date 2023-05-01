@@ -4,5 +4,5 @@ cd ..
 cd lexer
 flex lex.l  
 cd .. 
-gcc -o compiler parser/parser.tab.c lexer/lex.yy.c -lfl
+gcc -o compiler parser/parser.tab.c lexer/lex.yy.c -lfl -lm
 ./compiler <example> output

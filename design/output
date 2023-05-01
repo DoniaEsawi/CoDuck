@@ -1,4 +1,7 @@
+initialized symbol table 
 Found FUNC at line 1 
+hash value is 211 
+Inserted main for the first time with linenumber 1!
 Found IDENT at line 1 
 Found LEFT_PAREN at line 1 
 Found RIGHT_PAREN at line 1 
@@ -6,13 +9,19 @@ Found VOID at line 1
 Found LEFT_CURLY_BRACKET at line 1 
 Found SWITCH at line 2 
 Found LEFT_PAREN at line 2 
+hash value is 120 
+Inserted x for the first time with linenumber 2!
 Found IDENT at line 2 
 Found RIGHT_PAREN at line 2 
 Found LEFT_CURLY_BRACKET at line 2 
 Found CASE at line 3 
+hash value is 316 
+Inserted constant1 for the first time with linenumber 3!
 Found IDENT at line 3 
 Found COLON at line 3 
 Found CHAR at line 4 
+hash value is 99 
+Inserted c for the first time with linenumber 4!
 Found IDENT at line 4 
 Found ASSIGN_OP at line 4 
 Found CONST_CHAR at line 4 
@@ -20,9 +29,13 @@ Found SEMICOLON at line 4
 Found BREAK at line 5 
 Found SEMICOLON at line 5 
 Found CASE at line 7 
+hash value is 37 
+Inserted constant2 for the first time with linenumber 7!
 Found IDENT at line 7 
 Found COLON at line 7 
 Found CHAR at line 8 
+hash value is 99 
+found c again in line number 8!
 Found IDENT at line 8 
 Found ASSIGN_OP at line 8 
 Found CONST_CHAR at line 8 
@@ -32,6 +45,8 @@ Found SEMICOLON at line 9
 Found DEFAULT at line 11 
 Found COLON at line 11 
 Found CHAR at line 12 
+hash value is 99 
+found c again in line number 12!
 Found IDENT at line 12 
 Found ASSIGN_OP at line 12 
 Found CONST_CHAR at line 12 

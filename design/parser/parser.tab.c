@@ -68,11 +68,11 @@
 /* First part of user prologue.  */
 #line 1 "parser.y"
 
+    #include"../symbol_table/symbol_table.c"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include <math.h>
-    // #include"../symbol_table/symbol_table.c"
+    // #include <math.h>
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -134,7 +134,7 @@ extern int yydebug;
     BOOLEAN = 262,
     CHAR = 263,
     CONST = 264,
-    STRING = 265,
+    STR = 265,
     IDENT = 266,
     CONST_INT = 267,
     CONST_FLOAT = 268,
@@ -204,8 +204,9 @@ union YYSTYPE
   int int_val;
   double double_val;
   char* str_val;
+  ListNode* symbol_table_item;
 
-#line 209 "parser.tab.c"
+#line 210 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -587,20 +588,20 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    42,    42,    42,    42,    45,    45,    45,    45,    45,
-      45,    45,    47,    47,    50,    50,    53,    53,    55,    55,
-      57,    57,    59,    60,    61,    64,    66,    66,    66,    66,
-      66,    66,    67,    67,    68,    68,    69,    69,    69,    69,
-      71,    71,    71,    71,    71,    71,    71,    71,    72,    73,
-      75,    75,    75,    77,    77,    78,    78,    78,    79,    79,
-      80,    80,    82,    82,    82,    82,    82,    82,    85,    85,
-      86,    86,    89,    90,    90,    92,    92,    94,    96,    98,
-     100,   102,   104,   104,   104,   106,   108,   110,   110,   111,
-     113,   115,   117,   119,   120,   121,   123,   124,   125,   126,
-     127,   128,   129,   130,   131,   132,   134,   134,   134,   135,
-     135,   139,   139,   141,   143,   143,   145,   147,   151,   151,
-     151,   152,   155,   157,   157,   159,   159,   161,   161,   162,
-     162,   162,   163
+       0,    43,    43,    43,    43,    46,    46,    46,    46,    46,
+      46,    46,    48,    48,    51,    51,    54,    54,    56,    56,
+      58,    58,    60,    61,    62,    65,    67,    67,    67,    67,
+      67,    67,    68,    68,    69,    69,    70,    70,    70,    70,
+      72,    72,    72,    72,    72,    72,    72,    72,    73,    74,
+      76,    76,    76,    78,    78,    79,    79,    79,    80,    80,
+      81,    81,    83,    83,    83,    83,    83,    83,    86,    86,
+      87,    87,    90,    91,    91,    93,    93,    95,    97,    99,
+     101,   103,   105,   105,   105,   107,   109,   111,   111,   112,
+     114,   116,   118,   120,   121,   122,   124,   125,   126,   127,
+     128,   129,   130,   131,   132,   133,   135,   135,   135,   136,
+     136,   140,   140,   142,   144,   144,   146,   148,   152,   152,
+     152,   153,   156,   158,   158,   160,   160,   162,   162,   163,
+     163,   163,   164
 };
 #endif
 
@@ -610,11 +611,11 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "INTEGER", "FLOAT", "DOUBLE", "VOID",
-  "BOOLEAN", "CHAR", "CONST", "STRING", "IDENT", "CONST_INT",
-  "CONST_FLOAT", "CONST_CHAR", "STRING_LITERAL", "IF", "ELSE", "ELIF",
-  "WHILE", "FOR", "DO", "SWITCH", "CASE", "DEFAULT", "RETURN", "BREAK",
-  "CONTINUE", "TRUE_TOKEN", "FALSE_TOKEN", "ENUM", "FUNC", "UNTIL",
-  "LEFT_PAREN", "RIGHT_PAREN", "LEFT_CURLY_BRACKET", "RIGHT_CURLY_BRACKET",
+  "BOOLEAN", "CHAR", "CONST", "STR", "IDENT", "CONST_INT", "CONST_FLOAT",
+  "CONST_CHAR", "STRING_LITERAL", "IF", "ELSE", "ELIF", "WHILE", "FOR",
+  "DO", "SWITCH", "CASE", "DEFAULT", "RETURN", "BREAK", "CONTINUE",
+  "TRUE_TOKEN", "FALSE_TOKEN", "ENUM", "FUNC", "UNTIL", "LEFT_PAREN",
+  "RIGHT_PAREN", "LEFT_CURLY_BRACKET", "RIGHT_CURLY_BRACKET",
   "LEFT_SQ_BRACKET", "RIGHT_SQ_BRACKET", "SEMICOLON", "COMMA", "COLON",
   "QUESTION_MARK", "DOT", "ADD_OP", "SUB_OP", "MUL_OP", "DIV_OP", "MOD_OP",
   "INC_OP", "DEC_OP", "OR_OP", "AND_OP", "NOT_OP", "BIT_OR_OP", "AND",
@@ -1665,19 +1666,19 @@ yyreduce:
   switch (yyn)
     {
   case 68:
-#line 85 "parser.y"
+#line 86 "parser.y"
                  {printf("%d\n", yylval.int_val);}
-#line 1671 "parser.tab.c"
+#line 1672 "parser.tab.c"
     break;
 
   case 69:
-#line 85 "parser.y"
+#line 86 "parser.y"
                                                                  {printf("%lf\n", yylval.double_val);}
-#line 1677 "parser.tab.c"
+#line 1678 "parser.tab.c"
     break;
 
 
-#line 1681 "parser.tab.c"
+#line 1682 "parser.tab.c"
 
       default: break;
     }
@@ -1909,7 +1910,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 165 "parser.y"
+#line 166 "parser.y"
 
 
 void yyerror ()
@@ -1918,9 +1919,9 @@ void yyerror ()
   exit(1);
 }
 
-int main (){
-    
-
+int main (int argc, char *argv[]){
+    init_symbol_table();
+    yyin = fopen(argv[1], "r");
     // parsing
     int flag;
     flag = yyparse();
@@ -1931,6 +1932,11 @@ int main (){
       printf("/*-------------------------Rejected!---------------------------*/\n");
       //printf("/* Unrecognized token %s in line %d: ",yytext,lineno);
     }
+    fclose(yyin);
+
+    yyout = fopen("symtab_dump.out", "w");
+    dump_symboltable(yyout);
+    fclose(yyout);
 
     return flag;
 }

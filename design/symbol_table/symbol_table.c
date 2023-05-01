@@ -67,7 +67,7 @@ void insert(char *name, int lineno, int length, int type)
     }
     else // if the token is already in the list, add the line number
     {
-        printf("here\n");
+        // printf("here\n");
         list->scope = current_scope;
         Ref *temp = list->lines;
         while (temp->next != NULL)
