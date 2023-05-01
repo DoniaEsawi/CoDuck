@@ -1,34 +1,53 @@
-Found FLOAT at line 1 
+Found single-line comment at line 1
+Found FLOAT at line 2 
   ENTER declartions
   matched declaration
-Found IDENT at line 1 
-Found ASSIGN_OP at line 1 
-Found CONST_FLOAT at line 1 
-0.050000
-Found SEMICOLON at line 1 
-Found STRING at line 2 
 Found IDENT at line 2 
 Found ASSIGN_OP at line 2 
-Found STRING_LITERAL at line 2 
+Found CONST_FLOAT at line 2 
+0.050000
 Found SEMICOLON at line 2 
-Found IF at line 3 
-Found LEFT_PAREN at line 3 
+Found STRING at line 3 
 Found IDENT at line 3 
-Found RIGHT_PAREN at line 3 
-Found LEFT_CURLY_BRACKET at line 3 
+Found ASSIGN_OP at line 3 
+Found STRING_LITERAL at line 3 
+Found SEMICOLON at line 3 
+Found IF at line 4 
+Found LEFT_PAREN at line 4 
 Found IDENT at line 4 
-Found ASSIGN_OP at line 4 
-Found CONST_FLOAT at line 4 
+Found RIGHT_PAREN at line 4 
+Found LEFT_CURLY_BRACKET at line 4 
+Found IDENT at line 5 
+Found ASSIGN_OP at line 5 
+Found CONST_FLOAT at line 5 
 0.100000
-Found SEMICOLON at line 4 
-Found RIGHT_CURLY_BRACKET at line 5 
-Found ELSE at line 6 
-Found IF at line 6 
-Found LEFT_PAREN at line 6 
-Found IDENT at line 6 
-Found RIGHT_PAREN at line 6 
-Found LEFT_CURLY_BRACKET at line 6 
-Found RIGHT_CURLY_BRACKET at line 7 
-Found ELSE at line 8 
-Found SEMICOLON at line 8 
-  matched declaration
+Found SEMICOLON at line 5 
+Found RIGHT_CURLY_BRACKET at line 6 
+Found ELSE at line 7 
+Found IF at line 7 
+Found LEFT_PAREN at line 7 
+Found IDENT at line 7 
+Found RIGHT_PAREN at line 7 
+Found LEFT_CURLY_BRACKET at line 7 
+Found RIGHT_CURLY_BRACKET at line 8 
+Found ELSE at line 9 
+Found IF at line 9 
+Found LEFT_PAREN at line 9 
+Found IDENT at line 9 
+Found EQ_OP at line 9 
+Found STRING_LITERAL at line 9 
+Found RIGHT_PAREN at line 9 
+Found LEFT_CURLY_BRACKET at line 9 
+Found IDENT at line 10 
+Found ASSIGN_OP at line 10 
+Found STRING_LITERAL at line 10 
+Found SEMICOLON at line 10 
+Found RIGHT_CURLY_BRACKET at line 11 
+Found ELSE at line 12 
+Found LEFT_CURLY_BRACKET at line 12 
+Found IDENT at line 13 
+Found ASSIGN_OP at line 13 
+Found STRING_LITERAL at line 13 
+Found SEMICOLON at line 13 
+Found RIGHT_CURLY_BRACKET at line 14 
+/*--------------Your program is syntactically correct!-------*/

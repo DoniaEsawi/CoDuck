@@ -39,7 +39,7 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations statements;
+program: program function | functions |declarations statements;
 // program: declarations statements functions;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
@@ -50,7 +50,7 @@ beforedecl: CONST | /*empty*/;
 declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
-declarations:  {printf("  %s\n", "matched declaration");} declaration |  declarations declaration ;
+declarations: declaration |  declarations declaration ;
 
 tail: statements | LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 

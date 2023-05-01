@@ -1,4 +1,5 @@
-// This version is a correction for test # 3
+
+// will not parse correctly due to the missing " at the end of the string at line 14
 float i = 0.05;
 string hello = 'hello, world {ddd} ';
 if (True){
@@ -10,5 +11,5 @@ else if (hello == "menna"){
     hello = "a4tar katakeet";
 }
 else{
-    hello = "will be a4tar katakeet isa";
+    hello = "will be a4tar katakeet isa;
 }

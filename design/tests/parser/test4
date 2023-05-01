@@ -1,4 +1,3 @@
-// This version is a correction for test # 3
 float i = 0.05;
 string hello = 'hello, world {ddd} ';
 if (True){
@@ -7,8 +6,9 @@ if (True){
 else if (y){
 }
 else if (hello == "menna"){
-    hello = "a4tar katakeet";
+    hello = "a4tar katakeet"
 }
 else{
-    hello = "will be a4tar katakeet isa";
+    hello = "will be a4tar katakeet isa;
 }
+// will not parse correctly due to missing ; in line 10
