@@ -64,6 +64,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 "integer"|"INTEGER" {ret("INTEGER"); return INTEGER;}
 "float"|"FLOAT" {ret("FLOAT"); return FLOAT;}
 "double"|"DOUBLE" {ret("DOUBLE"); return DOUBLE;}
+"string"|"STRING" {ret("STRING"); return STRING;}
 "bool"|"BOOL" {ret("BOOLEAN"); return BOOLEAN;}
 "void"|"VOID" {ret("VOID"); return VOID;}
 "if"|"IF" {ret("IF"); return IF;}

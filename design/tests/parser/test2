@@ -1,0 +1,7 @@
+float i = .05;
+
+string hello = 'hello, world {ddd} ';
+
+if x ;
+else if y ;
+else ;
