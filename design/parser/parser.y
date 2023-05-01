@@ -3,7 +3,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    #include"../symbol_table/symbol_table.c"
+    // #include"../symbol_table/symbol_table.c"
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -17,7 +17,6 @@
   int int_val;
   double double_val;
   char* str_val;
-  ListNode* symbol_table_item;
 }
 
 %token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST
@@ -40,17 +39,19 @@
 /* expression priorities and rules */
 %%
 
-program: program function | function | IDENT;
+program: program function | functions | IDENT | declaration;
+// program: declarations statements functions;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR ;
 
-beforedecl: CONST | /*empty*/;
+// beforedecl: CONST | /*empty*/{printf("  %s\n", "ENTER declartions empty");};
 
 /* bool x; | const double x; | const integer x = 5; */
-declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
+declaration: type IDENT SEMICOLON | type IDENT ASSIGN_OP expression SEMICOLON |
+             CONST type IDENT SEMICOLON | CONST type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
-declarations: declaration | declarations declaration ;
+declarations:  {printf("  %s\n", "matched dec");} declaration |  declarations declaration ;
 
 tail: statements | LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
@@ -116,7 +117,9 @@ continue_statement: CONTINUE SEMICOLON ;
 
 expression_statement: expression SEMICOLON ;
 
-statements: statement | statements statement ;
+statements:  /*empty*/
+          | statement
+          | statements statement;
 
 statement: if_statement 
           | while_statement 
@@ -132,11 +135,23 @@ statement: if_statement
 statement_inloop: statement | break_statement | continue_statement ;   
 statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
 
+/* Function */
 
-function: FUNC IDENT LEFT_PAREN parameters RIGHT_PAREN type LEFT_CURLY_BRACKET tail return_statement RIGHT_CURLY_BRACKET;
+functions: functions function | function;
+
+function:function_head function_tail | /* empty */ ;
+
+param_empty: parameters | /* empty */;
+
+function_head: FUNC IDENT LEFT_PAREN param_empty RIGHT_PAREN type ;
+
+function_tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET;
+
+/* function: FUNC IDENT LEFT_PAREN parameters RIGHT_PAREN type LEFT_CURLY_BRACKET statements return_statement RIGHT_CURLY_BRACKET; */
 
 parameters: parameter | parameters COMMA parameter | /*empty*/ ;
 parameter: type IDENT ;
+
 
 enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET ;
 
@@ -156,19 +171,19 @@ void yyerror ()
   exit(1);
 }
 
-int main (int argc, char *argv[]){
+int main (){
     
-    init_symbol_table();
 
     // parsing
     int flag;
-    yyin = fopen(argv[1], "r");
     flag = yyparse();
-    fclose(yyin);
+    if ( flag == 0 ){
+      printf("/*--------------Your program is syntactically correct!-------*/\n");
+    }
+    else{
+      printf("/*-------------------------Rejected!---------------------------*/\n");
+      //printf("/* Unrecognized token %s in line %d: ",yytext,lineno);
+    }
 
-    yyout = fopen("symtab_dump.out", "w");
-    dump_symboltable(yyout);
-    fclose(yyout);
-    
     return flag;
 }

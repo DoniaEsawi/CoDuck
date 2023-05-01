@@ -3,6 +3,8 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
+    extern FILE *yyin;
+    extern FILE *yyout;
     extern int lineno;
     extern int yylex();
     void yyerror();

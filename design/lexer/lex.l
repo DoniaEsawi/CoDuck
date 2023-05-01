@@ -1,13 +1,13 @@
 /* flex will read only one input file */
 %option noyywrap 
-
 /* First Part: Declarations */
 %{
+    #include <assert.h>
 	#include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    #include"../symbol_table/symbol_table.h"
+    // #include"../symbol_table/symbol_table.h"
     #include"../parser/parser.tab.h"
     extern FILE *yyin;
     extern FILE *yyout;
@@ -18,12 +18,9 @@
     char* ret(char *token_type);
     void yyerror();
 %}
-
-
 /*********** start states ************/
 /* for a multi line comment */
 %x MULTILINE_COMMENT 
-
 /* basic definitions */
 alpha          [a-zA-Z]
 digit          [0-9]
@@ -42,7 +39,6 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 /***********************/
 /* second part: Rules */
 /**********************/
-
 
 %%
 
@@ -120,17 +116,17 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 
 {ident} {
-    insert(yytext,lineno, strlen(yytext), UNDEF);
-    yylval.symbol_table_item = lookup(yytext);
+    // insert(yytext,lineno, strlen(yytext), UNDEF);
+    // yylval.symbol_table_item = lookup(yytext);
     ret("IDENT");
     return IDENT;
     
     }
-{CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); }
-{CONST_FLOAT} { yylval.double_val = atof(yytext); ret("CONST_FLOAT"); }
-{CONST_CHAR} { yylval.char_val = yytext[0]; ret("CONST_CHAR"); }
+{CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); return CONST_INT; }
+{CONST_FLOAT} { yylval.double_val = atof(yytext); ret("CONST_FLOAT"); return CONST_FLOAT; }
+{CONST_CHAR} { yylval.char_val = yytext[0]; ret("CONST_CHAR"); return CONST_CHAR; }
 {STRING_LITERAL} { yylval.str_val = malloc(yyleng * sizeof(char)); 
-                   strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); }
+                   strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); return STRING_LITERAL; }
 
 "\n" {lineno++;}
 

@@ -1,16 +1,21 @@
-char* ret(char *token_type);
-void yyerror();
+/* char* ret(char *token_type); */
+/* void yyerror(); */
+%option noyywrap 
 %{
-#include <assert.h>
-#include <stdio.h>
-#include <string.h>
-#include "teac_parser.tab.h"
-void yyerror();
-//#include "cgen.h"
-
-int lineno = 1;
-char* ret(char *token_type);
+    #include <assert.h>
+    #include <stdio.h>
+    #include <string.h>
+    #include "teac_parser.tab.h"
+    void yyerror();
+    //#include "cgen.h"
+    extern FILE *yyin;
+    extern FILE *yyout;
+    int yydebug = 0;
+    int lineno = 1;
+    char* ret(char *token_type);
 %}
+/*********** start states ************/
+/* for a multi line comment */
 %x MULTILINE_COMMENT 
 
 /* basic definitions */
@@ -26,16 +31,24 @@ CONST_INT        -?([1-9]{digit}*)|"0"
 CONST_FLOAT      -?([1-9]{digit}*|"0")"."{digit}*
 CONST_CHAR        (\'{print}\')|(\'\\[nftrbv]\')|(\"{print}\")|(\"\\[nftrbv]\")
 STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
+
 /***********************/
 /* second part: Rules */
 /**********************/
 %%
+
 "//".*          {printf("Found single-line comment at line %d\n", lineno);}
+
+
 "/*"            {printf("Found start of a multi-line comment at line %d\n", lineno); BEGIN(MULTILINE_COMMENT);}
 <MULTILINE_COMMENT>\n {lineno++;}
+
 <MULTILINE_COMMENT>"*"
+
 <MULTILINE_COMMENT>[^*\n]+ 
+
 <MULTILINE_COMMENT>"*/" {printf("Found end of multi-line comment at line %d\n", lineno); BEGIN(INITIAL);}
+
 "const"|"CONST" {ret("CONST"); return CONST;}
 "char"|"CHAR" {ret("CHAR"); return CHAR;}
 "integer"|"INTEGER" {ret("INTEGER"); return INTEGER;}

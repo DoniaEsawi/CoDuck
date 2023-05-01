@@ -1,1 +1,8 @@
-x
+func sum(integer op1, integer op2) integer{ 
+    integer i;
+    integer y;
+    i = 1;
+    y = 2;
+    y = y 
+    return op1;
+}

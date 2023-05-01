@@ -1,1 +1,3 @@
-integer i=1;
+// main function
+// declarations
+double i = 2.5;
