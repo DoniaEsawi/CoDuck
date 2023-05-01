@@ -1,3 +1,6 @@
-Found IDENT at line 1 
+Found FLOAT at line 1 
   ENTER declartions
   matched declaration
+Found IDENT at line 1 
+Found ASSIGN_OP at line 1 
+Found DOT at line 1 
