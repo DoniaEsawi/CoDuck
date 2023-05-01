@@ -1,4 +1,4 @@
-float i = .05;
+float i = 0.05;
 
 string hello = 'hello, world {ddd} ';
 

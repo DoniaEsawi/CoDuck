@@ -3,4 +3,13 @@ Found FLOAT at line 1
   matched declaration
 Found IDENT at line 1 
 Found ASSIGN_OP at line 1 
-Found DOT at line 1 
+Found CONST_FLOAT at line 1 
+0.050000
+Found SEMICOLON at line 1 
+Found STRING at line 3 
+Found IDENT at line 3 
+Found ASSIGN_OP at line 3 
+Found STRING_LITERAL at line 3 
+Found SEMICOLON at line 3 
+Found IF at line 5 
+Found IDENT at line 5 

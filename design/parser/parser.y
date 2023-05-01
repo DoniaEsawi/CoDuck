@@ -19,7 +19,7 @@
   char* str_val;
 }
 
-%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST
+%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STRING
 %token<symbol_table_item> IDENT
 %token<int_val> CONST_INT
 %token<double_val> CONST_FLOAT
@@ -42,7 +42,7 @@
 program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations statements;
 // program: declarations statements functions;
 
-type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR ;
+type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
 
 beforedecl: CONST | /*empty*/;
 

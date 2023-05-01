@@ -57,6 +57,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 "const"|"CONST" {ret("CONST"); return CONST;}
 "char"|"CHAR" {ret("CHAR"); return CHAR;}
+"string"|"STRING" {ret("STRING"); return STRING;}
 "integer"|"INTEGER" {ret("INTEGER"); return INTEGER;}
 "float"|"FLOAT" {ret("FLOAT"); return FLOAT;}
 "double"|"DOUBLE" {ret("DOUBLE"); return DOUBLE;}
