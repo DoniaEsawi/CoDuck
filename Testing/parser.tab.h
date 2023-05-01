@@ -49,69 +49,43 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INTEGER = 258,
-    FLOAT = 259,
-    DOUBLE = 260,
-    VOID = 261,
-    BOOLEAN = 262,
-    CHAR = 263,
-    CONST = 264,
-    IDENT = 265,
-    CONST_INT = 266,
-    CONST_FLOAT = 267,
-    CONST_CHAR = 268,
-    STRING_LITERAL = 269,
-    IF = 270,
-    ELSE = 271,
-    ELIF = 272,
-    WHILE = 273,
-    FOR = 274,
-    DO = 275,
-    SWITCH = 276,
-    CASE = 277,
-    DEFAULT = 278,
-    RETURN = 279,
-    BREAK = 280,
-    CONTINUE = 281,
-    TRUE_TOKEN = 282,
-    FALSE_TOKEN = 283,
-    ENUM = 284,
-    FUNC = 285,
-    UNTIL = 286,
-    LEFT_PAREN = 287,
-    RIGHT_PAREN = 288,
-    LEFT_CURLY_BRACKET = 289,
-    RIGHT_CURLY_BRACKET = 290,
-    LEFT_SQ_BRACKET = 291,
-    RIGHT_SQ_BRACKET = 292,
-    SEMICOLON = 293,
-    COMMA = 294,
-    COLON = 295,
-    QUESTION_MARK = 296,
-    DOT = 297,
-    ADD_OP = 298,
-    SUB_OP = 299,
-    MUL_OP = 300,
-    DIV_OP = 301,
-    MOD_OP = 302,
-    INC_OP = 303,
-    DEC_OP = 304,
-    OR_OP = 305,
-    AND_OP = 306,
-    NOT_OP = 307,
-    BIT_OR_OP = 308,
-    AND = 309,
-    BIT_XOR_OP = 310,
-    BIT_NOT_OP = 311,
-    BIT_LSHIFT_OP = 312,
-    BIT_RSHIFT_OP = 313,
-    EQ_OP = 314,
-    NE_OP = 315,
-    GT_OP = 316,
-    LT_OP = 317,
-    GE_OP = 318,
-    LE_OP = 319,
-    ASSIGN_OP = 320
+    CHAR = 258,
+    INT = 259,
+    FLOAT = 260,
+    DOUBLE = 261,
+    IF = 262,
+    ELSE = 263,
+    WHILE = 264,
+    FOR = 265,
+    CONTINUE = 266,
+    BREAK = 267,
+    VOID = 268,
+    RETURN = 269,
+    ADDOP = 270,
+    MULOP = 271,
+    DIVOP = 272,
+    INCR = 273,
+    OROP = 274,
+    ANDOP = 275,
+    NOTOP = 276,
+    EQUOP = 277,
+    RELOP = 278,
+    LPAREN = 279,
+    RPAREN = 280,
+    LBRACK = 281,
+    RBRACK = 282,
+    LBRACE = 283,
+    RBRACE = 284,
+    SEMI = 285,
+    DOT = 286,
+    COMMA = 287,
+    ASSIGN = 288,
+    REFER = 289,
+    ID = 290,
+    ICONST = 291,
+    FCONST = 292,
+    CCONST = 293,
+    STRING = 294
   };
 #endif
 
@@ -119,15 +93,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "parser.y"
+#line 14 "parser.y"
 
-  char char_val;
-  int int_val;
-  double double_val;
-  char* str_val;
-  ListNode* symbol_table_item;
+    char char_val;
+	int int_val;
+	double double_val;
+	char* str_val;
+	list_t* symtab_item;
 
-#line 131 "parser.tab.h"
+#line 105 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

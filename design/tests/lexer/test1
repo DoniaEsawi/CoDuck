@@ -1,5 +1,4 @@
 /* this is a simple program to test our code*/
-
 integer x; // this is an integer variable
 
 float y; // this is a float variable

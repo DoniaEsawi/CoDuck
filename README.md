@@ -225,7 +225,14 @@ gcc lex.yy.c  -o lexer
 
 .\lexer input_file
 ```
-
+- to run the parser and lexer:
+```bash
+bison -d parser.y  // compiling parser  
+flex lexer.l  // compiling lexer  
+gcc -o compiler parser.tab.c lex.yy.c -lm // combining them into one file  
+rm lex.yy.c parser.tab.c  // removing "garbage"  
+./compiler input_file // running for "input_file"  
+```
 ## Resources
 
 ### Phase 1
