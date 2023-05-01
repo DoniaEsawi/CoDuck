@@ -26,6 +26,8 @@
 4. CASE
 5. SWITCH
 6. DEFAULT
+1. true (case sensitive)
+1. false (case sensitive)
 
 ### loops keywords
 
@@ -95,7 +97,7 @@
 ## Comments
 
 - Single line: // this is a single line comment
-- Multi-line: /* This is a Multi-line Comment */
+- Multi-line: /_ This is a Multi-line Comment _/
 
 ## Grammar design
 
@@ -162,6 +164,14 @@ while(condition){ // parenthesis are optional
 }
 ```
 
+### Do Until loops
+
+```c
+do{
+...
+}until(condition); // parenthesis are optional
+```
+
 ### for-statements
 
 ```c
@@ -183,7 +193,7 @@ for(var; cond; postfix;){
 
 ```golang
 
-func function_name(type name, ...) return_type{ 
+func function_name(type name, ...) return_type{
 return value;
 }
 
@@ -303,7 +313,9 @@ gcc lex.yy.c  -o lexer
 ## Links
 
 #### C Operator Precedence
+
 https://en.cppreference.com/w/c/language/operator_precedence
 
 #### C Grammar
+
 http://marvin.cs.uidaho.edu/Teaching/CS445/c-Grammar.pdf

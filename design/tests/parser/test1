@@ -1,0 +1,7 @@
+integer x;
+x = 1;
+x = x + 1;
+
+bool exit = false;
+
+bool eval = full_degree and bonus;
