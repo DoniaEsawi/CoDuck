@@ -39,8 +39,8 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions |declarations statements;
-// program: declarations statements functions;
+program: program function | functions | declarations statements;
+
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
 
@@ -103,7 +103,7 @@ switch_statement: SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET ca
 
 cases: case | cases case | cases default ;
 
-default: DEFAULT COLON statements BREAK SEMICOLON ;
+default: DEFAULT COLON statements;
 
 case: CASE expression COLON statements BREAK SEMICOLON ;
 
