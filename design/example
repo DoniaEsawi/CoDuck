@@ -1,15 +1,5 @@
-enum Level {
-  LOW,
-  MEDIUM,
-  HIGH
-}
 func main()void{
-
-}
-enum a{
-x = 0,
-y= 1
-}
-func test()void{
-    integer i = 1;
+	do{
+		integer i = 1;
+		}until(condition);
 }

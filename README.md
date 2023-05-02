@@ -227,12 +227,12 @@ enum Level {
   LOW,
   MEDIUM,
   HIGH
-}
+};
 
 enum a{
 x = 0,
 y= 1
-}
+};
 ```
 
 ## How To Run

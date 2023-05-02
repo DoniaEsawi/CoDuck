@@ -40,11 +40,11 @@
 /* expression priorities and rules */
 %%
 
-program: program | functions | globals ;
+program: program function | program global | functions | globals ;
 
-globals: declarations | enum_statements;
+globals: globals global | global;
+global: declaration | enum_statement;
 
-enum_statements: enum_statements enum_statement | enum_statement;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
 
@@ -103,7 +103,7 @@ optional_type: /* empty */ | type;
 
 for_statement: FOR LEFT_PAREN optional_type assign SEMICOLON bool_expression SEMICOLON expression RIGHT_PAREN tail_inloop ;
 
-do_statement: DO tail_inloop WHILE LEFT_PAREN bool_expression RIGHT_PAREN SEMICOLON ;
+do_statement: DO tail_inloop UNTIL LEFT_PAREN bool_expression RIGHT_PAREN SEMICOLON ;
 
 switch_statement: SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET ;
 
@@ -160,7 +160,7 @@ parameters: parameter | parameters COMMA parameter | /*empty*/ ;
 parameter: type IDENT ;
 
 
-enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET ;
+enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET SEMICOLON;
 
 enum_list: one_val | enum_list COMMA one_val ;
 
