@@ -7,6 +7,7 @@
 /* current scope */
 
 int current_scope = 0;
+int declare = 0; // 1: declaring, 0: not
 
 void init_symbol_table()
 {
@@ -21,11 +22,8 @@ void init_symbol_table()
 unsigned int hash(char *key)
 {
     unsigned int hashval = 0;
-    for (int i = 0; i < strlen(key); i++)
-    {
-        hashval += key[i] * pow(37, i); // this hash function is used by java
-    }
-
+	for(;*key!='\0';key++) hashval += *key;
+	hashval += key[0] % 11 + (key[0] << 3) - key[0];
     return hashval % HASHTABLESIZE;
 }
 
@@ -65,19 +63,50 @@ void insert(char *name, int lineno, int length, int type)
 
         printf("Inserted %s for the first time with linenumber %d!\n", name, lineno); // error checking
     }
-    else // if the token is already in the list, add the line number
-    {
-        printf("here\n");
-        list->scope = current_scope;
-        Ref *temp = list->lines;
-        while (temp->next != NULL)
-        {
-            temp = temp->next;
+    /* found in table */
+    else{
+        // just add line number
+        if(declare == 0){
+            /* find last reference */
+            Ref *t = list->lines;
+            while (t->next != NULL) t = t->next;
+
+                /* add linenumber to reference list */
+                t->next = (Ref*) malloc(sizeof(Ref));
+                t->next->lineNo = lineno;
+                t->next->next = NULL;
+                printf("Found %s again at line %d!\n", name, lineno);
         }
-        temp->next = (Ref *)malloc(sizeof(Ref));
-        temp->next->lineNo = lineno;
-        temp->next->next = NULL;
-        printf("found %s again in line number %d!\n", name, lineno); // error checking
+        /* new entry */
+        else{
+            /* same scope - multiple declaration error! */
+            if(list->scope == current_scope){
+                fprintf(stderr, "Error: A multiple declaration of variable %s at line %d\n", name, lineno);
+                exit(1);
+            }
+            /* other scope - create new entry */
+            else{
+                /* set up entry */
+                list = (ListNode *)malloc(sizeof(ListNode));
+
+                strcpy(list->name, name);
+
+                list->scope = current_scope;
+
+                list->stype = type;
+
+                list->lines = (Ref *)malloc(sizeof(Ref));
+
+                list->lines->lineNo = lineno;
+
+                list->lines->next = NULL;
+
+                list->next = symbol_table[hashval];
+
+                symbol_table[hashval] = list;
+                printf("Inserted %s for a new scope with linenumber %d!\n", name, lineno);
+            }	
+        }		
     }
 }
 
@@ -96,6 +125,33 @@ ListNode *lookup(char *name)
     return list; // if NULL , the token is not in the list
 }
 
+void set_type(char *name, int stype, int inf_type){
+	/* lookup entry */
+	ListNode *l = lookup(name);
+
+	/* set "main" type */
+	l->stype = stype;
+
+	/* if array, pointer or function */
+	if(inf_type != UNDEF){
+		l->inf_type = inf_type;
+	}	
+}
+
+int get_type(char *name){
+	/* lookup entry */
+	ListNode *l = lookup(name);
+
+	/* if "simple" type */
+	if(l->stype == INT_TYPE || l->stype == REAL_TYPE || l->stype == CHAR_TYPE){
+		return l->stype;
+	}
+	/* if array, pointer or function */
+	else{
+		return l->inf_type;
+	}
+}
+
 ListNode *lookup_scope(char *name, int scope)
 {
     // get the hash value of the token
@@ -111,10 +167,24 @@ ListNode *lookup_scope(char *name, int scope)
     return list; // if NULL , the token is not in the list
 }
 
-void hide_scope()
-{
-    if (current_scope > 0)
-        current_scope--;
+void hide_scope(){ /* hide the current scope */
+    ListNode *list;
+    int i;
+    printf("Hiding scope \'%d\':\n", current_scope);
+    /* for all the lists */
+    for (i = 0; i < HASHTABLESIZE; i++){
+        if(symbol_table[i] != NULL){
+            list = symbol_table[i];
+            /* Find the first item that is from another scope */
+            while(list != NULL && list->scope == current_scope){
+                printf("Hiding %s..\n", list->name);
+                list = list->next;
+            }
+            /* Set the list equal to that item */
+            symbol_table[i] = list;
+        }
+    }
+    current_scope--;
 }
 
 void incr_scope()

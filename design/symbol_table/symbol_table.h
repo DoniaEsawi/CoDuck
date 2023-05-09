@@ -7,12 +7,12 @@
 /* token types */
 
 #define UNDEF 0
-#define INT 1
-#define REAL 2 // float
-#define STRING 3
-#define BOOL 4
-#define ARRAY 5
-#define FUNCTION 6
+#define INT_TYPE 1
+#define REAL_TYPE 2
+#define CHAR_TYPE 3
+#define ARRAY_TYPE 4
+#define POINTER_TYPE 5
+#define FUNCTION_TYPE 6
 
 /* parameter passing method */
 #define VALUE 1
@@ -36,7 +36,7 @@ typedef struct Prameter
 
 typedef struct Ref
 {
-    int type;
+    //int type;
     int lineNo;
     struct Ref *next;
 } Ref;
@@ -46,7 +46,7 @@ typedef struct Ref
 typedef struct ListNode
 {
     char name[MAXTOKENLEN];
-    int lineno;
+    //int lineno;
     int size_of_st;
     int scope;
     struct Ref *lines;
@@ -56,12 +56,16 @@ typedef struct ListNode
     char *sval;
     // types
     int stype;    // type of the symbol table
+
+    //////Not used///////////////////////
     int inf_type; // type of the information (array), or return type of the function
     // for arrays
     int size_of_array;
     int *array_ival;
     double *array_fval;
     char **array_sval;
+    //////////////////////////////////////
+    
     // for functions
     int num_of_params;
     struct Prameter *params;

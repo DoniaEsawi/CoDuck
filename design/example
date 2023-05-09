@@ -2,6 +2,8 @@ float i = 0.05;
 
 string hello = 'hello, world {ddd} ';
 
-if x ;
-else if y ;
-else ;
+func add(integer op1,float op2) integer {
+
+	return op1 + op2;
+
+}

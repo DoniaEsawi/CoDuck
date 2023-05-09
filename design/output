@@ -1,15 +1,50 @@
+initialized symbol table 
 Found FLOAT at line 1 
   ENTER declartions
   matched declaration
+hash value is 105 
+Inserted i for the first time with linenumber 1!
 Found IDENT at line 1 
 Found ASSIGN_OP at line 1 
 Found CONST_FLOAT at line 1 
 0.050000
 Found SEMICOLON at line 1 
 Found STRING at line 3 
+hash value is 131 
+Inserted hello for the first time with linenumber 3!
 Found IDENT at line 3 
 Found ASSIGN_OP at line 3 
 Found STRING_LITERAL at line 3 
 Found SEMICOLON at line 3 
-Found IF at line 5 
+Found FUNC at line 5 
+hash value is 297 
+Inserted add for the first time with linenumber 5!
 Found IDENT at line 5 
+Found LEFT_PAREN at line 5 
+Found INTEGER at line 5 
+hash value is 272 
+Inserted op1 for the first time with linenumber 5!
+Found IDENT at line 5 
+Found COMMA at line 5 
+Found FLOAT at line 5 
+hash value is 273 
+Inserted op2 for the first time with linenumber 5!
+Found IDENT at line 5 
+Found RIGHT_PAREN at line 5 
+Found INTEGER at line 5 
+Found LEFT_CURLY_BRACKET at line 5 
+Found RETURN at line 7 
+hash value is 272 
+Found op1 again at line 7!
+Found IDENT at line 7 
+Found ADD_OP at line 7 
+hash value is 273 
+Found op2 again at line 7!
+Found IDENT at line 7 
+Found SEMICOLON at line 7 
+Found RIGHT_CURLY_BRACKET at line 9 
+Hiding scope '1':
+Hiding op1..
+Hiding op2..
+Hiding add..
+/*--------------Your program is syntactically correct!-------*/

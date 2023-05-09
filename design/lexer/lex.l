@@ -7,7 +7,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    // #include"../symbol_table/symbol_table.h"
+    #include"../symbol_table/symbol_table.h"
     #include"../parser/parser.tab.h"
     extern FILE *yyin;
     extern FILE *yyout;
@@ -117,8 +117,8 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 
 {ident} {
-    // insert(yytext,lineno, strlen(yytext), UNDEF);
-    // yylval.symbol_table_item = lookup(yytext);
+    insert(yytext,lineno, strlen(yytext), UNDEF);
+    yylval.symbol_table_item = lookup(yytext);
     ret("IDENT");
     return IDENT;
     

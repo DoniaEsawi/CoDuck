@@ -3,7 +3,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    // #include"../symbol_table/symbol_table.c"
+    #include"../symbol_table/symbol_table.c"
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -17,6 +17,7 @@
   int int_val;
   double double_val;
   char* str_val;
+  ListNode* symbol_table_item;
 }
 
 %token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STRING
@@ -47,7 +48,8 @@ type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
 beforedecl: CONST | /*empty*/;
 
 /* bool x; | const double x; | const integer x = 5; */
-declaration: beforedecl type IDENT SEMICOLON | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
+declaration:{ declare = 1; } beforedecl type IDENT { declare = 0; } SEMICOLON 
+            | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
 declarations:  {printf("  %s\n", "matched declaration");} declaration |  declarations declaration ;
@@ -138,7 +140,7 @@ statements_inloop: statement_inloop | statements_inloop statement_inloop ;
 
 functions: functions function | function;
 
-function:function_head function_tail;
+function: { incr_scope(); } function_head function_tail { hide_scope(); };
 
 param_empty: parameters | /* empty */;
 
@@ -148,8 +150,8 @@ function_tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET;
 
 /* function: FUNC IDENT LEFT_PAREN parameters RIGHT_PAREN type LEFT_CURLY_BRACKET statements return_statement RIGHT_CURLY_BRACKET; */
 
-parameters: parameter | parameters COMMA parameter | /*empty*/ ;
-parameter: type IDENT ;
+parameters:  parameter | parameters COMMA parameter | /*empty*/ ;
+parameter: { declare = 1; } type IDENT { declare = 0; } ;
 
 
 enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET ;
@@ -172,6 +174,8 @@ void yyerror ()
 
 int main (){
     
+    // initialize symbol table
+    init_symbol_table();
 
     // parsing
     int flag;
@@ -183,6 +187,12 @@ int main (){
       printf("/*-------------------------Rejected!---------------------------*/\n");
       //printf("/* Unrecognized token %s in line %d: ",yytext,lineno);
     }
+    // symbol table dump
+    yyout = fopen("symtab_dump.out", "w");
+    dump_symboltable(yyout);
+    fclose(yyout);
+	
+	return flag;
 
     return flag;
 }
