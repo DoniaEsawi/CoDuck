@@ -12,8 +12,10 @@ Found STRING at line 3
 hash value is 131 
 Found IDENT at line 3 
 Found ASSIGN_OP at line 3 
-Found STRING_LITERAL at line 3 
+Found CONST_INT at line 3 
+1
 Found SEMICOLON at line 3 
+<<<<<<< HEAD
 Found INTEGER at line 5 
 hash value is 97 
 Found IDENT at line 5 
@@ -59,3 +61,15 @@ Hiding op2..
 Hiding add..
 /*--------------Your program is syntactically correct!-------*/
 Warning: Something has not been checked in the revisit queue!
+=======
+Found RIGHT_CURLY_BRACKET at line 4 
+Found UNTIL at line 4 
+Found LEFT_PAREN at line 4 
+hash value is 49 
+Inserted condition for the first time with linenumber 4!
+Found IDENT at line 4 
+Found RIGHT_PAREN at line 4 
+Found SEMICOLON at line 4 
+Found RIGHT_CURLY_BRACKET at line 5 
+/*--------------Your program is syntactically correct!-------*/
+>>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec

@@ -1,0 +1,5 @@
+func main()void{
+	do{
+		integer i = 1;
+		}until(condition);
+}

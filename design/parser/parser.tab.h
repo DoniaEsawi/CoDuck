@@ -56,7 +56,7 @@ extern int yydebug;
     BOOLEAN = 262,
     CHAR = 263,
     CONST = 264,
-    STRING = 265,
+    STR = 265,
     IDENT = 266,
     CONST_INT = 267,
     CONST_FLOAT = 268,
@@ -126,8 +126,9 @@ union YYSTYPE
   int int_val;
   double double_val;
   char* str_val;
+  ListNode* symbol_table_item;
 
-#line 131 "parser.tab.h"
+#line 132 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

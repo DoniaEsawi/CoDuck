@@ -1,0 +1,14 @@
+func main() void{
+    switch (x){ 
+        case constant1:
+        char c = 'B';
+        break;
+
+        case constant2:
+        char c = 'B';
+        break;
+
+        default:
+        char c = 'B';
+    }
+}

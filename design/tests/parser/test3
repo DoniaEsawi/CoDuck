@@ -1,0 +1,8 @@
+float i = 0.05;
+string hello = 'hello, world {ddd} ';
+if (True){
+    i = 0.1;
+}
+else if (y){
+}
+else ;   // will not parse due to this line

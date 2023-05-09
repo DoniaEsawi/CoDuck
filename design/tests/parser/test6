@@ -1,0 +1,18 @@
+// This version is a correction 
+
+float i = 0.05;
+string hello = 'hello, world {ddd} ';
+func main()void{
+    if (True){
+        i = 0.1;
+    }
+    else if (y){
+    }
+    else if (hello == "menna"){
+        hello = "a4tar katakeet";
+    }
+    else{
+        hello = "will be a4tar katakeet isa";
+    }
+}
+

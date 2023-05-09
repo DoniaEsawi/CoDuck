@@ -2,6 +2,8 @@ float i = .05;
 
 string hello = 'hello, world {ddd} ';
 
-if x ;
+if x ;  
 else if y ;
 else ;
+
+// will not parse due to line 5.

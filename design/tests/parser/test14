@@ -1,0 +1,14 @@
+enum Level {
+  LOW,
+  MEDIUM,
+  HIGH
+};
+
+func test()void{
+    integer i = 1;
+}
+
+enum a{
+x = 0,
+y= 1
+};

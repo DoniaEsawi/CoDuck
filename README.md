@@ -16,6 +16,7 @@
 3. FLOAT
 4. BOOL
 5. VOID
+6. STRING
 
 ### conditional statement keywords
 
@@ -26,6 +27,8 @@
 4. CASE
 5. SWITCH
 6. DEFAULT
+7. true (case sensitive)
+8. false (case sensitive)
 
 ### loops keywords
 
@@ -95,7 +98,7 @@
 ## Comments
 
 - Single line: // this is a single line comment
-- Multi-line: /* This is a Multi-line Comment */
+- Multi-line: /_ This is a Multi-line Comment _/
 
 ## Grammar design
 
@@ -106,6 +109,26 @@
 <center>
 <img src="design/assets/declarations.png" width="400px"/>
 </center>
+
+a. examples
+
+```c
+String S = "hello, world !"; // this is a string
+
+String S2 = 'hii !'; // this is also a string
+
+String _S = 5; // invalid indentifier
+
+float float_number2 = .6; // invalid float
+
+float float_number3 = 0.; // valid float
+
+float float_number4 = 00.6 // invalid float
+
+float float_number5 = -0.006 // valid float
+
+integer x = 000 // invalid integer
+```
 
 #### Constants
 
@@ -162,6 +185,14 @@ while(condition){ // parenthesis are optional
 }
 ```
 
+### Do Until loops
+
+```c
+do{
+...
+}until(condition); // parenthesis are optional
+```
+
 ### for-statements
 
 ```c
@@ -183,7 +214,7 @@ for(var; cond; postfix;){
 
 ```golang
 
-func function_name(type name, ...) return_type{ 
+func function_name(type name, ...) return_type{
 return value;
 }
 
@@ -196,12 +227,12 @@ enum Level {
   LOW,
   MEDIUM,
   HIGH
-}
+};
 
 enum a{
 x = 0,
 y= 1
-}
+};
 ```
 
 ## How To Run
@@ -215,102 +246,31 @@ gcc lex.yy.c  -o lexer
 
 .\lexer input_file
 ```
+
 - to run the parser and lexer:
+
 ```bash
-bison -d parser.y  // compiling parser  
-flex lexer.l  // compiling lexer  
-gcc -o compiler parser.tab.c lex.yy.c -lm // combining them into one file  
-rm lex.yy.c parser.tab.c  // removing "garbage"  
-./compiler input_file // running for "input_file"  
+bison -d parser.y  // compiling parser
+flex lexer.l  // compiling lexer
+gcc -o compiler parser.tab.c lex.yy.c -lm // combining them into one file
+rm lex.yy.c parser.tab.c  // removing "garbage"
+./compiler input_file // running for "input_file"
 ```
+
+# to run the test cases:
+
+```bash
+./run.sh
+```
+
 ## Resources
 
-### Phase 1
-
-1. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-introduction
-
-2. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-a-simple-c-language
-
-3. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-lexical-analysis-using-flex
-
-4. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-symbol-table-basic-structure
-
-5. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-using-symbol-tables-in-the-lexer
-
-6. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-syntax-analysis-theory (optional)
-
-7. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-bison-basics (all)
-
-8. https://steemit.com/programming/@drifter1/writing-a-simple-compiler-on-my-own-creating-a-grammar-for-our-language
-
-9. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-combine-flex-and-bison
-
-10. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-passing-information-from-lexer-to-parser
-
-11. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-finishing-off-the-grammer-parser-part-1
-
-12. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-finishing-off-the-grammar-parser-part-2-c-flex-bison
-
-### Phase 2
-
-13. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-semantic-analysis-theory-c-flex-bison
-
-14. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-semantics-examples-c-flex-bison
-
-15. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own---scope-resolution-using-the-symbol-table-cflexbison
-
-16. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-type-declaration-and-checking-c-flex-bison
-
-17. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-function-semantics-part-1-c-flex-bison
-
-18. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-function-semantics-part-2-c-flex-bison
-
-19. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-abstract-syntax-tree-principle-c-flex-bison
-
-20. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-abstract-syntax-tree-structure-c-flex-bison
-
-21. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-abstract-syntax-tree-management-c-flex-bison
-
-22. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-declarations-and-initializations-c-flex-bison
-
-23. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-expressions-c-flex-bison
-
-24. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-expressions-c-flex-bison
-
-25. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-assignments-and-simple-statements-c-flex-bison
-
-26. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-if-else-statements-c-flex-bison
-
-27. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-loop-statements-and-some-fixes-c-flex-bison
-
-28. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-function-declarations-part-1-c-flex-bison
-
-29. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-function-declarations-part-2-c-flex-bison
-
-30. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-action-rules-for-function-calls-c-flex-bison
-
-31. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-datatype-attribute-for-expressions-c-flex-bison
-
-32. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-type-checking-for-assignments-c-flex-bison
-
-33. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-parameter-checking-part-1-c-flex-bison
-
-34. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-parameter-checking-part-2-c-flex-bison
-
-35. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-parameter-checking-part-3-c-flex-bison
-
-36. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-parameter-checking-part-4-c-flex-bison
-
-37. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-1-c-flex-bison
-
-38. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-2-c-flex-bison
-
-39. https://steemit.com/utopian-io/@drifter1/writing-a-simple-compiler-on-my-own-revisit-queue-and-assignment-checking-part-3-c-flex-bison
-
-## Links
+### Links
 
 #### C Operator Precedence
+
 https://en.cppreference.com/w/c/language/operator_precedence
 
 #### C Grammar
+
 http://marvin.cs.uidaho.edu/Teaching/CS445/c-Grammar.pdf

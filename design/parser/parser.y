@@ -1,4 +1,5 @@
 %{
+    #include"../symbol_table/symbol_table.c"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
@@ -21,7 +22,7 @@
   ListNode* symbol_table_item;
 }
 
-%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STRING
+%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STR
 %token<symbol_table_item> IDENT
 %token<int_val> CONST_INT
 %token<double_val> CONST_FLOAT
@@ -41,10 +42,18 @@
 /* expression priorities and rules */
 %%
 
+<<<<<<< HEAD
 program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
 // program: declarations statements functions;
+=======
+program: program function | program global | functions | globals ;
+>>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec
 
-type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
+globals: globals global | global;
+global: declaration | enum_statement;
+
+
+type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
 
 beforedecl: CONST | /*empty*/;
 
@@ -53,11 +62,11 @@ declaration:{ declare = 1; } beforedecl type IDENT { declare = 0; } SEMICOLON
             | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
-declarations:  {printf("  %s\n", "matched declaration");} declaration |  declarations declaration ;
+declarations: declaration |  declarations declaration ;
 
-tail: statements | LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
+tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
-tail_inloop: statements_inloop | LEFT_CURLY_BRACKET statements_inloop RIGHT_CURLY_BRACKET ;
+tail_inloop: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
 bool_expression: relExp
                 | TRUE_TOKEN 
@@ -66,7 +75,7 @@ bool_expression: relExp
 
 assign: IDENT ASSIGN_OP expression;
 
-expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression;
+expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression ;
 simpleExp: simpleExp OR_OP andExp | andExp ;
 andExp: andExp AND_OP  | bitRelExp ;
 bitRelExp: bitRelExp BIT_OR_OP relExp | bitRelExp AND relExp | bitRelExp BIT_XOR_OP relExp | relExp ;
@@ -98,15 +107,17 @@ if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail else_if else_part;
 
 while_statement: WHILE LEFT_PAREN bool_expression RIGHT_PAREN tail_inloop ;
 
-for_statement: FOR LEFT_PAREN assign SEMICOLON bool_expression SEMICOLON expression RIGHT_PAREN tail_inloop ;
+optional_type: /* empty */ | type;
 
-do_statement: DO tail_inloop WHILE LEFT_PAREN bool_expression RIGHT_PAREN SEMICOLON ;
+for_statement: FOR LEFT_PAREN optional_type assign SEMICOLON bool_expression SEMICOLON expression RIGHT_PAREN tail_inloop ;
+
+do_statement: DO tail_inloop UNTIL LEFT_PAREN bool_expression RIGHT_PAREN SEMICOLON ;
 
 switch_statement: SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET ;
 
 cases: case | cases case | cases default ;
 
-default: DEFAULT COLON statements BREAK SEMICOLON ;
+default: DEFAULT COLON statements;
 
 case: CASE expression COLON statements BREAK SEMICOLON ;
 
@@ -132,10 +143,12 @@ statement: if_statement
           | expression_statement
           | declarations
           | enum_statement
-          | func_call ;
+          | func_call
+          | break_statement
+          | continue_statement;
 
-statement_inloop: statement | break_statement | continue_statement ;   
-statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
+// statement_inloop: statement | /* empty */;   
+// statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
 
 /* Function */
 
@@ -155,13 +168,17 @@ parameters:  parameter | parameters COMMA parameter | /*empty*/ ;
 parameter: { declare = 1; } type IDENT { declare = 0; } ;
 
 
-enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET ;
+enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET SEMICOLON;
 
 enum_list: one_val | enum_list COMMA one_val ;
 
 one_val: IDENT | IDENT ASSIGN_OP value ;
 
+<<<<<<< HEAD
 func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN  SEMICOLON| IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
+=======
+func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON | IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
+>>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec
 arguments: argument | arguments COMMA argument | /*empty*/;
 argument: expression ;
 
@@ -173,6 +190,7 @@ void yyerror ()
   exit(1);
 }
 
+<<<<<<< HEAD
 int main (){
     
     // initialize symbol table
@@ -181,6 +199,11 @@ int main (){
     // initialize revisit queue
 	  queue = NULL;
 
+=======
+int main (int argc, char *argv[]){
+    init_symbol_table();
+    yyin = fopen(argv[1], "r");
+>>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec
     // parsing
     int flag;
     flag = yyparse();
@@ -191,6 +214,11 @@ int main (){
       printf("/*-------------------------Rejected!---------------------------*/\n");
       //printf("/* Unrecognized token %s in line %d: ",yytext,lineno);
     }
+    fclose(yyin);
+
+    yyout = fopen("symtab_dump.out", "w");
+    dump_symboltable(yyout);
+    fclose(yyout);
 
     if(queue != NULL){
 		printf("Warning: Something has not been checked in the revisit queue!\n");

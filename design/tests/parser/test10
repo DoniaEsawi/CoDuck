@@ -1,0 +1,6 @@
+// This version is a correction 
+
+const float i = 0.05;
+func main()void{
+    integer i = 0;
+}

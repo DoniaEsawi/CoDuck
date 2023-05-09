@@ -1,0 +1,12 @@
+// test function call  : should parse
+
+func summation(integer op1, integer op2) integer{
+return op1;
+}
+
+func main() void{
+    integer a = 1;
+    integer b = 2;
+    integer c;
+    c = summation(a,b);
+}

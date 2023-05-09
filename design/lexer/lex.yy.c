@@ -389,10 +389,10 @@ static const flex_int16_t yy_accept[260] =
 
        17,   29,   66,   27,   66,   66,   66,   66,   66,   14,
        66,   66,   66,   66,   66,   66,   66,   66,   66,   66,
-       66,   66,   30,   66,   66,   26,    7,   66,   66,   11,
+       66,   66,   30,   66,   66,   26,    7,   66,   66,   10,
        66,   66,   66,   66,   24,   22,   66,   66,   66,   31,
-       66,   66,   66,   66,   66,   12,   66,   28,    9,   18,
-       66,   66,   66,   66,   10,   66,   20,   25,    0
+       66,   66,   66,   66,   66,   11,   66,   28,   12,   18,
+       66,   66,   66,   66,    9,   66,   20,   25,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -630,7 +630,7 @@ char *yytext;
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    // #include"../symbol_table/symbol_table.h"
+    #include"../symbol_table/symbol_table.h"
     #include"../parser/parser.tab.h"
     extern FILE *yyin;
     extern FILE *yyout;
@@ -972,22 +972,22 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 60 "lex.l"
-{ret("STRING"); return STRING;}
+{ret("INTEGER"); return INTEGER;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 61 "lex.l"
-{ret("INTEGER"); return INTEGER;}
+{ret("FLOAT"); return FLOAT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 62 "lex.l"
-{ret("FLOAT"); return FLOAT;}
+{ret("DOUBLE"); return DOUBLE;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 63 "lex.l"
-{ret("DOUBLE"); return DOUBLE;}
+{ret("STR"); return STR;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
@@ -1258,8 +1258,8 @@ case 66:
 YY_RULE_SETUP
 #line 119 "lex.l"
 {
-    // insert(yytext,lineno, strlen(yytext), UNDEF);
-    // yylval.symbol_table_item = lookup(yytext);
+    insert(yytext,lineno, strlen(yytext), UNDEF);
+    yylval.symbol_table_item = lookup(yytext);
     ret("IDENT");
     return IDENT;
     
