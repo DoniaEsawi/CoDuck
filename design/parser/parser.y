@@ -1,5 +1,4 @@
 %{
-    #include"../symbol_table/symbol_table.c"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
@@ -42,12 +41,8 @@
 /* expression priorities and rules */
 %%
 
-<<<<<<< HEAD
 program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
 // program: declarations statements functions;
-=======
-program: program function | program global | functions | globals ;
->>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec
 
 globals: globals global | global;
 global: declaration | enum_statement;
@@ -174,11 +169,7 @@ enum_list: one_val | enum_list COMMA one_val ;
 
 one_val: IDENT | IDENT ASSIGN_OP value ;
 
-<<<<<<< HEAD
 func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN  SEMICOLON| IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
-=======
-func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON | IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
->>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec
 arguments: argument | arguments COMMA argument | /*empty*/;
 argument: expression ;
 
@@ -190,7 +181,6 @@ void yyerror ()
   exit(1);
 }
 
-<<<<<<< HEAD
 int main (){
     
     // initialize symbol table
@@ -199,11 +189,6 @@ int main (){
     // initialize revisit queue
 	  queue = NULL;
 
-=======
-int main (int argc, char *argv[]){
-    init_symbol_table();
-    yyin = fopen(argv[1], "r");
->>>>>>> e72ad1b58e1c2e1828db3e4e62b01e3cde35d6ec
     // parsing
     int flag;
     flag = yyparse();
