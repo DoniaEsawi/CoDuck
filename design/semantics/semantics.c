@@ -107,7 +107,7 @@ int get_result_type(int type_1, int type_2, int op_type){ /* type check and resu
 			if(type_1 == INT_TYPE){
 				// second type INT or CHAR
 				if(type_2 == INT_TYPE || type_2 == CHAR_TYPE){
-					return INT_TYPE;
+					return INT_TYPE;  //result type is a Boolean value, which in C is represented with an integer value.
 				}
 				else{
 					type_error(type_1, type_2, op_type);
@@ -128,7 +128,7 @@ int get_result_type(int type_1, int type_2, int op_type){ /* type check and resu
 			}
 			break;
 		/* ---------------------------------------------------------- */
-		case NOT_OP: /* special case of NOTOP */
+		case NOTT_OP: /* special case of NOTOP */
 			// type INT
 			if(type_1 == INT_TYPE){
 				return INT_TYPE;

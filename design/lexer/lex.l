@@ -7,6 +7,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
+    #include "../semantics/semantics.h"
     #include"../symbol_table/symbol_table.h"
     #include"../parser/parser.tab.h"
     extern FILE *yyin;

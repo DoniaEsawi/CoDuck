@@ -3,6 +3,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
+    #include "../semantics/semantics.c"
     #include"../symbol_table/symbol_table.c"
     extern FILE *yyin;
     extern FILE *yyout;
@@ -40,7 +41,7 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations statements;
+program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
 // program: declarations statements functions;
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STRING;
@@ -160,7 +161,7 @@ enum_list: one_val | enum_list COMMA one_val ;
 
 one_val: IDENT | IDENT ASSIGN_OP value ;
 
-func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN | IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN ;
+func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN  SEMICOLON| IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
 arguments: argument | arguments COMMA argument | /*empty*/;
 argument: expression ;
 
@@ -177,6 +178,9 @@ int main (){
     // initialize symbol table
     init_symbol_table();
 
+    // initialize revisit queue
+	  queue = NULL;
+
     // parsing
     int flag;
     flag = yyparse();
@@ -187,12 +191,19 @@ int main (){
       printf("/*-------------------------Rejected!---------------------------*/\n");
       //printf("/* Unrecognized token %s in line %d: ",yytext,lineno);
     }
+
+    if(queue != NULL){
+		printf("Warning: Something has not been checked in the revisit queue!\n");
+	  }
+
     // symbol table dump
     yyout = fopen("symtab_dump.out", "w");
     dump_symboltable(yyout);
     fclose(yyout);
+
+    yyout = fopen("revisit_dump.out", "w");
+    revisit_dump(yyout);
+    fclose(yyout);
 	
 	return flag;
-
-    return flag;
 }
