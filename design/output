@@ -1,6 +1,5 @@
 initialized symbol table 
 Found FLOAT at line 1 
-  ENTER declartions
 hash value is 105 
 Found IDENT at line 1 
 Found ASSIGN_OP at line 1 
@@ -27,21 +26,35 @@ Found ASSIGN_OP at line 6
 Found CONST_INT at line 6 
 2
 Found SEMICOLON at line 6 
-Found single-line comment at line 7
-Found FUNC at line 9 
+Found FUNC at line 8 
 hash value is 297 
-Found IDENT at line 9 
-Found LEFT_PAREN at line 9 
-Found INTEGER at line 9 
+** add added to queue with linenumber 8!
+Found IDENT at line 8 
+Found LEFT_PAREN at line 8 
+Found INTEGER at line 8 
 hash value is 272 
-Found IDENT at line 9 
-Found COMMA at line 9 
-Found FLOAT at line 9 
+Found IDENT at line 8 
+Found COMMA at line 8 
+Found FLOAT at line 8 
 hash value is 273 
-Found IDENT at line 9 
-Found RIGHT_PAREN at line 9 
-Found INTEGER at line 9 
-Found LEFT_CURLY_BRACKET at line 9 
+Found IDENT at line 8 
+Found RIGHT_PAREN at line 8 
+Found INTEGER at line 8 
+Found LEFT_CURLY_BRACKET at line 8 
+hash value is 214 
+** raghad added to queue with linenumber 10!
+Found IDENT at line 10 
+Found LEFT_PAREN at line 10 
+Found CONST_INT at line 10 
+4
+Found COMMA at line 10 
+Found CONST_INT at line 10 
+6
+Found COMMA at line 10 
+Found CONST_INT at line 10 
+7
+Found RIGHT_PAREN at line 10 
+Found SEMICOLON at line 10 
 Found RETURN at line 11 
 hash value is 272 
 Found op1 again at line 11!
@@ -53,8 +66,52 @@ Found IDENT at line 11
 Found SEMICOLON at line 11 
 Found RIGHT_CURLY_BRACKET at line 13 
 Hiding scope '1':
+Hiding raghad..
 Hiding op1..
 Hiding op2..
 Hiding add..
+Found FUNC at line 15 
+hash value is 214 
+** raghad added to queue with linenumber 15!
+Found IDENT at line 15 
+Found LEFT_PAREN at line 15 
+Found INTEGER at line 15 
+hash value is 272 
+Found IDENT at line 15 
+Found COMMA at line 15 
+Found FLOAT at line 15 
+hash value is 273 
+Found IDENT at line 15 
+Found COMMA at line 15 
+Found FLOAT at line 15 
+hash value is 274 
+Found IDENT at line 15 
+Found RIGHT_PAREN at line 15 
+Found INTEGER at line 15 
+Found LEFT_CURLY_BRACKET at line 15 
+Found RETURN at line 16 
+hash value is 272 
+Found op1 again at line 16!
+Found IDENT at line 16 
+Found MUL_OP at line 16 
+hash value is 273 
+Found op2 again at line 16!
+Found IDENT at line 16 
+Found MUL_OP at line 16 
+hash value is 274 
+Found op3 again at line 16!
+Found IDENT at line 16 
+Found SEMICOLON at line 16 
+Found RIGHT_CURLY_BRACKET at line 17 
+Hiding scope '1':
+Hiding raghad..
+Hiding op1..
+Hiding op2..
+Hiding op3..
 /*--------------Your program is syntactically correct!-------*/
 Warning: Something has not been checked in the revisit queue!
+Constant Node of const-type 1
+Constant Node of const-type 1
+Boolean Node of operator 0
+Simple Node of statement 0
+If Node with 0 elseifs

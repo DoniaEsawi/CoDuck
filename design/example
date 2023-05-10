@@ -4,10 +4,14 @@ string hello = 'hello, world {ddd} ';
 
 integer a = 1;
 integer b = 2;
-//add(a,b);
 
 func add(integer op1,float op2) integer {
 
+	raghad(4,6,7);
 	return op1 + op2;
 
+}
+
+func raghad(integer op1,float op2,float op3) integer {
+	return op1 * op2 * op3;
 }

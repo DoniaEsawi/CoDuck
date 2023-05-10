@@ -5,6 +5,8 @@
     #include <math.h>
     #include "../semantics/semantics.c"
     #include"../symbol_table/symbol_table.c"
+    #include "../ast/ast.h"
+	  #include "../ast/ast.c"
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -41,11 +43,12 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
+program: program function | program global | functions | globals ;
+// program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
 // program: declarations statements functions;
 
 globals: globals global | global;
-global: declaration | enum_statement;
+global: declarations | enum_statement;
 
 
 type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
@@ -53,11 +56,11 @@ type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
 beforedecl: CONST | /*empty*/;
 
 /* bool x; | const double x; | const integer x = 5; */
-declaration:{ declare = 1; } beforedecl type IDENT { declare = 0; } SEMICOLON 
+declaration: beforedecl type IDENT SEMICOLON 
             | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
 
 /* bool x; const double x; const integer x = 5; */
-declarations: declaration |  declarations declaration ;
+declarations:{ declare = 1; } declaration { declare = 0; }|  declarations declaration ;
 
 tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
@@ -188,6 +191,9 @@ int main (){
 
     // initialize revisit queue
 	  queue = NULL;
+    yyout = fopen("revisit_dump.out", "w");
+    revisit_dump(yyout);
+    fclose(yyout);
 
     // parsing
     int flag;
@@ -217,6 +223,16 @@ int main (){
     yyout = fopen("revisit_dump.out", "w");
     revisit_dump(yyout);
     fclose(yyout);
+    // to test ast tree
+    // Value val1, val2;
+    // val1.ival = 0;
+    // val2.ival = 1;
+    // AST_Node *const_node1 = new_ast_const_node(INT_TYPE, val1);
+    // AST_Node *const_node2 = new_ast_const_node(INT_TYPE, val2);
+    // AST_Node *bool_node = new_ast_bool_node(OP_OR, const_node1, const_node2);
+    // AST_Node *simple_node = new_ast_simple_node(0);
+    // AST_Node *if_node = new_ast_if_node(bool_node, simple_node, NULL, 0, NULL);
+    // ast_traversal(if_node);
 	
 	return flag;
 }

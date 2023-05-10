@@ -59,7 +59,7 @@ void insert(char *name, int lineno, int length, int type)
             //printf("Inserted %s for the first time with linenumber %d!\n", name, lineno); 
 		}
 		else{
-			/* add it to check it again later */
+			/* add it to check it again later  as function call */
 			list = (ListNode *)malloc(sizeof(ListNode));
 			strcpy(list->name, name);
 			list->stype = type;
@@ -71,24 +71,25 @@ void insert(char *name, int lineno, int length, int type)
 			symbol_table[hashval] = list;
 			
 			/* Adding identifier to the revisit queue! */
+            printf("** %s added to queue with linenumber %d!\n", name, lineno); 
 			add_to_queue(list->name, PARAM_CHECK);
 		}
     }
     /* found in table */
     else{
         // just add line number
-        if(declare == 0){
+        if(declare == 0){  // here we refrance for Identifier
             /* find last reference */
             Ref *t = list->lines;
             while (t->next != NULL) t = t->next;
 
-                /* add linenumber to reference list */
-                t->next = (Ref*) malloc(sizeof(Ref));
-                t->next->lineNo = lineno;
-                t->next->next = NULL;
-                printf("Found %s again at line %d!\n", name, lineno);
+            /* add linenumber to reference list */
+            t->next = (Ref*) malloc(sizeof(Ref));
+            t->next->lineNo = lineno;
+            t->next->next = NULL;
+            printf("Found %s again at line %d!\n", name, lineno);
         }
-        /* new entry */
+        /* new entry */ //identification for same variable for the scond time
         else{
             /* same scope - multiple declaration error! */
             if(list->scope == current_scope){
@@ -99,21 +100,13 @@ void insert(char *name, int lineno, int length, int type)
             else{
                 /* set up entry */
                 list = (ListNode *)malloc(sizeof(ListNode));
-
                 strcpy(list->name, name);
-
                 list->scope = current_scope;
-
                 list->stype = type;
-
                 list->lines = (Ref *)malloc(sizeof(Ref));
-
                 list->lines->lineNo = lineno;
-
                 list->lines->next = NULL;
-
                 list->next = symbol_table[hashval];
-
                 symbol_table[hashval] = list;
                 printf("Inserted %s for a new scope with linenumber %d!\n", name, lineno);
             }	
