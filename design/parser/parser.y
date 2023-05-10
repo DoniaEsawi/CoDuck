@@ -41,8 +41,7 @@
 /* expression priorities and rules */
 %%
 
-program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
-// program: declarations statements functions;
+program: program function | program global | functions | globals ;
 
 globals: globals global | global;
 global: declaration | enum_statement;
