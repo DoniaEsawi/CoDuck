@@ -110,8 +110,3 @@ Hiding op2..
 Hiding op3..
 /*--------------Your program is syntactically correct!-------*/
 Warning: Something has not been checked in the revisit queue!
-Constant Node of const-type 1
-Constant Node of const-type 1
-Boolean Node of operator 0
-Simple Node of statement 0
-If Node with 0 elseifs

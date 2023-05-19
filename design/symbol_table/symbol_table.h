@@ -9,7 +9,13 @@
 #define VALUE 1
 #define REFERENCE 2
 
-
+/* Types of values that we can have */
+typedef union Value{
+	int ival;
+	double fval;
+	char cval;
+	char *sval;
+}Value;
 
 // parameter node
 
@@ -21,6 +27,7 @@ typedef struct Prameter
     int ival;               // initial value for int
     double fval;            // initial value for float
     char sval[MAXTOKENLEN]; // initial value for string
+    Value val;              // to store the value of the parameter
 } Prameter;
 
 // reference for each variable
@@ -42,9 +49,7 @@ typedef struct ListNode
     int scope;
     struct Ref *lines;
     // values
-    int ival;
-    double fval;
-    char *sval;
+    Value val;
     // types
     int stype;    // type of the symbol table
 
@@ -52,9 +57,7 @@ typedef struct ListNode
     int inf_type; // type of the information (array), or return type of the function
     // for arrays
     int size_of_array;
-    int *array_ival;
-    double *array_fval;
-    char **array_sval;
+    value *val;
     //////////////////////////////////////
     
     // for functions

@@ -271,12 +271,44 @@ void dump_symboltable(FILE *output)
         ListNode *list = symbol_table[i];
         while (list != NULL)
         {
-            fprintf(output, "%-24s %-12s ", list->name, list->stype == 0 ? "UNDEF" : list->stype == 1 ? "INT"
-                                                                                 : list->stype == 2   ? "REAL"
-                                                                                 : list->stype == 3   ? "STRING"
-                                                                                 : list->stype == 4   ? "BOOL"
-                                                                                 : list->stype == 5   ? "ARRAY"
-                                                                                                      : "FUNCTION");
+            fprintf(output, "%-24s", list->name);
+            if (list->stype == 1) fprintf(output,"%-15s","INT");
+            else if (list->stype == 2)  fprintf(output,"%-15s","REAL");
+            else if (list->stype == 3)  fprintf(output,"%-15s","CHAR");
+            else if (list->stype == 4)  fprintf(output,"%-15s","STRING");
+            else if (list->stype == 5)  fprintf(output,"%-15s","ARRAY");
+            // else if (list->stype == 7)  fprintf(output,"%-15s","FUNCTION");
+            else if (list->stype == 8)  fprintf(output,"%-15s","VOID");
+            else if (list->stype == 9)  fprintf(output,"%-15s","BOOLEAN");
+
+            // for function type
+            else if (list->stype == 7){
+            fprintf(output,"func ret ");
+            if (list->inf_type == 1)       fprintf(output,"%-6s","INT");
+            else if (list->inf_type == 2)  fprintf(output,"%-6s","REAL");
+            else if (list->inf_type == 4)  fprintf(output,"%-6s","STRING");
+            else if (list->inf_type == 3)  fprintf(output,"%-6s","CHAR");
+            else if (list->inf_type == 8)  fprintf(output,"%-6s","VOID");
+            else if (list->inf_type == 9)  fprintf(output,"%-6s","BOOLEAN");
+
+            else fprintf(output,"%-4s","UNDEF");
+            }
+            
+            // for array
+            else if (list->stype == 5){
+            fprintf(output,"array of ");
+            if (list->inf_type == 1)       fprintf(output,"%-6s","INT");
+            else if (list->inf_type == 2)  fprintf(output,"%-6s","REAL");
+            else if (list->inf_type == 3)  fprintf(output,"%-6s","CHAR");
+            else if (list->inf_type == 4)  fprintf(output,"%-6s","STRING");
+            else if (list->inf_type == 9)  fprintf(output,"%-6s","BOOLEAN");
+
+            else fprintf(output,"%-13s","UNDEF");
+            }
+
+            // else 
+            else fprintf(output,"%-15s","UNDEF"); // if UNDEF or 0
+
             Ref *temp = list->lines;
             while (temp != NULL)
             {

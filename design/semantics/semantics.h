@@ -8,6 +8,7 @@
 #define POINTER_TYPE 6
 #define FUNCTION_TYPE 7
 #define VOID_TYPE 8
+#define BOOL_TYPE 9
 
 /* operator types */
 #define NONE 0		// to check types only - assignment, parameter

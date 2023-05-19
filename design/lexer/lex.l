@@ -125,11 +125,11 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
     return IDENT;
     
     }
-{CONST_INT} { yylval.int_val = atoi(yytext); ret("CONST_INT"); return CONST_INT; }
-{CONST_FLOAT} { yylval.double_val = atof(yytext); ret("CONST_FLOAT"); return CONST_FLOAT; }
-{CONST_CHAR} { yylval.char_val = yytext[0]; ret("CONST_CHAR"); return CONST_CHAR; }
-{STRING_LITERAL} { yylval.str_val = malloc(yyleng * sizeof(char)); 
-                   strcpy(yylval.str_val, yytext); ret("STRING_LITERAL"); return STRING_LITERAL; }
+{CONST_INT} {  yylval.val.ival = atoi(yytext); ret("CONST_INT"); return CONST_INT; }
+{CONST_FLOAT} { yylval.val.fval = atof(yytext); ret("CONST_FLOAT"); return CONST_FLOAT; }
+{CONST_CHAR} { yylval.val.cval = yytext[0]; ret("CONST_CHAR"); return CONST_CHAR; }
+{STRING_LITERAL} { yylval.val.sval = malloc(yyleng * sizeof(char)); 
+                   strcpy(yylval.val.sval, yytext); ret("STRING_LITERAL"); return STRING_LITERAL; }
 
 "\n" {lineno++;}
 

@@ -12,31 +12,47 @@
     extern int lineno;
     extern int yylex();
     void yyerror();
+    // for declaration
+    void add_to_names(ListNode *entry);
+	  ListNode **names;
+	  int nc = 0;
 %}
 
 
 %union{
-  char char_val;
-  int int_val;
-  double double_val;
-  char* str_val;
-  ListNode* symbol_table_item;
+  Value val;
+  AST_Node* node;
+  ListNode* symbol_table_item;  
+
+  // for declaration
+  int data_type;
+  int const_type;
+
+  // for arrays
+  int array_size;
+
 }
 
-%token<int_val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STR
+%token<val> INTEGER FLOAT DOUBLE VOID BOOLEAN CHAR CONST STR
 %token<symbol_table_item> IDENT
-%token<int_val> CONST_INT
-%token<double_val> CONST_FLOAT
-%token<char_val> CONST_CHAR
-%token<str_val> STRING_LITERAL
-%token<int_val> IF ELSE ELIF WHILE FOR DO SWITCH CASE DEFAULT RETURN BREAK CONTINUE
-%token<int_val> TRUE_TOKEN FALSE_TOKEN
-%token<int_val> ENUM FUNC UNTIL
-%token<int_val> LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
-%token<int_val> SEMICOLON COMMA COLON QUESTION_MARK DOT
-%token<int_val> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
-%token<int_val> OR_OP AND_OP NOT_OP BIT_OR_OP AND BIT_XOR_OP BIT_NOT_OP BIT_LSHIFT_OP BIT_RSHIFT_OP
-%token<int_val> EQ_OP NE_OP GT_OP LT_OP GE_OP LE_OP ASSIGN_OP
+%token<val> CONST_INT
+%token<val> CONST_FLOAT
+%token<val> CONST_CHAR
+%token<val> STRING_LITERAL
+%token<val> IF ELSE ELIF WHILE FOR DO SWITCH CASE DEFAULT RETURN BREAK CONTINUE
+%token<val> TRUE_TOKEN FALSE_TOKEN
+%token<val> ENUM FUNC UNTIL
+%token<val> LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
+%token<val> SEMICOLON COMMA COLON QUESTION_MARK DOT
+%token<val> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
+%token<val> OR_OP AND_OP NOT_OP BIT_OR_OP AND BIT_XOR_OP BIT_NOT_OP BIT_LSHIFT_OP BIT_RSHIFT_OP
+%token<val> EQ_OP NE_OP GT_OP LT_OP GE_OP LE_OP ASSIGN_OP
+
+%type <node> program
+%type <node> declarations declaration
+%type <data_type> type
+%type <symbol_table_item> variable
+%type <array_size> array
 
 %start program
 
@@ -51,17 +67,67 @@ globals: globals global | global;
 global: declarations | enum_statement;
 
 
-type: INTEGER |  FLOAT | DOUBLE | VOID | BOOLEAN  | CHAR | STR;
+type: INTEGER  { $$ = INT_TYPE;   }
+      | FLOAT  { $$ = REAL_TYPE;   }
+      | DOUBLE { $$ = REAL_TYPE;   }
+      | VOID   { $$ = VOID_TYPE;   } 
+      | BOOLEAN{ $$ = BOOL_TYPE;   }  
+      | CHAR   { $$ = CHAR_TYPE;   }
+      | STR    { $$ = STR_TYPE;   } ;
 
 beforedecl: CONST | /*empty*/;
-
+/*----------------------------------------------------------------------------*/
 /* bool x; | const double x; | const integer x = 5; */
 declaration: beforedecl type IDENT SEMICOLON 
-            | beforedecl type IDENT ASSIGN_OP expression SEMICOLON;
+	{
+		int i;
+		$$ = new_ast_decl_node($1, IDENT);
+		nc = 0;
+		
+		AST_Node_Decl *temp = (AST_Node_Decl*) $$;
+		
+		// declare types of the names
+		for(i=0; i < temp->names_count; i++){
+			// variable
+			if(temp->names[i]->stype == UNDEF){
+				set_type(temp->names[i]->name, temp->data_type, UNDEF);
+      }
+
+      // array
+			else if(temp->names[i]->stype == ARRAY_TYPE){
+				set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
+			}
+    }
+		ast_traversal($$); /* just for testing */
+	}
+
+  | beforedecl type IDENT ASSIGN_OP expression SEMICOLON
+  	{
+		int i;
+		$$ = new_ast_decl_node($1, IDENT, nc);
+		nc = 0;
+		
+		AST_Node_Decl *temp = (AST_Node_Decl*) $$;
+		
+		// declare types of the names
+		for(i=0; i < temp->names_count; i++){
+			// variable
+			if(temp->names[i]->stype == UNDEF){
+				set_type(temp->names[i]->name, temp->data_type, UNDEF);
+      }
+
+      // array
+			else if(temp->names[i]->stype == ARRAY_TYPE){
+				set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
+			}
+    }
+		ast_traversal($$); /* just for testing */
+	}
+;
 
 /* bool x; const double x; const integer x = 5; */
 declarations:{ declare = 1; } declaration { declare = 0; }|  declarations declaration ;
-
+/*----------------------------------------------------------------------------*/
 tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
 tail_inloop: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
@@ -182,6 +248,21 @@ void yyerror ()
 {
   fprintf(stderr, "Syntax error at line %d\n", lineno);
   exit(1);
+}
+
+void add_to_names(ListNode *entry){
+	// first entry
+	if(nc == 0){
+		nc = 1;
+		names = (ListNode **) malloc( 1 * sizeof(ListNode *));
+		names[0] = entry;
+	}
+	// general case
+	else{
+		nc++;
+		names = (ListNode **) realloc(names, nc * sizeof(ListNode *));
+		names[nc - 1] = entry;		
+	}
 }
 
 int main (){
