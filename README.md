@@ -237,17 +237,16 @@ y= 1
 
 ## How To Run
 
-- to run the lexer you can run the lexer using:
+#### to run the test cases:
 
 ```bash
-flex lex.l
-
-gcc lex.yy.c  -o lexer
-
-.\lexer input_file
+## add a test case in design\tests\parser
+## to run them using a bash script:
+cd design
+./run.sh
 ```
 
-- to run the parser and lexer:
+#### another option to run the code
 
 ```bash
 bison -d parser.y  // compiling parser
@@ -255,12 +254,6 @@ flex lexer.l  // compiling lexer
 gcc -o compiler parser.tab.c lex.yy.c -lm // combining them into one file
 rm lex.yy.c parser.tab.c  // removing "garbage"
 ./compiler input_file // running for "input_file"
-```
-
-# to run the test cases:
-
-```bash
-./run.sh
 ```
 
 ## Resources
