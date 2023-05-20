@@ -1,24 +1,21 @@
+#include "../semantics/semantics.h"
 /* length of the symbol table */
 #define HASHTABLESIZE 401
 
 /* max length of tokens */
 #define MAXTOKENLEN 40
 
-/* token types */
-
-#define UNDEF 0
-#define INT 1
-#define REAL 2 // float
-#define STRING 3
-#define BOOL 4
-#define ARRAY 5
-#define FUNCTION 6
-
 /* parameter passing method */
 #define VALUE 1
 #define REFERENCE 2
 
-
+/* Types of values that we can have */
+typedef union Value{
+	int ival;
+	double fval;
+	char cval;
+	char *sval;
+}Value;
 
 // parameter node
 
@@ -30,13 +27,14 @@ typedef struct Prameter
     int ival;               // initial value for int
     double fval;            // initial value for float
     char sval[MAXTOKENLEN]; // initial value for string
+    Value val;              // to store the value of the parameter
 } Prameter;
 
 // reference for each variable
 
 typedef struct Ref
 {
-    int type;
+    //int type;
     int lineNo;
     struct Ref *next;
 } Ref;
@@ -46,22 +44,22 @@ typedef struct Ref
 typedef struct ListNode
 {
     char name[MAXTOKENLEN];
-    int lineno;
+    //int lineno;
     int size_of_st;
     int scope;
     struct Ref *lines;
     // values
-    int ival;
-    double fval;
-    char *sval;
+    Value val;
     // types
     int stype;    // type of the symbol table
+
+    //////Not used///////////////////////
     int inf_type; // type of the information (array), or return type of the function
     // for arrays
     int size_of_array;
-    int *array_ival;
-    double *array_fval;
-    char **array_sval;
+    value *val;
+    //////////////////////////////////////
+    
     // for functions
     int num_of_params;
     struct Prameter *params;
@@ -69,9 +67,25 @@ typedef struct ListNode
     struct ListNode *next; // pointer to next item in the list
 } ListNode;
 
+typedef struct revisit_queue{
+    // name of identifier
+    char *st_name;
+	
+    // type of revisit
+    int revisit_type;
+
+    // maybe additional information to simplify the process ...
+
+    // next item in the queue
+    struct revisit_queue *next;
+}revisit_queue;
+
 // symbol table
 
 static ListNode **symbol_table;
+
+// revisit queue
+static revisit_queue *queue;
 
 // functions
 
@@ -87,3 +101,18 @@ ListNode *lookup_scope(char *name, int scope); // search for a symbol in the sym
 void hide(int scope);    // hide all symbols in the symbol table with the given scope
 void increment_scope();  // increase the current scope
 void dump_symboltable(FILE *output); // print the symbol table
+
+
+// Function Declaration and Parameters
+Prameter def_param(int par_type, char *param_name, int passing); // define parameter
+int func_declare(char *name, int ret_type, int num_of_pars, Prameter *parameters); // declare function
+int func_param_check(char *name, int num_of_pars, Prameter *parameters); // check parameters
+
+// Type Functions
+void set_type(char *name, int st_type, int inf_type); // set the type of an entry (declaration)
+int get_type(char *name); // get the type of an entry
+
+// Revisit Queue Functions
+void add_to_queue(char *name, int type); // add to queue
+int revisit(char *name); // revisit entry by also removing it from queue
+void revisit_dump(FILE *of); // dump file
