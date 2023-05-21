@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 // ast node management
 AST_Node *new_ast_node(Node_Type type, AST_Node *left, AST_Node *right)
@@ -18,7 +17,7 @@ AST_Node *new_ast_node(Node_Type type, AST_Node *left, AST_Node *right)
 	return v;
 }
 
-AST_Node *new_ast_decl_node(int data_type, ListNode **names, bool is_constant)
+AST_Node *new_ast_decl_node(int data_type, ListNode **names, int names_count, int is_constant)
 {
 	// allocate memory
 	AST_Node_Decl *v = malloc(sizeof(AST_Node_Decl));

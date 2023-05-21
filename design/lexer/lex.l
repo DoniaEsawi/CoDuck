@@ -6,7 +6,6 @@
 	#include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include <math.h>
     #include "../semantics/semantics.h"
     #include"../symbol_table/symbol_table.h"
     #include"../parser/parser.tab.h"
@@ -95,9 +94,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 "=="|"!="				{ret("EQ_OP"); return EQ_OP;}
 ">"|"<"|">="|"<="		 {ret("REL_OP"); return REL_OP;}
 "=" {ret("ASSIGN_OP"); return ASSIGN_OP;}
-
-"|"|"~"|">>"|"<<"|"^"|"&" {ret("BIT_LOGIC_OP"); return BIT_NOT_OP;}
-
+"|"|"~"|">>"|"<<"|"^"|"&"   {ret("BIT_LOGIC_OP"); return BIT_LOGIC_OP;}
 "(" {ret("LEFT_PAREN"); return LEFT_PAREN;}
 ")" {ret("RIGHT_PAREN"); return RIGHT_PAREN;}
 "[" {ret("LEFT_SQ_BRACKET"); return LEFT_SQ_BRACKET;}

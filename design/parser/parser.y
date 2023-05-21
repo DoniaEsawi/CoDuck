@@ -1,12 +1,14 @@
 %{
+
+    #include "../semantics/semantics.c"
+    #include"../symbol_table/symbol_table.c"
+    #include "../ast/ast.h"
+	#include "../ast/ast.c"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    #include "../semantics/semantics.c"
-    #include"../symbol_table/symbol_table.c"
-    #include "../ast/ast.h"
-	  #include "../ast/ast.c"
+
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -61,8 +63,6 @@
 %right NOT_OP INC_OP DEC_OP 
 %left BIT_LOGIC_OP
 %left LEFT_PAREN RIGHT_PAREN LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
-// %type <array_size> array
-// %type <val> sign
 // (non-terminal) definitions
 %type <node> value
 %type <symbol_table_item> init var_init
@@ -70,6 +70,7 @@
 %type <node> declarations declaration
 %type <data_type> type
 %type <symbol_table_item> variable
+// %type <val> sign
 
 %start program
 
@@ -77,11 +78,6 @@
 %%
 
 program: declarations statements RETURN SEMICOLON functions_optional; //TODO: SOLVE THE WARNING "type clash on default action: <node> != <> [-Wother]"
-// program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
-// program: declarations statements functions;
-
-// globals: globals global | global;
-// global: declarations | enum_statement;
 
 functions_optional: functions | /* empty */;
 type: INTEGER  { $$ = INT_TYPE;   }
@@ -96,7 +92,7 @@ type: INTEGER  { $$ = INT_TYPE;   }
 declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
     {
         int i;
-        $$ = new_ast_decl_node($1, names, nc, false);
+        $$ = new_ast_decl_node($1, names, nc, 0);
         nc = 0;
 
         AST_Node_Decl *temp = (AST_Node_Decl*) $$;
@@ -104,16 +100,16 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
             // variable
-            if(temp->names[i]->st_type == UNDEF){
-                set_type(temp->names[i]->st_name, temp->data_type, UNDEF);
+            if(temp->names[i]->stype == UNDEF){
+                set_type(temp->names[i]->name, temp->data_type, UNDEF);
             }
             // pointer
-            else if(temp->names[i]->st_type == POINTER_TYPE){
-                set_type(temp->names[i]->st_name, POINTER_TYPE, temp->data_type);
+            else if(temp->names[i]->stype == POINTER_TYPE){
+                set_type(temp->names[i]->name, POINTER_TYPE, temp->data_type);
             }
             // array
-            else if(temp->names[i]->st_type == ARRAY_TYPE){
-                set_type(temp->names[i]->st_name, ARRAY_TYPE, temp->data_type);
+            else if(temp->names[i]->stype == ARRAY_TYPE){
+                set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
             }
         }
         ast_traversal($$); /* just for testing */
@@ -122,7 +118,7 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
   CONST type { declare = 1; } names { declare = 0; } SEMICOLON
     {
         int i;
-        $$ = new_ast_decl_node($2, names, nc, true);
+        $$ = new_ast_decl_node($2, names, nc, 1);
         nc = 0;
 
         AST_Node_Decl *temp = (AST_Node_Decl*) $$;
@@ -130,19 +126,19 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
             // variable
-            if(temp->names[i]->st_type == UNDEF){
-                set_type(temp->names[i]->st_name, temp->data_type, UNDEF);
+            if(temp->names[i]->stype == UNDEF){
+                set_type(temp->names[i]->name, temp->data_type, UNDEF);
             }
             // pointer
-            else if(temp->names[i]->st_type == POINTER_TYPE){
-                set_type(temp->names[i]->st_name, POINTER_TYPE, temp->data_type);
+            else if(temp->names[i]->stype == POINTER_TYPE){
+                set_type(temp->names[i]->name, POINTER_TYPE, temp->data_type);
             }
             // array
-            else if(temp->names[i]->st_type == ARRAY_TYPE){
-                set_type(temp->names[i]->st_name, ARRAY_TYPE, temp->data_type);
+            else if(temp->names[i]->stype == ARRAY_TYPE){
+                set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
             }
         }
-        ast_traversal($$); // just for testing
+        ast_traversal($$); /* just for testing */
     }
 ;
 
@@ -170,7 +166,7 @@ var_init:  IDENT ASSIGN_OP value
 { 
 	AST_Node_Const *temp = (AST_Node_Const*) $$;
 	$1->val = temp->val;
-	$1->st_type = temp->const_type;
+	$1->stype = temp->const_type;
 	$$ = $1;
 }
 ;
@@ -196,7 +192,6 @@ expression: expression ADD_OP expression
 | LEFT_PAREN expression RIGHT_PAREN
 | unary_expression
 | func_call
-/* | sign expression */
 | variable
 | sign value;
 sign : SUB_OP | /* empty */;
@@ -225,7 +220,6 @@ while_statement: WHILE LEFT_PAREN expression RIGHT_PAREN tail ;
 
 optional_type: /* empty */ | type;
 
-// tail_inloop: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
 assignment: variable ASSIGN_OP expression ;
 for_statement: FOR LEFT_PAREN optional_type assignment SEMICOLON expression SEMICOLON expression RIGHT_PAREN tail ;
@@ -239,12 +233,10 @@ cases: cases case | case |  cases default ;
 default: DEFAULT COLON statements;
 
 case: CASE expression COLON statements ;
-//optional_break: /* empty */ | BREAK SEMICOLON ;
 break_statement: BREAK SEMICOLON ;
 
 continue_statement: CONTINUE SEMICOLON ;
 
-// expression_statement: expression SEMICOLON ; //TODO: REVISIT THIS
 
 statements: statements statement
           | statement
@@ -255,9 +247,6 @@ statement: if_statement
           | for_statement 
           | do_statement 
           | switch_statement 
-  //        | return_statement 
-  //        | expression_statement
-          /* | declarations */
           | enum_statement
           | func_call SEMICOLON
           | break_statement
@@ -269,9 +258,6 @@ statement: if_statement
           | DEC_OP IDENT SEMICOLON
           ;
 
-// statement_inloop: statement | /* empty */;   
-// statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
-
 /* Function */
 
 functions: functions function | function;
@@ -280,7 +266,7 @@ function: { incr_scope(); } function_head function_tail { hide_scope(); };
 
 param_empty: parameters | /* empty */;
 
-function_head: FUNC IDENT LEFT_PAREN param_empty RIGHT_PAREN type ;
+function_head: FUNC { declare = 1; } IDENT LEFT_PAREN param_empty RIGHT_PAREN type { declare = 0; };
 
 function_tail: LEFT_CURLY_BRACKET declarations_statements_optional return_optional RIGHT_CURLY_BRACKET ; 
 declarations_statements:declarations_statements statement|declarations_statements declaration| statement | declaration;

@@ -1,4 +1,3 @@
-#include "../semantics/semantics.h"
 /* length of the symbol table */
 #define HASHTABLESIZE 401
 
