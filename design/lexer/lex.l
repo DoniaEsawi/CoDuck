@@ -6,10 +6,11 @@
 	#include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
-    #include "../semantics/semantics.h"
     #include"../symbol_table/symbol_table.h"
-    #include"../parser/parser.tab.h"
+    #include "../semantics/semantics.h"
     #include "../ast/ast.h"
+    #include"../parser/parser.tab.h"
+    
     extern FILE *yyin;
     extern FILE *yyout;
     int yydebug = 0;
