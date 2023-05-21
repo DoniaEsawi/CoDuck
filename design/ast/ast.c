@@ -27,7 +27,7 @@ AST_Node *new_ast_decl_node(int data_type, ListNode **names, int names_count, in
 	v->data_type = data_type;
 	v->names = names;
 	v->is_const = is_constant;
-	// v->names_count = names_count;
+	v->names_count = names_count;
 
 	// return type-casted result
 	return (struct AST_Node *)v;

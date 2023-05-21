@@ -1,5 +1,5 @@
 /* length of the symbol table */
-#define HASHTABLESIZE 401
+#define HASHTABLESIZE 500
 
 /* max length of tokens */
 #define MAXTOKENLEN 40

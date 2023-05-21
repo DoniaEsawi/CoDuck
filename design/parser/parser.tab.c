@@ -1872,19 +1872,20 @@ void add_to_names(ListNode *entry){
 	}
 }
 
-int main (){
+int main (int argc, char *argv[]){
     
     // initialize symbol table
     init_symbol_table();
 
     // initialize revisit queue
-	  queue = NULL;
-    yyout = fopen("revisit_dump.out", "w");
+	queue = NULL;
+    /* yyout = fopen("revisit_dump.out", "w");
     revisit_dump(yyout);
-    fclose(yyout);
+    fclose(yyout); */
 
     // parsing
     int flag;
+    yyin = fopen(argv[1], "r");
     flag = yyparse();
     if ( flag == 0 ){
       printf("/*--------------Your program is syntactically correct!-------*/\n");
@@ -1895,9 +1896,9 @@ int main (){
     }
     fclose(yyin);
 
-    yyout = fopen("symtab_dump.out", "w");
+    /* yyout = fopen("symtab_dump.out", "w");
     dump_symboltable(yyout);
-    fclose(yyout);
+    fclose(yyout); */
 
     if(queue != NULL){
 		printf("Warning: Something has not been checked in the revisit queue!\n");

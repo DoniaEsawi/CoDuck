@@ -96,21 +96,17 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         nc = 0;
 
         AST_Node_Decl *temp = (AST_Node_Decl*) $$;
+        printf("names_count: %d\n", temp->names_count);
 
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
+            printf(" -- name: %s\n, type: %d\n", temp->names[i]->name, temp->names[i]->stype);
             // variable
             if(temp->names[i]->stype == UNDEF){
+                printf("name: %s\n, type: %d\n", temp->names[i]->name, temp->data_type);
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
             }
-            // pointer
-            else if(temp->names[i]->stype == POINTER_TYPE){
-                set_type(temp->names[i]->name, POINTER_TYPE, temp->data_type);
-            }
-            // array
-            else if(temp->names[i]->stype == ARRAY_TYPE){
-                set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
-            }
+            
         }
         ast_traversal($$); /* just for testing */
     }
@@ -152,7 +148,9 @@ names: names COMMA variable
 	}
 	| variable
 	{
+        printf("variable: %s\n", $1->name);
 		add_to_names($1);
+        printf("names_count: %d\n", nc);
 	}
 	| init
 	{ 
@@ -300,6 +298,7 @@ void yyerror ()
 }
 
 void add_to_names(ListNode *entry){
+    printf("add_to_names: %s\n", entry->name);
 	// first entry
 	if(nc == 0){
 		nc = 1;
@@ -314,19 +313,17 @@ void add_to_names(ListNode *entry){
 	}
 }
 
-int main (){
+int main (int argc, char *argv[]){
     
     // initialize symbol table
     init_symbol_table();
 
     // initialize revisit queue
-	  queue = NULL;
-    yyout = fopen("revisit_dump.out", "w");
-    revisit_dump(yyout);
-    fclose(yyout);
+	queue = NULL;
 
     // parsing
     int flag;
+    yyin = fopen(argv[1], "r");
     flag = yyparse();
     if ( flag == 0 ){
       printf("/*--------------Your program is syntactically correct!-------*/\n");
@@ -337,10 +334,6 @@ int main (){
     }
     fclose(yyin);
 
-    yyout = fopen("symtab_dump.out", "w");
-    dump_symboltable(yyout);
-    fclose(yyout);
-
     if(queue != NULL){
 		printf("Warning: Something has not been checked in the revisit queue!\n");
 	  }
@@ -350,19 +343,10 @@ int main (){
     dump_symboltable(yyout);
     fclose(yyout);
 
+    // revisit queue dump
     yyout = fopen("revisit_dump.out", "w");
     revisit_dump(yyout);
     fclose(yyout);
-    // to test ast tree
-    // Value val1, val2;
-    // val1.ival = 0;
-    // val2.ival = 1;
-    // AST_Node *const_node1 = new_ast_const_node(INT_TYPE, val1);
-    // AST_Node *const_node2 = new_ast_const_node(INT_TYPE, val2);
-    // AST_Node *bool_node = new_ast_bool_node(OP_OR, const_node1, const_node2);
-    // AST_Node *simple_node = new_ast_simple_node(0);
-    // AST_Node *if_node = new_ast_if_node(bool_node, simple_node, NULL, 0, NULL);
-    // ast_traversal(if_node);
 	
 	return flag;
 }

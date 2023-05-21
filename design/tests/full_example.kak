@@ -17,6 +17,7 @@ for(i = 0; i < 10; i++){ // for
 		continue;
 	}
 	else{
+			p=add(val, i);
     	print("\n");
     	p = p + 1;
 	}
