@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_PARSER_TAB_H_INCLUDED
-# define YY_YY_PARSER_TAB_H_INCLUDED
+#ifndef YY_YY_OUT_LOG_INCLUDED
+# define YY_YY_OUT_LOG_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -105,10 +105,20 @@ extern int yydebug;
     OR_OP = 306,                   /* OR_OP  */
     AND_OP = 307,                  /* AND_OP  */
     NOT_OP = 308,                  /* NOT_OP  */
-    BIT_LOGIC_OP = 309,            /* BIT_LOGIC_OP  */
-    EQ_OP = 310,                   /* EQ_OP  */
-    REL_OP = 311,                  /* REL_OP  */
-    ASSIGN_OP = 312                /* ASSIGN_OP  */
+    BIT_OR_OP = 309,               /* BIT_OR_OP  */
+    BIT_AND_OP = 310,              /* BIT_AND_OP  */
+    BIT_XOR_OP = 311,              /* BIT_XOR_OP  */
+    BIT_NOT_OP = 312,              /* BIT_NOT_OP  */
+    BIT_LSHIFT_OP = 313,           /* BIT_LSHIFT_OP  */
+    BIT_RSHIFT_OP = 314,           /* BIT_RSHIFT_OP  */
+    EQ_OP = 315,                   /* EQ_OP  */
+    NE_OP = 316,                   /* NE_OP  */
+    GT_OP = 317,                   /* GT_OP  */
+    LT_OP = 318,                   /* LT_OP  */
+    GE_OP = 319,                   /* GE_OP  */
+    LE_OP = 320,                   /* LE_OP  */
+    ASSIGN_OP = 321,               /* ASSIGN_OP  */
+    BIT_RSHIFT_OPS = 322           /* BIT_RSHIFT_OPS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -131,7 +141,7 @@ union YYSTYPE
   int array_size;
 
 
-#line 135 "parser.tab.h"
+#line 145 "out.log"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -146,4 +156,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */
+#endif /* !YY_YY_OUT_LOG_INCLUDED  */

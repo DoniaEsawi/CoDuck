@@ -92,19 +92,12 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 "or"|"OR"|"||" {ret("OR_OP"); return OR_OP;}
 "and"|"AND"|"&&" {ret("AND_OP"); return AND_OP;}
 "not"|"NOT"|"!" {ret("NOT_OP"); return NOT_OP;}
-"==" {ret("EQ_OP"); return EQ_OP;}
-"!=" {ret("NE_OP"); return NE_OP;}
-"<" {ret("LT_OP"); return LT_OP;}
-">" {ret("GT_OP"); return GT_OP;}
-"<=" {ret("LE_OP"); return LE_OP;}
-">=" {ret("GE_OP"); return GE_OP;}
+"=="|"!="				{ret("EQ_OP"); return EQ_OP;}
+">"|"<"|">="|"<="		 {ret("REL_OP"); return REL_OP;}
 "=" {ret("ASSIGN_OP"); return ASSIGN_OP;}
-"|" {ret("BIT_OR_OP"); return BIT_OR_OP;}
-"&" {ret("AND"); return AND;}
-"^" {ret("BIT_XOR_OP"); return BIT_XOR_OP;}
-"<<" {ret("BIT_LSHIFT_OP"); return BIT_LSHIFT_OP;}
-">>" {ret("BIT_RSHIFT_OP"); return BIT_RSHIFT_OP;}
-"~" {ret("BIT_NOT_OP"); return BIT_NOT_OP;}
+
+"|"|"~"|">>"|"<<"|"^"|"&" {ret("BIT_LOGIC_OP"); return BIT_NOT_OP;}
+
 "(" {ret("LEFT_PAREN"); return LEFT_PAREN;}
 ")" {ret("RIGHT_PAREN"); return RIGHT_PAREN;}
 "[" {ret("LEFT_SQ_BRACKET"); return LEFT_SQ_BRACKET;}

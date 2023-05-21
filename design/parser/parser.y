@@ -45,28 +45,45 @@
 %token<val> LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
 %token<val> SEMICOLON COMMA COLON QUESTION_MARK DOT
 %token<val> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
-%token<val> OR_OP AND_OP NOT_OP BIT_OR_OP AND BIT_XOR_OP BIT_NOT_OP BIT_LSHIFT_OP BIT_RSHIFT_OP
-%token<val> EQ_OP NE_OP GT_OP LT_OP GE_OP LE_OP ASSIGN_OP
+%token<val> OR_OP AND_OP NOT_OP BIT_LOGIC_OP
+%token<val> EQ_OP REL_OP ASSIGN_OP
 
+
+/* precedencies and associativities */
+%left COMMA
+%right ASSIGN_OP
+%left OR_OP
+%left AND_OP
+%left EQ_OP
+%left REL_OP
+%left ADD_OP SUB_OP
+%left MUL_OP DIV_OP MOD_OP
+%right NOT_OP INC_OP DEC_OP 
+%left BIT_LOGIC_OP
+%left LEFT_PAREN RIGHT_PAREN LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
+// %type <array_size> array
+// %type <val> sign
+// (non-terminal) definitions
+%type <node> value
+%type <symbol_table_item> init var_init
 %type <node> program
 %type <node> declarations declaration
 %type <data_type> type
 %type <symbol_table_item> variable
-%type <array_size> array
 
 %start program
 
 /* expression priorities and rules */
 %%
 
-program: program function | program global | functions | globals ;
+program: declarations statements RETURN SEMICOLON functions_optional; //TODO: SOLVE THE WARNING "type clash on default action: <node> != <> [-Wother]"
 // program: program function | functions | {printf("  %s\n", "ENTER declartions");} declarations | statements;
 // program: declarations statements functions;
 
-globals: globals global | global;
-global: declarations | enum_statement;
+// globals: globals global | global;
+// global: declarations | enum_statement;
 
-
+functions_optional: functions | /* empty */;
 type: INTEGER  { $$ = INT_TYPE;   }
       | FLOAT  { $$ = REAL_TYPE;   }
       | DOUBLE { $$ = REAL_TYPE;   }
@@ -75,141 +92,182 @@ type: INTEGER  { $$ = INT_TYPE;   }
       | CHAR   { $$ = CHAR_TYPE;   }
       | STR    { $$ = STR_TYPE;   } ;
 
-beforedecl: CONST | /*empty*/;
-/*----------------------------------------------------------------------------*/
-/* bool x; | const double x; | const integer x = 5; */
-declaration: beforedecl type IDENT SEMICOLON 
+
+declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
+    {
+        int i;
+        $$ = new_ast_decl_node($1, names, nc, false);
+        nc = 0;
+
+        AST_Node_Decl *temp = (AST_Node_Decl*) $$;
+
+        // declare types of the names
+        for(i=0; i < temp->names_count; i++){
+            // variable
+            if(temp->names[i]->st_type == UNDEF){
+                set_type(temp->names[i]->st_name, temp->data_type, UNDEF);
+            }
+            // pointer
+            else if(temp->names[i]->st_type == POINTER_TYPE){
+                set_type(temp->names[i]->st_name, POINTER_TYPE, temp->data_type);
+            }
+            // array
+            else if(temp->names[i]->st_type == ARRAY_TYPE){
+                set_type(temp->names[i]->st_name, ARRAY_TYPE, temp->data_type);
+            }
+        }
+        ast_traversal($$); /* just for testing */
+    }
+  |
+  CONST type { declare = 1; } names { declare = 0; } SEMICOLON
+    {
+        int i;
+        $$ = new_ast_decl_node($2, names, nc, true);
+        nc = 0;
+
+        AST_Node_Decl *temp = (AST_Node_Decl*) $$;
+
+        // declare types of the names
+        for(i=0; i < temp->names_count; i++){
+            // variable
+            if(temp->names[i]->st_type == UNDEF){
+                set_type(temp->names[i]->st_name, temp->data_type, UNDEF);
+            }
+            // pointer
+            else if(temp->names[i]->st_type == POINTER_TYPE){
+                set_type(temp->names[i]->st_name, POINTER_TYPE, temp->data_type);
+            }
+            // array
+            else if(temp->names[i]->st_type == ARRAY_TYPE){
+                set_type(temp->names[i]->st_name, ARRAY_TYPE, temp->data_type);
+            }
+        }
+        ast_traversal($$); // just for testing
+    }
+;
+
+names: names COMMA variable
 	{
-		int i;
-		$$ = new_ast_decl_node($1, IDENT);
-		nc = 0;
-		
-		AST_Node_Decl *temp = (AST_Node_Decl*) $$;
-		
-		// declare types of the names
-		for(i=0; i < temp->names_count; i++){
-			// variable
-			if(temp->names[i]->stype == UNDEF){
-				set_type(temp->names[i]->name, temp->data_type, UNDEF);
-      }
-
-      // array
-			else if(temp->names[i]->stype == ARRAY_TYPE){
-				set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
-			}
-    }
-		ast_traversal($$); /* just for testing */
+		add_to_names($3);
 	}
-
-  | beforedecl type IDENT ASSIGN_OP expression SEMICOLON
-  	{
-		int i;
-		$$ = new_ast_decl_node($1, IDENT, nc);
-		nc = 0;
-		
-		AST_Node_Decl *temp = (AST_Node_Decl*) $$;
-		
-		// declare types of the names
-		for(i=0; i < temp->names_count; i++){
-			// variable
-			if(temp->names[i]->stype == UNDEF){
-				set_type(temp->names[i]->name, temp->data_type, UNDEF);
-      }
-
-      // array
-			else if(temp->names[i]->stype == ARRAY_TYPE){
-				set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
-			}
-    }
-		ast_traversal($$); /* just for testing */
+	| names COMMA init
+	{
+		add_to_names($3);
+	}
+	| variable
+	{
+		add_to_names($1);
+	}
+	| init
+	{ 
+		add_to_names($1);
 	}
 ;
 
+init: var_init { $$ = $1; };
+
+var_init:  IDENT ASSIGN_OP value
+{ 
+	AST_Node_Const *temp = (AST_Node_Const*) $$;
+	$1->val = temp->val;
+	$1->st_type = temp->const_type;
+	$$ = $1;
+}
+;
+
+variable: IDENT { $$ = $1; };
+
 /* bool x; const double x; const integer x = 5; */
-declarations:{ declare = 1; } declaration { declare = 0; }|  declarations declaration ;
+declarations:  declarations declaration | declaration ;
 /*----------------------------------------------------------------------------*/
+
+
+
+expression: expression ADD_OP expression 
+| expression SUB_OP expression
+| expression MUL_OP expression
+| expression DIV_OP expression
+| expression MOD_OP expression
+| expression BIT_LOGIC_OP expression
+| expression AND_OP expression
+| expression OR_OP expression
+| expression EQ_OP expression
+| expression REL_OP expression
+| LEFT_PAREN expression RIGHT_PAREN
+| unary_expression
+| func_call
+/* | sign expression */
+| variable
+| sign value;
+sign : SUB_OP | /* empty */;
+unary_expression: INC_OP IDENT | DEC_OP IDENT | NOT_OP IDENT| IDENT INC_OP | IDENT DEC_OP;
+
+
+value: CONST_INT  { $$ = new_ast_const_node(INT_TYPE, $1);  }
+| CONST_FLOAT { $$ = new_ast_const_node(REAL_TYPE, $1); }
+| CONST_CHAR { $$ = new_ast_const_node(CHAR_TYPE, $1); }
+| STRING_LITERAL { $$ = new_ast_const_node(STR_TYPE, $1); }
+| TRUE_TOKEN { $$ = new_ast_const_node(BOOL_TYPE, $1); }
+| FALSE_TOKEN { $$ = new_ast_const_node(BOOL_TYPE, $1); }
+;
+
 tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
-tail_inloop: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
-
-bool_expression: relExp
-                | TRUE_TOKEN 
-                | FALSE_TOKEN;
-
-
-assign: IDENT ASSIGN_OP expression;
-
-expression: assign | IDENT INC_OP | IDENT DEC_OP | simpleExp | IDENT | bool_expression ;
-simpleExp: simpleExp OR_OP andExp | andExp ;
-andExp: andExp AND_OP  | bitRelExp ;
-bitRelExp: bitRelExp BIT_OR_OP relExp | bitRelExp AND relExp | bitRelExp BIT_XOR_OP relExp | relExp ;
-
-op: EQ_OP | NE_OP | GT_OP | LT_OP | LE_OP | GE_OP | OR_OP | AND_OP;
-relExp: relExp op bitshiftExp 
-        | bitshiftExp ;
-
-bitshiftExp: bitshiftExp BIT_LSHIFT_OP sumExp | bitshiftExp BIT_RSHIFT_OP sumExp | sumExp ;
-
-pls_min: ADD_OP | SUB_OP;
-mul_div: MUL_OP | DIV_OP | MOD_OP;
-sumExp: sumExp pls_min mulExp | mulExp ;
-mulExp: mulExp mul_div unaryExp | unaryExp ;
-
-unaryExp: INC_OP IDENT | DEC_OP IDENT | NOT_OP IDENT |  IDENT | value | LEFT_PAREN expression RIGHT_PAREN ;
-
-
-value: CONST_INT {printf("%d\n", yylval.int_val);} | CONST_FLOAT {printf("%lf\n", yylval.double_val);} |
-       CONST_CHAR | STRING_LITERAL;
-
-
-else_if: ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail
-        | else_if ELIF LEFT_PAREN bool_expression RIGHT_PAREN tail | /*empty*/;
+else_if: ELIF LEFT_PAREN expression RIGHT_PAREN tail
+        | else_if ELIF LEFT_PAREN expression RIGHT_PAREN tail;
 
 else_part: ELSE tail | /*empty*/ ;        
 
-if_statement: IF LEFT_PAREN bool_expression RIGHT_PAREN tail else_if else_part;
+if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail else_if else_part |
+              IF LEFT_PAREN expression RIGHT_PAREN tail else_part;
 
-while_statement: WHILE LEFT_PAREN bool_expression RIGHT_PAREN tail_inloop ;
+while_statement: WHILE LEFT_PAREN expression RIGHT_PAREN tail ;
 
 optional_type: /* empty */ | type;
 
-for_statement: FOR LEFT_PAREN optional_type assign SEMICOLON bool_expression SEMICOLON expression RIGHT_PAREN tail_inloop ;
+// tail_inloop: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET ;
 
-do_statement: DO tail_inloop UNTIL LEFT_PAREN bool_expression RIGHT_PAREN SEMICOLON ;
+assignment: variable ASSIGN_OP expression ;
+for_statement: FOR LEFT_PAREN optional_type assignment SEMICOLON expression SEMICOLON expression RIGHT_PAREN tail ;
+
+do_statement: DO tail UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON ;
 
 switch_statement: SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET ;
 
-cases: case | cases case | cases default ;
+cases: cases case | case |  cases default ;
 
 default: DEFAULT COLON statements;
 
-case: CASE expression COLON statements BREAK SEMICOLON ;
-
-return_val: expression | /*empty*/ ;
-return_statement: RETURN return_val SEMICOLON ;
-
+case: CASE expression COLON statements ;
+//optional_break: /* empty */ | BREAK SEMICOLON ;
 break_statement: BREAK SEMICOLON ;
 
 continue_statement: CONTINUE SEMICOLON ;
 
-expression_statement: expression SEMICOLON ;
+// expression_statement: expression SEMICOLON ; //TODO: REVISIT THIS
 
-statements:  /*empty*/
+statements: statements statement
           | statement
-          | statements statement;
+          ;
 
 statement: if_statement 
           | while_statement 
           | for_statement 
           | do_statement 
           | switch_statement 
-          | return_statement 
-          | expression_statement
-          | declarations
+  //        | return_statement 
+  //        | expression_statement
+          /* | declarations */
           | enum_statement
-          | func_call
+          | func_call SEMICOLON
           | break_statement
-          | continue_statement;
+          | continue_statement
+          | assignment SEMICOLON
+          | IDENT INC_OP SEMICOLON
+          | IDENT DEC_OP SEMICOLON
+          | INC_OP IDENT SEMICOLON
+          | DEC_OP IDENT SEMICOLON
+          ;
 
 // statement_inloop: statement | /* empty */;   
 // statements_inloop: statement_inloop | statements_inloop statement_inloop ;       
@@ -224,23 +282,28 @@ param_empty: parameters | /* empty */;
 
 function_head: FUNC IDENT LEFT_PAREN param_empty RIGHT_PAREN type ;
 
-function_tail: LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET;
+function_tail: LEFT_CURLY_BRACKET declarations_statements_optional return_optional RIGHT_CURLY_BRACKET ; 
+declarations_statements:declarations_statements statement|declarations_statements declaration| statement | declaration;
+declarations_statements_optional: declarations_statements | /* empty */;
 
-/* function: FUNC IDENT LEFT_PAREN parameters RIGHT_PAREN type LEFT_CURLY_BRACKET statements return_statement RIGHT_CURLY_BRACKET; */
+return_optional: RETURN return_val SEMICOLON | /* empty */;
 
-parameters:  parameter | parameters COMMA parameter | /*empty*/ ;
-parameter: { declare = 1; } type IDENT { declare = 0; } ;
+return_val: expression | /*empty*/ ;
+
+parameters:  parameters COMMA parameter | parameter ;
+
+parameter: { declare = 1; } type variable { declare = 0; } ;
 
 
 enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET SEMICOLON;
 
 enum_list: one_val | enum_list COMMA one_val ;
 
-one_val: IDENT | IDENT ASSIGN_OP value ;
+one_val: IDENT | var_init ;
 
-func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN  SEMICOLON| IDENT ASSIGN_OP IDENT LEFT_PAREN arguments RIGHT_PAREN SEMICOLON;
-arguments: argument | arguments COMMA argument | /*empty*/;
-argument: expression ;
+func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN;
+arguments: argument | /*empty*/;
+argument: argument COMMA expression | expression;
 
 %%
 

@@ -82,6 +82,9 @@ typedef struct AST_Node_Decl{
 	// symbol table entries of the variables
 	ListNode** names;
 
+	// bool to indicate if this variable is constant
+	int is_const;
+
     // int names_count; use incase of array
 }AST_Node_Decl;
 
@@ -258,7 +261,7 @@ typedef struct AST_Node_Return{
 /* The basic node */
 AST_Node *new_ast_node(Node_Type type, AST_Node *left, AST_Node *right); 	 // simple nodes
 /* Declarations */
-AST_Node *new_ast_decl_node(int data_type, ListNode **names);					 // declaration
+AST_Node *new_ast_decl_node(int data_type, ListNode **names, bool is_constant);					 // declaration
 AST_Node *new_ast_const_node(int const_type, Value val);					 // constant
 /* ... */
 
