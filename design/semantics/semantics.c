@@ -6,7 +6,7 @@ extern int lineno;
 
 // actual types are: INT_TYPE, REAL_TYPE, CHAR_TYPE
 
-int get_result_type(int type_1, int type_2, int op_type)
+int get_result_type(int type_1, int type_2, int op_type, int lineno)
 { /* type check and result type */
 	switch (op_type)
 	{
@@ -21,7 +21,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type REAL
@@ -34,7 +34,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type CHAR
@@ -47,7 +47,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		break;
@@ -68,7 +68,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type REAL
@@ -81,7 +81,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type CHAR
@@ -99,12 +99,12 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		else
 		{
-			type_error(type_1, type_2, op_type);
+			type_error(type_1, type_2, op_type, lineno);
 		}
 		break;
 	/* ---------------------------------------------------------- */
@@ -126,7 +126,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 		}
 		else
 		{
-			type_error(type_1, type_2, op_type);
+			type_error(type_1, type_2, op_type, lineno);
 		}
 		break;
 	/* ---------------------------------------------------------- */
@@ -141,7 +141,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type CHAR
@@ -154,12 +154,12 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		else
 		{
-			type_error(type_1, type_2, op_type);
+			type_error(type_1, type_2, op_type, lineno);
 		}
 		break;
 	/* ---------------------------------------------------------- */
@@ -176,7 +176,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 		}
 		else
 		{
-			type_error(type_1, type_2, op_type);
+			type_error(type_1, type_2, op_type, lineno);
 		}
 		break;
 	/* ---------------------------------------------------------- */
@@ -191,7 +191,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		else if (type_1 == REAL_TYPE)
@@ -203,7 +203,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type CHAR
@@ -216,12 +216,12 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		else
 		{
-			type_error(type_1, type_2, op_type);
+			type_error(type_1, type_2, op_type, lineno);
 		}
 		break;
 	/* ---------------------------------------------------------- */
@@ -236,7 +236,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		else if (type_1 == REAL_TYPE)
@@ -248,7 +248,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		// first type CHAR
@@ -261,12 +261,12 @@ int get_result_type(int type_1, int type_2, int op_type)
 			}
 			else
 			{
-				type_error(type_1, type_2, op_type);
+				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
 		else
 		{
-			type_error(type_1, type_2, op_type);
+			type_error(type_1, type_2, op_type, lineno);
 		}
 		break;
 	/* ---------------------------------------------------------- */
@@ -276,7 +276,7 @@ int get_result_type(int type_1, int type_2, int op_type)
 	}
 }
 
-void type_error(int type_1, int type_2, int op_type)
+void type_error(int type_1, int type_2, int op_type, int lineno)
 { /* print type error */
 	fprintf(stderr, "Type conflict between  ");
 	/* first type */

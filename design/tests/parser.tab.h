@@ -108,7 +108,8 @@ extern int yydebug;
     BIT_LOGIC_OP = 309,            /* BIT_LOGIC_OP  */
     EQ_OP = 310,                   /* EQ_OP  */
     REL_OP = 311,                  /* REL_OP  */
-    ASSIGN_OP = 312                /* ASSIGN_OP  */
+    ASSIGN_OP = 312,               /* ASSIGN_OP  */
+    MINUS = 313                    /* MINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -117,7 +118,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 24 "../parser/parser.y"
+#line 30 "../parser/parser.y"
 
   Value val;
   AST_Node* node;
@@ -130,8 +131,11 @@ union YYSTYPE
   // for arrays
   int array_size;
 
+  // for paramaters
+  Prameter par;
 
-#line 135 "parser.tab.h"
+
+#line 139 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

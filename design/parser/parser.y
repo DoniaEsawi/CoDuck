@@ -397,12 +397,47 @@ assignment: var_ref ASSIGN_OP expression
 {
 	AST_Node_VAR *temp = (AST_Node_VAR*) $1;
 	$$ = new_ast_assign_node(temp->entry, $3);
-  // check assignment semantics
-  get_result_type(
-    get_type(temp->entry->name), /* variable datatype */
-    expression_data_type($3),       /* expression datatype */
-    NONE  /* checking compatibility only (no operator) */
-  );
+  /* find datatypes */
+  int type1 = get_type(temp->entry->name);
+	int type2 = expression_data_type($3);
+  /* the last function will give us information about revisits */
+  /* contains revisit => add assignment-check to revisit queue */
+  if(cont_revisit == 1){	
+    /* search if entry exists */
+    revisit_queue *q = search_queue(temp->entry->name);
+		if(q == NULL){
+			add_to_queue(temp->entry, temp->entry->name, ASSIGN_CHECK);
+			q = search_queue(temp->entry->name);	
+		}
+    /* setup structures */
+    if(q->num_of_assigns == 0){ /* first node */
+			q->nodes = (void**) malloc(sizeof(void*));
+      q->linenos = (int*)malloc(sizeof(int));
+		}
+    else{ /* general case */
+			q->nodes = (void**) realloc(q->nodes, (q->num_of_assigns + 1) * sizeof(void*));
+      q->linenos = (int*)realloc(q->linenos, (q->num_of_assigns + 1) * sizeof(int));
+		}
+    /* add info of assignment */
+    q->nodes[q->num_of_assigns] = (void*) $3;
+    q->linenos[q->num_of_assigns] = lineno;
+    /* increment number of assignments */
+		q->num_of_assigns++;
+    /* reset revisit flag */
+		cont_revisit = 0;
+
+		printf("Assignment revisit for %s at line %d\n", temp->entry->name, lineno);
+  }
+  else{ /* no revisit */
+		/* check assignment semantics */
+		get_result_type(
+			type1,       /*  variable datatype  */
+			type2,       /* expression datatype */
+			NONE  /* checking compatibility only (no operator) */
+		  ,
+			lineno
+    );
+	}
 }
 ;
 // optional_declaration: declaration | assignment SEMICOLON| var_ref SEMICOLON;
@@ -754,7 +789,8 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 				int type_2 = $1->params[i].type;
 
 				/* check compatibility for function call */
-				get_result_type(type_1, type_2, NONE);
+				get_result_type(type_1, type_2, NONE,
+			lineno);
 				/* error occurs automatically in the function */
 			}
 		}
@@ -854,6 +890,17 @@ int main (int argc, char *argv[]){
         q->next = q->next->next;
       }
       
+      /* perform the remaining checks (assignments) */
+      if(queue != NULL){
+          revisit_queue *cur;
+          cur = queue;
+          while(cur != NULL){
+            if(cur->revisit_type == ASSIGN_CHECK){
+              revisit(cur->st_name);
+            }
+            cur = cur->next;
+          }
+      }
       /* if still not empty -> Warning */
       if(queue != NULL){
         printf("Warning: Something has not been checked in the revisit queue!\n");

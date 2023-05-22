@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "symbol_table.h"
 #include "../semantics/semantics.h"
+
+#include "symbol_table.h"
 
 /* current scope */
 
@@ -11,6 +12,7 @@ int current_scope = 0;
 int declare = 0; // 1: declaring, 0: not
 /* flag variable for function declaring */
 int function_decl = 0; // 1: declaring function, 0: not
+
 void init_symbol_table()
 {
     symbol_table = malloc(sizeof(ListNode *) * HASHTABLESIZE);
@@ -307,7 +309,8 @@ int func_param_check(char *name, int num_of_calls,
             type_2 = par_types[i][j];
 
             /* check compatibility for function call */
-            get_result_type(type_1, type_2, NONE);
+            get_result_type(type_1, type_2, NONE,
+                            lineno);
             /* error occurs automatically in the function */
         }
     }
@@ -401,6 +404,10 @@ void add_to_queue(ListNode *entry, char *name, int type)
         {
             q->num_of_calls = 0;
         }
+        else if (type == ASSIGN_CHECK)
+        {
+            q->num_of_assigns = 0;
+        }
 
         /* q "becomes" the queue */
         queue = q;
@@ -423,6 +430,10 @@ void add_to_queue(ListNode *entry, char *name, int type)
         if (type == PARAM_CHECK)
         {
             q->next->num_of_calls = 0;
+        }
+        else if (type == ASSIGN_CHECK)
+        {
+            q->next->num_of_assigns = 0;
         }
     }
 }
@@ -462,9 +473,11 @@ revisit_queue *search_prev_queue(char *name)
 }
 // This function will be called when functions get declared, to take care of function calls that has not been checked yet!
 int revisit(char *name)
-{ /* revisit entry by also removing it from queue */
+{
+    int i, type1, type2;
+    /* revisit entry by also removing it from queue */
     revisit_queue *q = search_queue(name);
-
+    revisit_queue *q2;
     if (q == NULL)
     {
         return -1; // revisit is not needed
@@ -481,7 +494,7 @@ int revisit(char *name)
         }
 
         /* remove entry by making it point to it's next */
-        revisit_queue *q2 = search_prev_queue(name);
+        q2 = search_prev_queue(name);
         if (q2 == NULL)
         { /* special case: first entry */
             queue = queue->next;
@@ -493,7 +506,30 @@ int revisit(char *name)
 
         break;
     case ASSIGN_CHECK:
-        /* run assignment check */
+        /* run assignment check for each assignment */
+        type1 = get_type(q->entry->name);
+        for (i = 0; i < q->num_of_assigns; i++)
+        {
+            type2 = expression_data_type(q->nodes[i]);
+
+            /* perform assignment check */
+            get_result_type(
+                type1, /*  variable datatype  */
+                type2, /* expression datatype */
+                NONE   /* checking compatibility only (no operator) */
+                ,
+                q->linenos[i]);
+        }
+        /* remove entry by making it point to it's next */
+        q2 = search_prev_queue(name);
+        if (q2 == NULL)
+        { /* special case: first entry */
+            queue = queue->next;
+        }
+        else
+        {
+            q2->next = q2->next->next;
+        }
         break;
         /* ... */
     }
@@ -517,6 +553,11 @@ void revisit_dump(FILE *of)
         {
             fprintf(of, "%s", "Parameter Check");
             fprintf(of, "for %d function calls", q->num_of_calls);
+        }
+        else if (q->revisit_type == ASSIGN_CHECK)
+        {
+            fprintf(of, "%s", "Assignment Check ");
+            fprintf(of, "for %d assignments", q->num_of_assigns);
         }
         // more later on
         fprintf(of, "\n");

@@ -5,6 +5,7 @@ integer i;                    // simple variable
 char c = 'c';             // one with init
 string s = "hello";
 double val = 2.5, x; // two variables, one with init and one array
+integer val2;
 integer p;
 // statements
 for(i = 0; i < 10; i++){ // for
@@ -14,18 +15,19 @@ for(i = 0; i < 10; i++){ // for
 	}
 	elif(i == 5){
 		i = 2 * i;
-		val = func1();
+		val2 = func1();
 		print("\n");
 		continue;
 	}
 	else{
-			p=add(val, i);
+			val=add(val, i);
     	print("\n");
     	p = p + 1;
 	}
 	
 	if(i == 2 && val == 4.5){ // if
 		print("iteration: 3\n");
+		val2=add(val, i);
 	}
 }
 

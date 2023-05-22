@@ -22,5 +22,5 @@
 #define PARAM_CHECK 1  /* Check parameters of function call when functions gets declared */
 #define ASSIGN_CHECK 2 /* Check assignment when function call part of the expression */
 // Function Declarations
-int get_result_type(int type_1, int type_2, int op_type); /* type check and result type */
-void type_error(int type_1, int type_2, int op_type);     /* print type error */
+int get_result_type(int type_1, int type_2, int op_type, int lineno); /* type check and result type */
+void type_error(int type_1, int type_2, int op_type, int lineno);     /* print type error */

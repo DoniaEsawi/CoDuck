@@ -82,7 +82,10 @@ typedef struct revisit_queue
     int **par_types;
     int *num_of_pars;
     int num_of_calls;
-
+    // assignment expression nodes
+    void **nodes; // I put the type "void", cause this type allows us to type-cast anything to it. we will cast it later to ast
+    int num_of_assigns;
+    int *linenos;
     // next item in the queue
     struct revisit_queue *next;
 } revisit_queue;
