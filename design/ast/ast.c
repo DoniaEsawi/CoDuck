@@ -336,11 +336,12 @@ AST_Node *new_ast_func_decl_node(int ret_type, ListNode *entry)
 
 AST_Node *new_ast_return_node(int ret_type, AST_Node *ret_val)
 {
+	printf("new_ast_return_node, ret_type: %d, ret_val: %d\n", ret_type, ret_val->type);
 	// allocate memory
 	AST_Node_Return *v = malloc(sizeof(AST_Node_Return));
 
 	// set entries
-	v->type = RETURN_NODE; // FUNC_DECL;
+	v->type = RETURN_NODE;
 	v->ret_type = ret_type;
 	v->ret_val = ret_val;
 

@@ -222,7 +222,7 @@ void hide_scope()
             /* Find the first item that is from another scope */
             while (list != NULL && list->scope == current_scope)
             {
-                // printf("Hiding %s..\n", list->name);
+                printf("Hiding %s from scope %d ..\n", list->name, list->scope);
                 list = list->next;
             }
             /* Set the list equal to that item */
