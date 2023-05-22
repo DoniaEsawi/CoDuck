@@ -49,62 +49,67 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INTEGER = 258,
-    FLOAT = 259,
-    DOUBLE = 260,
-    VOID = 261,
-    BOOLEAN = 262,
-    CHAR = 263,
-    CONST = 264,
-    STR = 265,
-    IDENT = 266,
-    CONST_INT = 267,
-    CONST_FLOAT = 268,
-    CONST_CHAR = 269,
-    STRING_LITERAL = 270,
-    IF = 271,
-    ELSE = 272,
-    ELIF = 273,
-    WHILE = 274,
-    FOR = 275,
-    DO = 276,
-    SWITCH = 277,
-    CASE = 278,
-    DEFAULT = 279,
-    RETURN = 280,
-    BREAK = 281,
-    CONTINUE = 282,
-    TRUE_TOKEN = 283,
-    FALSE_TOKEN = 284,
-    ENUM = 285,
-    FUNC = 286,
-    UNTIL = 287,
-    LEFT_PAREN = 288,
-    RIGHT_PAREN = 289,
-    LEFT_CURLY_BRACKET = 290,
-    RIGHT_CURLY_BRACKET = 291,
-    LEFT_SQ_BRACKET = 292,
-    RIGHT_SQ_BRACKET = 293,
-    SEMICOLON = 294,
-    COMMA = 295,
-    COLON = 296,
-    QUESTION_MARK = 297,
-    DOT = 298,
-    ADD_OP = 299,
-    SUB_OP = 300,
-    MUL_OP = 301,
-    DIV_OP = 302,
-    MOD_OP = 303,
-    INC_OP = 304,
-    DEC_OP = 305,
-    OR_OP = 306,
-    AND_OP = 307,
-    NOT_OP = 308,
-    BIT_LOGIC_OP = 309,
-    EQ_OP = 310,
-    REL_OP = 311,
-    ASSIGN_OP = 312,
-    MINUS = 313
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    INTEGER = 258,                 /* INTEGER  */
+    FLOAT = 259,                   /* FLOAT  */
+    DOUBLE = 260,                  /* DOUBLE  */
+    VOID = 261,                    /* VOID  */
+    BOOLEAN = 262,                 /* BOOLEAN  */
+    CHAR = 263,                    /* CHAR  */
+    CONST = 264,                   /* CONST  */
+    STR = 265,                     /* STR  */
+    IDENT = 266,                   /* IDENT  */
+    CONST_INT = 267,               /* CONST_INT  */
+    CONST_FLOAT = 268,             /* CONST_FLOAT  */
+    CONST_CHAR = 269,              /* CONST_CHAR  */
+    STRING_LITERAL = 270,          /* STRING_LITERAL  */
+    IF = 271,                      /* IF  */
+    ELSE = 272,                    /* ELSE  */
+    ELIF = 273,                    /* ELIF  */
+    WHILE = 274,                   /* WHILE  */
+    FOR = 275,                     /* FOR  */
+    DO = 276,                      /* DO  */
+    SWITCH = 277,                  /* SWITCH  */
+    CASE = 278,                    /* CASE  */
+    DEFAULT = 279,                 /* DEFAULT  */
+    RETURN = 280,                  /* RETURN  */
+    BREAK = 281,                   /* BREAK  */
+    CONTINUE = 282,                /* CONTINUE  */
+    TRUE_TOKEN = 283,              /* TRUE_TOKEN  */
+    FALSE_TOKEN = 284,             /* FALSE_TOKEN  */
+    ENUM = 285,                    /* ENUM  */
+    FUNC = 286,                    /* FUNC  */
+    UNTIL = 287,                   /* UNTIL  */
+    LEFT_PAREN = 288,              /* LEFT_PAREN  */
+    RIGHT_PAREN = 289,             /* RIGHT_PAREN  */
+    LEFT_CURLY_BRACKET = 290,      /* LEFT_CURLY_BRACKET  */
+    RIGHT_CURLY_BRACKET = 291,     /* RIGHT_CURLY_BRACKET  */
+    LEFT_SQ_BRACKET = 292,         /* LEFT_SQ_BRACKET  */
+    RIGHT_SQ_BRACKET = 293,        /* RIGHT_SQ_BRACKET  */
+    SEMICOLON = 294,               /* SEMICOLON  */
+    COMMA = 295,                   /* COMMA  */
+    COLON = 296,                   /* COLON  */
+    QUESTION_MARK = 297,           /* QUESTION_MARK  */
+    DOT = 298,                     /* DOT  */
+    ADD_OP = 299,                  /* ADD_OP  */
+    SUB_OP = 300,                  /* SUB_OP  */
+    MUL_OP = 301,                  /* MUL_OP  */
+    DIV_OP = 302,                  /* DIV_OP  */
+    MOD_OP = 303,                  /* MOD_OP  */
+    INC_OP = 304,                  /* INC_OP  */
+    DEC_OP = 305,                  /* DEC_OP  */
+    OR_OP = 306,                   /* OR_OP  */
+    AND_OP = 307,                  /* AND_OP  */
+    NOT_OP = 308,                  /* NOT_OP  */
+    BIT_LOGIC_OP = 309,            /* BIT_LOGIC_OP  */
+    EQ_OP = 310,                   /* EQ_OP  */
+    REL_OP = 311,                  /* REL_OP  */
+    ASSIGN_OP = 312,               /* ASSIGN_OP  */
+    END = 313,                     /* END  */
+    MINUS = 314                    /* MINUS  */
   };
 #endif
 
@@ -112,7 +117,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 34 "../parser/parser.y"
+#line 29 "parser.y"
 
   Value val;
   AST_Node* node;
@@ -129,7 +134,7 @@ union YYSTYPE
   Prameter par;
 
 
-#line 133 "parser.tab.h"
+#line 140 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

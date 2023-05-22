@@ -8,8 +8,6 @@
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
-    // #include <vector>
-
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
@@ -58,12 +56,13 @@
 %token<val> STRING_LITERAL
 %token<val> IF ELSE ELIF WHILE FOR DO SWITCH CASE DEFAULT RETURN BREAK CONTINUE
 %token<val> TRUE_TOKEN FALSE_TOKEN
-%token<val> ENUM FUNC UNTIL
+%token<val> ENUM FUNC UNTIL 
 %token<val> LEFT_PAREN RIGHT_PAREN LEFT_CURLY_BRACKET RIGHT_CURLY_BRACKET LEFT_SQ_BRACKET RIGHT_SQ_BRACKET
-%token<val> SEMICOLON COMMA COLON QUESTION_MARK DOT
+%token<val> SEMICOLON COMMA COLON QUESTION_MARK DOT 
 %token<val> ADD_OP SUB_OP MUL_OP DIV_OP MOD_OP INC_OP DEC_OP
-%token<val> OR_OP AND_OP NOT_OP BIT_LOGIC_OP
+%token<val> OR_OP AND_OP NOT_OP BIT_LOGIC_OP 
 %token<val> EQ_OP REL_OP ASSIGN_OP
+%token<val> END
 // %type <val> sign
 
 
@@ -96,6 +95,7 @@
 %type <par>  parameter
 %type <node> return_type
 %type <node> func_call arguments argument
+%type <node> return_statement
 %start program
 
 /* expression priorities and rules */
@@ -103,7 +103,8 @@
 
 program: declarations { ast_traversal($1); } 
 statements { ast_traversal($3); }
-RETURN SEMICOLON functions_optional { ast_traversal($7); }; 
+END SEMICOLON
+functions_optional { ast_traversal($7); }; 
 
 functions_optional:
 functions
@@ -515,7 +516,10 @@ statement: if_statement
         { 
         $$ = $1; /* just pass information */
         }
- 
+        | return_statement
+        {
+          $$ = $1; /* just pass information */
+        }
         | for_statement 
         { 
         $$ = $1; /* just pass information */
@@ -600,7 +604,7 @@ function: { incr_scope(); } function_head function_tail
 { 
     /* perform revisit */
 	  revisit(temp_function->entry->name);
-    hide_scope();
+    // hide_scope();
     $$ = (AST_Node *) temp_function;
     
 } 
@@ -638,7 +642,7 @@ return_type: type
 		$$ = new_ast_ret_type_node($1);
 	}
 ;
-function_tail: LEFT_CURLY_BRACKET declarations_optional statements_optional return_optional RIGHT_CURLY_BRACKET ; 
+function_tail: LEFT_CURLY_BRACKET declarations_optional statements_optional  RIGHT_CURLY_BRACKET ; 
 /* general_statement: statement{
     // set the function statements to the statement if it is not set yet
     if(temp_function->statements == NULL){
@@ -695,17 +699,18 @@ declarations_optional:
     temp_function->declarations = NULL;
   }
 ;
-
-return_optional: 
-  RETURN expression SEMICOLON
+return_statement:
+RETURN expression SEMICOLON
   {
     temp_function->return_node = new_ast_return_node(temp_function->ret_type, $2);
   }
-  | /* empty */
+/* return_optional: 
+  return_statement
+  | 
   {
     temp_function->return_node = NULL;
   }
-  ;
+  ; */
 
 // return_val: expression | /*empty*/ ;
 param_empty: 

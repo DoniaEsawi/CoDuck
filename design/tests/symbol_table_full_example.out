@@ -1,6 +1,10 @@
 ------------ -------------- ------ ------------
 Name         Type           Scope  Line Numbers
 ------------ -------------- ------ ------------
-val          REAL              0   2      3      4      
-i            INT               0   1      
-res          REAL              0   2      4      
+func1        func ret INT      1   9      
+print        func ret VOID     0   4      
+a            INT               1   11     
+b            INT               1   13     
+d            INT               1   9      12     
+i            INT               0   2      
+j            INT               1   10     14     18     

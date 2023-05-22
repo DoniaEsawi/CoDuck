@@ -14,6 +14,7 @@
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
+<<<<<<< HEAD
             "intelliSenseMode": "windows-msvc-x64"
         },
         {
@@ -34,6 +35,9 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true
             }
+=======
+            "intelliSenseMode": "gcc-x64"
+>>>>>>> 990882282e9c5f3fe6f6d657bf82ffad29607b85
         }
     ],
     "version": 4
