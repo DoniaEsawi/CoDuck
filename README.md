@@ -5,6 +5,36 @@
     <img src="https://user-images.githubusercontent.com/56982963/233789407-d3b3fea9-8e90-4e1b-b3d5-7ecd84d6b850.svg#gh-light-mode-only"/>
 </div>
 
+# TODO
+
+- [ ] Check if always false, then warning
+- [ ] test the semantic analyzer more
+- [ ] switch cases (should be easy)
+- [ ] enums (i don't know :" )
+- [ ] do until (easy)
+- [ ] type casting (i don't know :" )
+- [ ] handling constant variables checks
+- [ ] (Not sure if needed) treating INT as a subtype of REAL (double, floats) "y3ni momken a3mel assignment l variable float b int"
+- [ ] code generation using stack machines
+
+# program structure
+
+1. // declarations
+1. // statements
+1. // return;
+1. // optional function declarations
+
+# Some limitations:
+
+1. in for loops declaration (i=0; i<1; i++) is valid, but (int i=0; i<1; i++) is not
+1. inside functions body, the syntax must be the following:
+
+- // optional declarations
+- // optional statements
+- // optional return
+
+3. There's no bit-wise logical operations
+
 # Language specs
 
 ## Tokens
