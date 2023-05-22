@@ -3,11 +3,12 @@
     #include "../semantics/semantics.c"
     #include"../symbol_table/symbol_table.c"
     #include "../ast/ast.h"
-	#include "../ast/ast.c"
+	  #include "../ast/ast.c"
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
     #include <math.h>
+    // #include <vector>
 
     extern FILE *yyin;
     extern FILE *yyout;
@@ -16,14 +17,19 @@
     void yyerror();
     // for declaration
     void add_to_names(ListNode *entry);
-	ListNode **names;
-	int nc = 0;
+    ListNode **names;
+    int nc = 0;
     // for else ifs
-	void add_elseif(AST_Node *elsif);
-	AST_Node **elsifs;
-	int elseif_count = 0;
+    void add_elseif(AST_Node *elsif);
+    AST_Node **elsifs;
+    int elseif_count = 0;
     // for functions
     AST_Node_Func_Decl *temp_function;
+    void gencode(char* x);
+    void gencode_rel(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op);
+    void gencode_math(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op)
+    char * ICG[1000];
+    int nextinstr = 0;
 %}
 
 
@@ -132,6 +138,13 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
             // variable
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                //  generate a string of "push" then the name
+                char* push = "push ";
+                char* temp_name = temp->names[i]->name;
+                char* temp_str = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
+                strcpy(temp_str, push);
+                strcat(temp_str, temp_name);
+                gencode(temp_str);
             }
             
         }
@@ -824,13 +837,66 @@ argument: argument COMMA expression
 
 %%
 
+
+void gencode(char* x)
+{
+	char* instruction;
+  ICG[nextinstr] = (char*) malloc(strlen(x) * sizeof(char));
+  // copy instruction
+  strcpy(ICG[nextinstr], x);
+
+  nextinstr++;
+}
+
+
+// void gencode_rel(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op)
+// {
+// 	lhs->data_type = arg1->data_type;
+
+// 	lhs->truelist = {nextinstr};
+// 	lhs->falselist = {nextinstr + 1};
+
+// 	std::string code;
+
+// 	code = string("if ") + arg1->addr + op + arg2->addr + string(" goto _");
+// 	gencode(code);
+
+// 	code = string("goto _");
+// 	gencode(code);
+// }
+
+// void gencode_math(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op)
+// {
+// 	lhs->addr = "t" + to_string(temp_var_number);
+// 	std::string expr = lhs->addr + string(" = ") + arg1->addr + op + arg2->addr;
+// 	lhs->code = arg1->code + arg2->code + expr;
+
+// 	temp_var_number++;
+
+// 	gencode(expr);
+// }
+
+void displayICG()
+{
+  // open file in c
+  FILE *outfile;
+  outfile = fopen("ICG.txt", "w");
+	for(int i=0; i<nextinstr;i++)
+  {
+    fprintf(outfile, "%d: %s\n", i, ICG[i]);
+  }
+	fclose(outfile);
+}
+
+
 void yyerror ()
 {
   fprintf(stderr, "Syntax error at line %d\n", lineno);
   exit(1);
 }
 
-void add_to_names(ListNode *entry){
+void add_to_names(ListNode *entry)
+{
 	// first entry
 	if(nc == 0){
 		nc = 1;
@@ -844,7 +910,9 @@ void add_to_names(ListNode *entry){
 		names[nc - 1] = entry;		
 	}
 }
-void add_elseif(AST_Node *elsif){
+
+void add_elseif(AST_Node *elsif)
+{
   // first entry
   if(elseif_count == 0){
     elseif_count = 1;
@@ -858,6 +926,7 @@ void add_elseif(AST_Node *elsif){
     elsifs[elseif_count - 1] = elsif;
   }
 }
+
 int main (int argc, char *argv[]){
     
     // initialize symbol table
@@ -913,6 +982,8 @@ int main (int argc, char *argv[]){
     yyout = fopen(argv[2], "w");
     dump_symboltable(yyout);
     fclose(yyout);
+
+    displayICG();
 
     // revisit queue dump
     yyout = fopen(argv[3], "w");
