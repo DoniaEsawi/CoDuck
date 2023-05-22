@@ -3,11 +3,13 @@
 // declarations
 integer i;                    // simple variable
 char c = 'c';             // one with init
+string s = "hello";
 double val = 2.5, x; // two variables, one with init and one array
 integer p;
 // statements
 for(i = 0; i < 10; i++){ // for
 	if(i > 5){ // if-else
+			i = i + 1;
     	break;
 	}
 	elif(i == 5){

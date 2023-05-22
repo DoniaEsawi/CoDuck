@@ -3,3 +3,5 @@
 Draft/*
 design/parser/parser.tab.c
 design/parser/parser.tab.h
+.vscode/settings.json
+design/tests/compiler.exe

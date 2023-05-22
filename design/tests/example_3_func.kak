@@ -1,32 +1,36 @@
-// program: declarations statements RETURN SEMI functions
-// main function (declarations statements)
 // declarations
 integer i;                    // simple variable
 char c = 'c';             // one with init
-double val = 2.5, x; // two variables, one with init and one array
-integer p;
+double val = 2.5, res; // two variables, one with init and one array
+double p;                // pointer variable
 // statements
-for(i = 0; i < 10; i++){ // for
-	if(i > 5){ // if-else
+p = res;
+for(i = 0; i < 10; i++){
+	if(i > 5){
     	break;
 	}
 	elif(i == 5){
 		i = 2 * i;
 		val = func1();
-		print("hello");
+		p = add(val, i);
+		print(res);
+		print("\n");
 		continue;
 	}
 	else{
+		p = add(val, i);
+    	val = res;
+   	 	print(res);
     	print("\n");
     	p = p + 1;
 	}
-	
-	if(i == 2 && val == 4.5){ // if
+
+	if(i == 2 && val == 4.5){
 		print("iteration: 3\n");
 	}
 }
 
-while(i < 12){ // while
+while(i < 12){
 	print(i);
 	print(" ");
 	func2(c);
@@ -36,18 +40,15 @@ print("\n");
 return; /* RETURN SEMI */
 // other functions (functions)
 func func1() integer{ 		/* without parameters */
-	// statements
 	return 5;
 }
 func func2(char c)void{ /* with one parameter */
-	// declarations
-	// statements
-	print(c);
+	char s;
+	s = c;
+	print(s);
 }
 func add (double a, integer b)double{  /* with two parameters */
-    // declarations
     double res;
-    // statements
-    res = a + b;
+    res = a + b + (-5);
     return res;
 }

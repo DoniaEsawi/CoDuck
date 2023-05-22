@@ -35,7 +35,7 @@ ident            {alpha}{alphanum}*
 CONST_INT        -?([1-9]{digit}*)|"0"
 CONST_FLOAT      -?([1-9]{digit}*|"0")"."{digit}*
 CONST_CHAR        (\'{print}\')|(\'\\[nftrbv]\')|(\"{print}\")|(\"\\[nftrbv]\")
-STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
+STRING_LITERAL   (\"{print}*\")|(\'{print}*\')
 
 
 /***********************/
@@ -44,10 +44,14 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 %%
 
-"//".*          {printf("Found single-line comment at line %d\n", lineno);}
+"//".*          {
+    // printf("Found single-line comment at line %d\n", lineno);
+}
 
 
-"/*"            {printf("Found start of a multi-line comment at line %d\n", lineno); BEGIN(MULTILINE_COMMENT);}
+"/*"            {
+    // printf("Found start of a multi-line comment at line %d\n", lineno); 
+BEGIN(MULTILINE_COMMENT);}
 
 <MULTILINE_COMMENT>\n {lineno++;}
 
@@ -55,7 +59,9 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 <MULTILINE_COMMENT>[^*\n]+ 
 
-<MULTILINE_COMMENT>"*/" {printf("Found end of multi-line comment at line %d\n", lineno); BEGIN(INITIAL);}
+<MULTILINE_COMMENT>"*/" {
+    // printf("Found end of multi-line comment at line %d\n", lineno); 
+    BEGIN(INITIAL);}
 
 "const"|"CONST" {ret("CONST"); return CONST;}
 "char"|"CHAR" {ret("CHAR"); return CHAR;}
@@ -80,8 +86,12 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 "func"|"FUNC" {ret("FUNC"); return FUNC;}
 "return"|"RETURN" {ret("RETURN"); return RETURN;}
 "enum"|"ENUM" {ret("ENUM"); return ENUM;}
-"true" {ret("TRUE_TOKEN"); return TRUE_TOKEN;}
-"false" {ret("FALSE_TOKE"); return FALSE_TOKEN;}
+"true" {ret("TRUE_TOKEN"); 
+yylval.val.ival = 1;
+return TRUE_TOKEN;}
+"false" {ret("FALSE_TOKE"); 
+yylval.val.ival = 0;
+return FALSE_TOKEN;}
 "+" {ret("ADD_OP"); return ADD_OP;}
 "-" {ret("SUB_OP"); return SUB_OP;}
 "*" {ret("MUL_OP"); return MUL_OP;}
@@ -92,8 +102,13 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 "or"|"OR"|"||" {ret("OR_OP"); return OR_OP;}
 "and"|"AND"|"&&" {ret("AND_OP"); return AND_OP;}
 "not"|"NOT"|"!" {ret("NOT_OP"); return NOT_OP;}
-"=="|"!="				{ret("EQ_OP"); return EQ_OP;}
-">"|"<"|">="|"<="		 {ret("REL_OP"); return REL_OP;}
+
+"=="		     { yylval.val.ival = EQUAL; ret("=="); return EQ_OP; }
+"!="			 { yylval.val.ival = NOT_EQUAL; ret("!="); return EQ_OP; }
+">"				 { yylval.val.ival = GREATER;  ret(">"); return REL_OP; }
+"<"				 { yylval.val.ival = LESS;  ret("<"); return REL_OP; }
+">="			 { yylval.val.ival = GREATER_EQUAL; ret(">="); return REL_OP; }
+"<="			 { yylval.val.ival = LESS_EQUAL;  ret("<="); return REL_OP; }
 "=" {ret("ASSIGN_OP"); return ASSIGN_OP;}
 "|"|"~"|">>"|"<<"|"^"|"&"   {ret("BIT_LOGIC_OP"); return BIT_LOGIC_OP;}
 "(" {ret("LEFT_PAREN"); return LEFT_PAREN;}
@@ -135,7 +150,7 @@ STRING_LITERAL   (\"({print})*\")|(\'({print})*\')
 
 char* ret(char *token_type)
 {
-    printf("Found %s at line %d \n", token_type, lineno);
+    // printf("Found %s at line %d \n", token_type, lineno);
     //return token_type;
 }
 

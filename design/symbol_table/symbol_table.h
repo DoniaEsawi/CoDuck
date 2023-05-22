@@ -70,13 +70,18 @@ typedef struct ListNode
 
 typedef struct revisit_queue
 {
+    // symbol table entry
+    ListNode *entry;
     // name of identifier
     char *st_name;
 
     // type of revisit
     int revisit_type;
 
-    // maybe additional information to simplify the process ...
+    // parameters of function calls
+    int **par_types;
+    int *num_of_pars;
+    int num_of_calls;
 
     // next item in the queue
     struct revisit_queue *next;
@@ -105,15 +110,20 @@ void increment_scope();              // increase the current scope
 void dump_symboltable(FILE *output); // print the symbol table
 
 // Function Declaration and Parameters
-Prameter def_param(int par_type, char *param_name, int passing);                   // define parameter
-int func_declare(char *name, int ret_type, int num_of_pars, Prameter *parameters); // declare function
-int func_param_check(char *name, int num_of_pars, Prameter *parameters);           // check parameters
+Prameter def_param(int par_type, char *param_name, int passing); // define parameter
+int func_declare(char *name, int ret_type,
+                 int num_of_pars, Prameter *parameters);
+int func_param_check(char *name, int num_of_calls,
+                     int **par_types, int *num_of_pars);
 
 // Type Functions
 void set_type(char *name, int st_type, int inf_type); // set the type of an entry (declaration)
 int get_type(char *name);                             // get the type of an entry
 
 // Revisit Queue Functions
-void add_to_queue(char *name, int type); // add to queue
-int revisit(char *name);                 // revisit entry by also removing it from queue
-void revisit_dump(FILE *of);             // dump file
+void add_to_queue(ListNode *entry, char *name, int type); // add to queue
+revisit_queue *search_queue(char *name);
+revisit_queue *search_prev_queue(char *name);
+
+int revisit(char *name);     // revisit entry by also removing it from queue
+void revisit_dump(FILE *of); // dump file
