@@ -157,14 +157,14 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         for(i=0; i < temp->names_count; i++){
             set_constant(temp->names[i]->name, 0);
             if(temp->names[i]->stype == UNDEF){
-                set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                set_type(temp->names[i]->name, temp->data_type, UNDEF, yyout);
             }else{
                if (temp->data_type== INT_TYPE){
                 if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
                   printf("Error: type mismatch at line %d\n ", lineno);
                   exit(1);
                 }else{
-                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF, yyout);
                 }
                }
               else if (temp->data_type== REAL_TYPE){
@@ -172,7 +172,7 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
                   printf("Error: type mismatch at line %d\n ", lineno);
                   exit(1);
                 }else{
-                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF, yyout);
                 }
                 }
                 else if (temp->data_type== CHAR_TYPE){
@@ -222,14 +222,14 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
             // variable
             set_constant(temp->names[i]->name, 1);
             if(temp->names[i]->stype == UNDEF){
-                set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                set_type(temp->names[i]->name, temp->data_type, UNDEF, yyout);
             }else{
                if (temp->data_type== INT_TYPE){
                 if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
                   printf("Error: type mismatch at line %d\n ", lineno);
                   exit(1);
                 }else{
-                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF, yyout);
                 }
                }
               else if (temp->data_type== REAL_TYPE){
@@ -237,7 +237,7 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
                   printf("Error: type mismatch at line %d\n ", lineno);
                   exit(1);
                 }else{
-                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF, yyout);
                 }
                 }
                 else if (temp->data_type== CHAR_TYPE){
@@ -267,6 +267,13 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
 
 names: names COMMA variable
 	{
+    if(ENUM_decl==0){
+      declare = 0;
+    }
+    else{
+      current_enum_val++;
+    }
+    
 		add_to_names($3);
     ListNode *entry = (ListNode*) $3;
     char* temp_name = entry->name;
@@ -278,10 +285,16 @@ names: names COMMA variable
 	}
 	| names COMMA init
 	{
+    if(ENUM_decl==1){
+      current_enum_val++;
+    }
 		add_to_names($3);
 	}
 	| variable
 	{
+    if(ENUM_decl==1){
+      current_enum_val++;
+    }
 		add_to_names($1);
     ListNode *entry = (ListNode*) $1;
     char* temp_name = entry->name;
@@ -293,6 +306,9 @@ names: names COMMA variable
 	}
 	| init
 	{ 
+    if(ENUM_decl==1){
+      current_enum_val++;
+    }
 		add_to_names($1);
 	}
 ;
@@ -477,6 +493,30 @@ expression: expression ADD_OP expression
 	    }
 | var_ref 
 { 
+    // get the variable node
+    AST_Node_VAR *temp = (AST_Node_VAR*) $1;
+    // check if it's a char or string
+    if( temp->entry->stype == STR_TYPE || temp->entry->stype == CHAR_TYPE){
+      // get the value of the variable
+      Value val = get_value(temp->entry->name);
+      // check if it's a string and sval is NULL
+      if(temp->entry->stype == STR_TYPE && temp->entry->val.sval == NULL){
+        // error : variable used without being initialized
+        fprintf(stderr, "Error: variable %s used without being initialized at line %d\n",
+          temp->entry->name, lineno);
+          exit(1);
+      }
+      else if (temp->entry->stype == CHAR_TYPE && temp->entry->val.cval == NULL){
+        // error : variable used without being initialized
+        fprintf(stderr, "Error: variable %s used without being initialized at line %d\n",
+          temp->entry->name, lineno);
+          exit(1);
+      }
+    }
+    else{
+      $$ = $1; /* just pass information */
+    }
+  
     $$ = $1; /* just pass information */
     AST_Node_VAR *temp = (AST_Node_VAR*) $1;
     char* temp_str = (char*) malloc(sizeof(temp->entry->name) + 1);
@@ -751,7 +791,7 @@ assignment: var_ref ASSIGN_OP expression
     if (type1 == REAL_TYPE && type2 == INT_TYPE){
       temp2->val.fval = (float)temp2->val.ival;
     }
-    set_value(temp->entry->name, temp2->val);
+    set_value(temp->entry->name, temp2->val, yyout);
   }
 }
 ;
@@ -1077,18 +1117,18 @@ parameter: { declare = 1; } type variable
     declare = 0;
     // set type of symbol table entry	
     if($3->stype == UNDEF){ /* "simple" type */
-        set_type($3->name, $2, UNDEF); 
+        set_type($3->name, $2, UNDEF, yyout);
     }
     $$ = def_param($2, $3->name, 0); //always pass by value
 }
 ;
 
 
-enum_statement : ENUM IDENT LEFT_CURLY_BRACKET enum_list RIGHT_CURLY_BRACKET SEMICOLON;
+enum_statement: {ENUM_decl= 1;} ENUM IDENT  LEFT_CURLY_BRACKET{declare = 1; } names {ENUM_decl = 0; declare=0; current_enum_val=0;} RIGHT_CURLY_BRACKET  SEMICOLON;
 
-enum_list: one_val | enum_list COMMA one_val ;
+/* enum_list: one_val | enum_list COMMA one_val ;
 
-one_val: IDENT | var_init ;
+one_val: IDENT | var_init ; */
 
 func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 {	

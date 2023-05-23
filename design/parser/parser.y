@@ -145,6 +145,7 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
             // variable
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
+
                 //  generate a string of "push" then the name
                 char* push = "push ";
                 char* temp_name = temp->names[i]->name;
@@ -1032,6 +1033,7 @@ int main (int argc, char *argv[]){
     // parsing
     int flag;
     yyin = fopen(argv[1], "r");
+    
     flag = yyparse();
     if ( flag == 0 ){
       printf("/*--------------Your program is syntactically correct!-------*/\n");

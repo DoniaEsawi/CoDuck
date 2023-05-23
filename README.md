@@ -8,11 +8,11 @@
 # TODO
 
 - [ ] code generation using stack machines
-- [ ] enums (i don't know :" )
+- [x] enums
 - [x] switch cases (should be easy)
-- [ ] if variable is not initialized, then warning
-- [ ] if variable is used without being initialized, then error (in char and strings only)
-- [ ] if variable is not used, then warning
+- [x] if variable is not initialized, then warning
+- [x] if variable is used without being initialized, then error (in char and strings only)
+- [x] if variable is not used, then warning
 - [x] Check if always false, then warning
 - [x] do until (easy)
 - [x] handling constant variables checks

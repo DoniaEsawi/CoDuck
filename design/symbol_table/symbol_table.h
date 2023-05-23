@@ -121,9 +121,9 @@ int func_declare(char *name, int ret_type,
 int func_param_check(char *name, int num_of_calls,
                      int **par_types, int *num_of_pars, int lineno); // check parameters of function calls
 // Type Functions
-void set_type(char *name, int st_type, int inf_type); // set the type of an entry (declaration)
-void set_value(char *name, Value val);                // set the type of an entry (declaration)
-int get_type(char *name);                             // get the type of an entry
+void set_type(char *name, int st_type, int inf_type, FILE *output); // set the type of an entry (declaration)
+void set_value(char *name, Value val, FILE *output);                // set the type of an entry (declaration)
+int get_type(char *name);                                           // get the type of an entry
 
 // Revisit Queue Functions
 void add_to_queue(ListNode *entry, char *name, int type); // add to queue
@@ -134,6 +134,7 @@ int revisit(char *name);     // revisit entry by also removing it from queue
 void revisit_dump(FILE *of); // dump file
 
 void print_new_scope_symbol_table(FILE *of, int scope); // print the symbol table of the new scope
+void print_scope(FILE *output);
 
 // void incr_scope(int lineno);
 
@@ -144,3 +145,4 @@ void incr_scope(int lineno);   // go to next scope
 void check_undeclared_variables();
 void set_constant(char *name, int val);
 int isConst(char *name);
+Value get_value(char *name);
