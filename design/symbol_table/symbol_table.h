@@ -122,6 +122,7 @@ int func_param_check(char *name, int num_of_calls,
                      int **par_types, int *num_of_pars, int lineno); // check parameters of function calls
 // Type Functions
 void set_type(char *name, int st_type, int inf_type); // set the type of an entry (declaration)
+void set_value(char *name, Value val);                // set the type of an entry (declaration)
 int get_type(char *name);                             // get the type of an entry
 
 // Revisit Queue Functions

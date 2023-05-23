@@ -121,6 +121,7 @@ void insert(char *name, int lineno, int length, int type)
                 }
                 else if (function_decl == 1)
                 {
+
                     fprintf(stderr,
                             "A multiple declaration of function %s at line %d\n",
                             name, lineno);
@@ -175,7 +176,12 @@ ListNode *lookup(char *name)
 
     return list; // if NULL , the token is not in the list
 }
-
+void set_value(char *name, Value val)
+{
+    /* lookup entry */
+    ListNode *l = lookup(name);
+    l->val = val;
+}
 void set_type(char *name, int stype, int inf_type)
 {
     /* lookup entry */
@@ -230,9 +236,11 @@ void hide_scope(FILE *output)
     int i;
     // printf("Hiding scope \'%d\':\n", current_scope);
     /* for all the lists */
-    fprintf(output, "------------ -------------- ------ --------------------------- ------------ \n");
-    fprintf(output, "Name         Type           Scope  Parent Declared in          Line Numbers \n");
-    fprintf(output, "------------ -------------- ------ --------------------------- ------------ \n");
+    fprintf(output, "==================================================================================================================================\n");
+    fprintf(output, "                                   Scope Symbol Table                                    \n");
+    fprintf(output, "------------ -------------- ------------ --------------------------- ------- -----------------------------------------------------\n");
+    fprintf(output, "Name         Type            Value       Parent Declared in          Scope   Line Numbers\n");
+    fprintf(output, "------------ -------------- ------------ --------------------------- ------- -----------------------------------------------------\n");
 
     for (i = 0; i < HASHTABLESIZE; i++)
     {
@@ -246,35 +254,35 @@ void hide_scope(FILE *output)
                 fprintf(output, "%-13s", list->name);
                 if (list->stype == INT_TYPE)
                 {
-                    fprintf(output, "%-6s", "INT");
-                    fprintf(output, "%-6d", list->val.ival);
+                    fprintf(output, "%-15s", "INT");
+                    fprintf(output, "%-13d", list->val.ival);
                 }
                 else if (list->stype == REAL_TYPE)
                 {
-                    fprintf(output, "%-6s", "REAL");
-                    fprintf(output, "%-6.3f", list->val.fval);
+                    fprintf(output, "%-15s", "REAL");
+                    fprintf(output, "%-13.3f", list->val.fval);
                 }
 
                 else if (list->stype == STR_TYPE)
                 {
-                    fprintf(output, "%-6s", "STRING");
-                    fprintf(output, "%-6s", list->val.sval);
+                    fprintf(output, "%-15s", "STRING");
+                    fprintf(output, "%-13s", list->val.sval);
                 }
                 else if (list->stype == CHAR_TYPE)
                 {
-                    fprintf(output, "%-6s", "CHAR");
-                    fprintf(output, "%-6s", list->val.cval);
+                    fprintf(output, "%-15s", "CHAR");
+                    fprintf(output, "%-13s", list->val.cval);
                 }
                 else if (list->stype == VOID_TYPE)
-                    fprintf(output, "%-6s", "VOID");
-                else if (list->stype == BOOL_TYPE)
-                    fprintf(output, "%-6s", "BOOLEAN");
-
+                {
+                    fprintf(output, "%-15s", "VOID");
+                    fprintf(output, "%-13s", " ");
+                }
                 else if (list->stype == BOOL_TYPE)
                 {
                     fprintf(output, "%-15s", "BOOLEAN");
+                    fprintf(output, "%-13d", list->val.ival);
                 }
-
                 // for function type
                 else if (list->stype == FUNCTION_TYPE)
                 {
@@ -282,38 +290,50 @@ void hide_scope(FILE *output)
                     if (list->inf_type == INT_TYPE)
                     {
                         fprintf(output, "%-6s", "INT");
-                        fprintf(output, "%-6d", list->val.ival);
+                        fprintf(output, "%-13d", list->val.ival);
                     }
                     else if (list->inf_type == REAL_TYPE)
                     {
                         fprintf(output, "%-6s", "REAL");
-                        fprintf(output, "%-6.3f", list->val.fval);
+                        fprintf(output, "%-13.3f", list->val.fval);
                     }
 
                     else if (list->inf_type == STR_TYPE)
                     {
                         fprintf(output, "%-6s", "STRING");
-                        fprintf(output, "%-6s", list->val.sval);
+                        fprintf(output, "%-13s", list->val.sval);
                     }
                     else if (list->inf_type == CHAR_TYPE)
                     {
                         fprintf(output, "%-6s", "CHAR");
-                        fprintf(output, "%-6s", list->val.cval);
+                        fprintf(output, "%-13s", list->val.cval);
                     }
                     else if (list->inf_type == VOID_TYPE)
-                        fprintf(output, "%-6s", "VOID");
+                    {
+                        fprintf(output, "%-15s", "VOID");
+                        fprintf(output, "%-13s", " ");
+                    }
                     else if (list->inf_type == BOOL_TYPE)
+                    {
                         fprintf(output, "%-6s", "BOOLEAN");
+                        fprintf(output, "%-13d", list->val.ival);
+                    }
                     else
-                        fprintf(output, "%-4s", "UNDEF");
+                    {
+                        fprintf(output, "%-6s", "UNDEF");
+                        fprintf(output, "%-13s", " ");
+                    }
                 }
 
                 else
+                {
                     fprintf(output, "%-15s", "UNDEF"); // if UNDEF or 0
-                fprintf(output, "   %d   ", list->scope);
+                    fprintf(output, "%-13s", " ");
+                }
+                fprintf(output, "%-28d", list->parent);
+                fprintf(output, "%-9d", list->scope);
                 Ref *temp = list->lines;
                 int l_nos = 0;
-                fprintf(output, "%-15d", list->parent);
 
                 while (temp != NULL)
                 {
@@ -332,6 +352,8 @@ void hide_scope(FILE *output)
             symbol_table[i] = list;
         }
     }
+    fprintf(output, "==================================================================================================================================\n");
+
     current_scope--;
 }
 
@@ -426,9 +448,11 @@ int func_param_check(char *name, int num_of_calls,
 
 void dump_symboltable(FILE *output)
 {
-    fprintf(output, "------------ -------------- ------- ------ ------------\n");
-    fprintf(output, "Name         Type            Value   Scope  Line Numbers\n");
-    fprintf(output, "------------ -------------- ------- ------ ------------\n");
+    fprintf(output, "======================================================================================================\n");
+    fprintf(output, "                       Main Symbol Table                     \n");
+    fprintf(output, "------------ -------------- ------------ ------- -----------------------------------------------------\n");
+    fprintf(output, "Name         Type            Value        Scope  Line Numbers\n");
+    fprintf(output, "------------ -------------- ------------ ------- -----------------------------------------------------\n");
     for (int i = 0; i < HASHTABLESIZE; i++)
     {
         if (symbol_table[i] != NULL)
@@ -440,138 +464,82 @@ void dump_symboltable(FILE *output)
                 fprintf(output, "%-13s", list->name);
                 if (list->stype == INT_TYPE)
                 {
-                    fprintf(output, "%-6s", "INT");
-                    fprintf(output, "%-6d", list->val.ival);
-                }
-                else if (list->stype == REAL_TYPE)
-                {
-                    fprintf(output, "%-6s", "REAL");
-                    fprintf(output, "%-6.3f", list->val.fval);
-                }
-
-                else if (list->stype == STR_TYPE)
-                {
-                    fprintf(output, "%-6s", "STRING");
-                    fprintf(output, "%-6s", list->val.sval);
-                }
-                else if (list->stype == CHAR_TYPE)
-                {
-                    fprintf(output, "%-6s", "CHAR");
-                    fprintf(output, "%-6s", list->val.cval);
-                }
-                else if (list->stype == VOID_TYPE)
-                    fprintf(output, "%-6s", "VOID");
-                else if (list->stype == BOOL_TYPE)
-                    fprintf(output, "%-6s", "BOOLEAN");
-
-                else if (list->stype == BOOL_TYPE)
-                {
-                    fprintf(output, "%-15s", "BOOLEAN");
-                }
-
-                // for function type
-                else if (list->stype == FUNCTION_TYPE)
-                {
-                    fprintf(output, "func ret ");
-                    if (list->inf_type == INT_TYPE)
-                    {
-                        fprintf(output, "%-6s", "INT");
-                        fprintf(output, "%-6d", list->val.ival);
-                    }
-                    else if (list->inf_type == REAL_TYPE)
-                    {
-                        fprintf(output, "%-6s", "REAL");
-                        fprintf(output, "%-6.3f", list->val.fval);
-                    }
-
-                    else if (list->inf_type == STR_TYPE)
-                    {
-                        fprintf(output, "%-6s", "STRING");
-                        fprintf(output, "%-6s", list->val.sval);
-                    }
-                    else if (list->inf_type == CHAR_TYPE)
-                    {
-                        fprintf(output, "%-6s", "CHAR");
-                        fprintf(output, "%-6s", list->val.cval);
-                    }
-                    else if (list->inf_type == VOID_TYPE)
-                        fprintf(output, "%-6s", "VOID");
-                    else if (list->inf_type == BOOL_TYPE)
-                        fprintf(output, "%-6s", "BOOLEAN");
-                    else
-                        fprintf(output, "%-4s", "UNDEF");
-                }
-
-                else
-                    fprintf(output, "%-15s", "UNDEF"); // if UNDEF or 0
-
-                fprintf(output, "   %d   ", list->scope);
-                Ref *temp = list->lines;
-                while (temp != NULL)
-                {
-                    fprintf(output, "%-6d ", temp->lineNo);
-                    // i++;
-                    temp = temp->next;
-                }
-                fprintf(output, "\n");
-                list = list->next;
-            }
-        }
-    }
-}
-
-void print_new_scope_symbol_table(FILE *output, int scope)
-{
-    fprintf(output, "------------ -------------- ------ ------------\n");
-    fprintf(output, "Name         Type           Scope  Line Numbers\n");
-    fprintf(output, "------------ -------------- ------ ------------\n");
-    for (int i = 0; i < HASHTABLESIZE; i++)
-    {
-        if (symbol_table[i] != NULL)
-        {
-            ListNode *list = symbol_table[i];
-            while (list != NULL)
-            {
-                fprintf(output, "%-13s", list->name);
-                if (list->stype == INT_TYPE)
                     fprintf(output, "%-15s", "INT");
+                    fprintf(output, "%-15d", list->val.ival);
+                }
                 else if (list->stype == REAL_TYPE)
+                {
                     fprintf(output, "%-15s", "REAL");
-                else if (list->stype == CHAR_TYPE)
-                    fprintf(output, "%-15s", "CHAR");
+                    fprintf(output, "%-15.3f", list->val.fval);
+                }
+
                 else if (list->stype == STR_TYPE)
+                {
                     fprintf(output, "%-15s", "STRING");
-                else if (list->stype == ARRAY_TYPE)
-                    fprintf(output, "%-15s", "ARRAY");
-                // else if (list->stype == 7)  fprintf(output,"%-15s","FUNCTION");
+                    fprintf(output, "%-15s", list->val.sval);
+                }
+                else if (list->stype == CHAR_TYPE)
+                {
+                    fprintf(output, "%-15s", "CHAR");
+                    fprintf(output, "%-15s", list->val.cval);
+                }
                 else if (list->stype == VOID_TYPE)
+                {
                     fprintf(output, "%-15s", "VOID");
+                    fprintf(output, "%-15s", " ");
+                }
                 else if (list->stype == BOOL_TYPE)
+                {
                     fprintf(output, "%-15s", "BOOLEAN");
+                    fprintf(output, "%-15d", list->val.ival);
+                }
 
                 // for function type
                 else if (list->stype == FUNCTION_TYPE)
                 {
                     fprintf(output, "func ret ");
                     if (list->inf_type == INT_TYPE)
+                    {
                         fprintf(output, "%-6s", "INT");
+                        fprintf(output, "%-15d", list->val.ival);
+                    }
                     else if (list->inf_type == REAL_TYPE)
+                    {
                         fprintf(output, "%-6s", "REAL");
+                        fprintf(output, "%-15.3f", list->val.fval);
+                    }
+
                     else if (list->inf_type == STR_TYPE)
+                    {
                         fprintf(output, "%-6s", "STRING");
+                        fprintf(output, "%-15s", list->val.sval);
+                    }
                     else if (list->inf_type == CHAR_TYPE)
+                    {
                         fprintf(output, "%-6s", "CHAR");
+                        fprintf(output, "%-15s", list->val.cval);
+                    }
                     else if (list->inf_type == VOID_TYPE)
+                    {
                         fprintf(output, "%-6s", "VOID");
+                        fprintf(output, "%-15s", " ");
+                    }
                     else if (list->inf_type == BOOL_TYPE)
+                    {
                         fprintf(output, "%-6s", "BOOLEAN");
+                        fprintf(output, "%-15d", list->val.ival);
+                    }
                     else
-                        fprintf(output, "%-4s", "UNDEF");
+                    {
+                        fprintf(output, "%-6s", "UNDEF");
+                        fprintf(output, "%-15s", " ");
+                    }
                 }
 
                 else
                     fprintf(output, "%-15s", "UNDEF"); // if UNDEF or 0
-                fprintf(output, "   %d   ", list->scope);
+
+                fprintf(output, "%-6d", list->scope);
                 Ref *temp = list->lines;
                 while (temp != NULL)
                 {
@@ -584,6 +552,7 @@ void print_new_scope_symbol_table(FILE *output, int scope)
             }
         }
     }
+    fprintf(output, "======================================================================================================\n");
 }
 
 // Revisit Queue Functions

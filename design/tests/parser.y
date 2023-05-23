@@ -106,10 +106,10 @@ statements { ast_traversal($3); }
 END SEMICOLON
 functions_optional { ast_traversal($7); };  */
 program:
-
-statements { ast_traversal($1); }
+functions_optional { ast_traversal($1); }
+statements { ast_traversal($3); }
 END SEMICOLON
-functions_optional { ast_traversal($5); }
+
 ;
 
 
@@ -144,8 +144,50 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
             // variable
+            printf("name is %s\n", temp->names[i]->name);
+            printf("temp data type is %d\n", temp->data_type);
+            printf("node type is %d\n", $1);
+            printf("temp stype is %d\n", temp->names[i]->stype);
+            
             if(temp->names[i]->stype == UNDEF){
+                
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
+            }else{
+               if (temp->data_type== INT_TYPE){
+                if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+               }
+              else if (temp->data_type== REAL_TYPE){
+                if(temp->names[i]->stype !=REAL_TYPE&&temp->names[i]->stype !=INT_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+                }
+                else if (temp->data_type== CHAR_TYPE){
+                if(temp->names[i]->stype !=CHAR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== BOOL_TYPE){
+                if(temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== STR_TYPE){
+                if(temp->names[i]->stype !=STR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                
             }
             
         }
@@ -424,6 +466,7 @@ assignment: var_ref ASSIGN_OP expression
 	int type2 = expression_data_type($3);
   /* the last function will give us information about revisits */
   /* contains revisit => add assignment-check to revisit queue */
+  
   if(cont_revisit == 1){	
     /* search if entry exists */
     revisit_queue *q = search_queue(temp->entry->name);
@@ -460,6 +503,11 @@ assignment: var_ref ASSIGN_OP expression
 			lineno
     );
 	}
+  if($3->type==CONST_NODE)
+  {
+    AST_Node_Const *temp2 = (AST_Node_Const*) $3;
+    set_value(temp->entry->name, temp2->val);
+  }
 }
 ;
 // optional_declaration: declaration | assignment SEMICOLON| var_ref SEMICOLON;

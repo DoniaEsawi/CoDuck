@@ -130,8 +130,12 @@ return FALSE_TOKEN;}
     return IDENT;
     
     }
-{CONST_INT} {  yylval.val.ival = atoi(yytext); ret("CONST_INT"); return CONST_INT; }
-{CONST_FLOAT} { yylval.val.fval = atof(yytext); ret("CONST_FLOAT"); return CONST_FLOAT; }
+{CONST_INT} {  yylval.val.ival = atoi(yytext); 
+yylval.val.fval = atof(yytext);
+ret("CONST_INT"); return CONST_INT; }
+{CONST_FLOAT} { yylval.val.fval = atof(yytext);
+ yylval.val.ival = atoi(yytext); 
+ ret("CONST_FLOAT"); return CONST_FLOAT; }
 {CONST_CHAR} { yylval.val.cval = yytext[0]; ret("CONST_CHAR"); return CONST_CHAR; }
 {STRING_LITERAL} { yylval.val.sval = malloc(yyleng * sizeof(char)); 
                    strcpy(yylval.val.sval, yytext); ret("STRING_LITERAL"); return STRING_LITERAL; }
