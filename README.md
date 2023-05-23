@@ -24,21 +24,50 @@
 
 # program structure
 
-1. // declarations
-1. // statements
-1. // return;
 1. // optional function declarations
+1. // statements
+1. // end;
 
 # Some limitations:
 
 1. in for loops declaration (i=0; i<1; i++) is valid, but (int i=0; i<1; i++) is not
-1. inside functions body, the syntax must be the following:
+1. In case of initialization in the same line of declaration, only constants are allowed. i.e. integer x = 5; is valid, but integer x = y; is not
+1. There's no bit-wise logical operations
 
-- // optional declarations
-- // optional statements
-- // optional return
+# Symbol table
 
-3. There's no bit-wise logical operations
+- Global scope table is printed after parsing
+- for each new scope, we create a new symboltable and we print it while exiting the scope
+
+1. Global Symbol Table structure
+
+```
+==================================================================================
+                                   Scope Symbol Table                                    
+------------ -------------- ------------ --------------------------- ------- ----------
+Name         Type            Value       Parent Declared in          Scope   Line Numbers
+------------ -------------- ------------ --------------------------- ------- ----------
+a            INT            0            2                           1        4      
+b            INT            8            2                           1        5      6      
+j            INT            2            2                           1        3      10     15     22     27     
+==================================================================================
+
+
+```
+
+1. Block Symbol Table structure
+
+```
+=====================================================================
+                       Main Symbol Table
+------------ -------------- ------------ ------- -------------------
+Name         Type            Value        Scope  Line Numbers
+------------ -------------- ------------ ------- -------------------
+test         STRING         (null)         0     48
+coduck       INT            1              0     34
+func1        func ret INT   0              0     2
+===================================================================
+```
 
 # Language specs
 
