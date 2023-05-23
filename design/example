@@ -1,5 +1,6 @@
-func main()void{
-	do{
-		integer i = 1;
-		}until(condition);
+float i ;
+i = 0;
+integer main (){
+
+    return 0;
 }

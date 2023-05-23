@@ -5,6 +5,70 @@
     <img src="https://user-images.githubusercontent.com/56982963/233789407-d3b3fea9-8e90-4e1b-b3d5-7ecd84d6b850.svg#gh-light-mode-only"/>
 </div>
 
+# TODO
+
+- [ ] code generation using stack machines
+- [x] enums
+- [x] switch cases (should be easy)
+- [x] if variable is not initialized, then warning
+- [x] if variable is used without being initialized, then error (in char and strings only)
+- [x] if variable is not used, then warning
+- [x] Check if always false, then warning
+- [x] do until (easy)
+- [x] handling constant variables checks
+- [x] (Not sure if needed) treating INT as a subtype of REAL (double, floats) "y3ni momken a3mel assignment l variable float b int" in operations only
+- [x] check the symbol table format (scopes)
+- [x] print the scope symbol table as a table in the output file
+- [ ] test the semantic analyzer more
+- [ ] edit the error messages to be more indicative (super easy)
+
+# program structure
+
+1. // optional function declarations
+1. // statements
+1. // end;
+
+# Some limitations:
+
+1. in for loops declaration (i=0; i<1; i++) is valid, but (int i=0; i<1; i++) is not
+1. In case of initialization in the same line of declaration, only constants are allowed. i.e. integer x = 5; is valid, but integer x = y; is not
+1. There's no bit-wise logical operations
+
+# Symbol table
+
+- Global scope table is printed after parsing
+- for each new scope, we create a new symboltable and we print it while exiting the scope
+
+1. Global Symbol Table structure
+
+```
+==================================================================================
+                                   Scope Symbol Table                                    
+------------ -------------- ------------ --------------------------- ------- ----------
+Name         Type            Value       Parent Declared in          Scope   Line Numbers
+------------ -------------- ------------ --------------------------- ------- ----------
+a            INT            0            2                           1        4      
+b            INT            8            2                           1        5      6      
+j            INT            2            2                           1        3      10     15     22     27     
+==================================================================================
+
+
+```
+
+1. Block Symbol Table structure
+
+```
+=====================================================================
+                       Main Symbol Table
+------------ -------------- ------------ ------- -------------------
+Name         Type            Value        Scope  Line Numbers
+------------ -------------- ------------ ------- -------------------
+test         STRING         (null)         0     48
+coduck       INT            1              0     34
+func1        func ret INT   0              0     2
+===================================================================
+```
+
 # Language specs
 
 ## Tokens
@@ -243,6 +307,15 @@ y= 1
 | store J         | used for the store of the previous value in the variable J (i.e J = 1 + 2 will be 1 , 2, ADD, store J)|
 | if false goto # | if condition false goto the else part at line (#)|
 
+
+## Quadruples
+
+| Quadruple  | Quadruple Description | 
+| :-------------- |:----------------:|
+| push J          | used for the variables declarations (i.e int J;) |
+| Add,Sub,Mul,<,> | used for the addtion of the two previous operands (i.e J = 1 + 2 will be 1 , 2, ADD) |
+| store J         | used for the store of the previous value in the variable J (i.e J = 1 + 2 will be 1 , 2, ADD, store J)|
+| if false goto # | if condition false goto the else part at line (#)|
 
 ## How To Run
 

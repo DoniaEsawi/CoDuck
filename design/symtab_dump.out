@@ -1,6 +1,6 @@
 ------------------------ ------------ ------------------
 Name                     Type         Line Number       
 ------------------------ ------------ ------------------
-condition                UNDEF        4      
-i                        UNDEF        3      
-main                     UNDEF        1      
+a                        UNDEF        5      
+i                        UNDEF        1      
+hello                    UNDEF        3      

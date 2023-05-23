@@ -1,3 +1,9 @@
 1.svg
 2.svg
 Draft/*
+design/parser/parser.tab.c
+design/parser/parser.tab.h
+.vscode/settings.json
+design/tests/compiler.exe
+.vscode/c_cpp_properties.json
+design/tests/lex.yy.c
