@@ -143,14 +143,8 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
 
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
-            // variable
-            printf("name is %s\n", temp->names[i]->name);
-            printf("temp data type is %d\n", temp->data_type);
-            printf("node type is %d\n", $1);
-            printf("temp stype is %d\n", temp->names[i]->stype);
-            
+            set_constant(temp->names[i]->name, 0);
             if(temp->names[i]->stype == UNDEF){
-                
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
             }else{
                if (temp->data_type== INT_TYPE){
@@ -193,7 +187,7 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         }
     }
   |
-  CONST type { declare = 1; } names { declare = 0; } SEMICOLON
+  CONST type { declare = 1; } init{ add_to_names($4); declare = 0; } SEMICOLON
     {
         int i;
         $$ = new_ast_decl_node($2, names, nc, 1);
@@ -204,17 +198,47 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
             // variable
+            set_constant(temp->names[i]->name, 1);
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
+            }else{
+               if (temp->data_type== INT_TYPE){
+                if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+               }
+              else if (temp->data_type== REAL_TYPE){
+                if(temp->names[i]->stype !=REAL_TYPE&&temp->names[i]->stype !=INT_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+                }
+                else if (temp->data_type== CHAR_TYPE){
+                if(temp->names[i]->stype !=CHAR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== BOOL_TYPE){
+                if(temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== STR_TYPE){
+                if(temp->names[i]->stype !=STR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                
             }
-            // pointer
-            else if(temp->names[i]->stype == POINTER_TYPE){
-                set_type(temp->names[i]->name, POINTER_TYPE, temp->data_type);
-            }
-            // array
-            else if(temp->names[i]->stype == ARRAY_TYPE){
-                set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
-            }
+            
         }
     }
 ;
@@ -242,9 +266,7 @@ init: var_init { $$ = $1; };
 var_init:  IDENT ASSIGN_OP value
 { 
 	AST_Node_Const *temp = (AST_Node_Const*) $3;
-  
-  printf("temp values is %d", temp->val);
-	$1->val = temp->val;
+  	$1->val = temp->val;
 	$1->stype = temp->const_type;
 	$$ = $1;
 }
@@ -416,11 +438,21 @@ else_if: ELIF LEFT_PAREN expression RIGHT_PAREN tail
 {
     AST_Node *temp = new_ast_elsif_node($3, $5);
     add_elseif(temp);
+    int is_false=is_always_false($3);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+
 }
         | else_if ELIF LEFT_PAREN expression RIGHT_PAREN tail
 {
     AST_Node *temp = new_ast_elsif_node($4, $6);
     add_elseif(temp);
+    int is_false=is_always_false($4);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+
 }
 ;
 
@@ -436,15 +468,33 @@ else_part: ELSE tail
 }
 ;        
 
-if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail else_if else_part 
+if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail {
+
+    int is_false=is_always_false($3);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+    printf("is false %d\n", is_false);
+
+}else_if else_part 
   {
-    $$ = new_ast_if_node($3, $5, elsifs, elseif_count, $7);
+    $$ = new_ast_if_node($3, $5, elsifs, elseif_count, $8);
     elseif_count = 0;
     elsifs = NULL;
+    printf("is false beforee \n");
+
   }
-| IF LEFT_PAREN expression RIGHT_PAREN tail else_part
+| IF LEFT_PAREN expression RIGHT_PAREN tail {
+  int is_false=is_always_false($3);
+
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+
+}else_part
 {
-    $$ = new_ast_if_node($3, $5, NULL, 0, $6);
+    $$ = new_ast_if_node($3, $5, NULL, 0, $7);
+    
 }
 ;
 
@@ -462,7 +512,14 @@ assignment: var_ref ASSIGN_OP expression
 	AST_Node_VAR *temp = (AST_Node_VAR*) $1;
 	$$ = new_ast_assign_node(temp->entry, $3);
   /* find datatypes */
+  int is_const = isConst(temp->entry->name);
+  if(is_const == 1){
+    fprintf(stderr, "Error: assignment to constant %s at line %d\n",
+      temp->entry->name, lineno);
+    exit(1);;
+  }
   int type1 = get_type(temp->entry->name);
+
 	int type2 = expression_data_type($3);
   /* the last function will give us information about revisits */
   /* contains revisit => add assignment-check to revisit queue */

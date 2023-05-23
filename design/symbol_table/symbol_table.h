@@ -54,7 +54,7 @@ typedef struct ListNode
     Value val;
     // types
     int stype; // type of the symbol table
-
+    int is_constant;
     //////Not used///////////////////////
     int inf_type; // type of the information (array), or return type of the function
     // for arrays
@@ -142,3 +142,5 @@ void hide_scope(FILE *output); // hide the current scope
 void incr_scope(int lineno);   // go to next scope
 
 void check_undeclared_variables();
+void set_constant(char *name, int val);
+int isConst(char *name);

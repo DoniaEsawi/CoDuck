@@ -53,7 +53,17 @@ AST_Node *new_ast_const_node(int const_type, Value val)
 	// set entries
 	v->type = CONST_NODE;
 	v->const_type = const_type;
+
 	v->val = val;
+	// // check if sval is null pointer
+	// if (val.sval == NULL)
+	// {
+	// 	v->val.sval = "";
+	// }
+	// if (val.cval == '\0')
+	// {
+	// 	v->val.cval = ' ';
+	// }
 
 	// return type-casted result
 	return (struct AST_Node *)v;
@@ -509,6 +519,322 @@ AST_Node *new_ast_decl_params_node(Prameter *parameters, int num_of_pars, Pramet
 
 	// return type-casted result
 	return (struct AST_Node *)v;
+}
+// Value expression_value(AST_Node *node)
+// {
+// 	switch (node->type)
+// 	{
+// 	case ARITHM_NODE:
+// 		switch (node->op)
+// 		{
+// 		case OP_ADD:
+// 			return expression_value(node->left) + expression_value(node->right);
+// 			/* code */
+// 			break;
+
+// 		default:
+// 			break;
+// 		}
+
+// 		/* code */
+// 		break;
+
+// 	default:
+// 		break;
+// 	}
+// }
+int is_always_false(AST_Node *node)
+{
+	/* temp nodes */
+	AST_Node_Arithm *temp_arithm;
+	AST_Node_Incr *temp_incr;
+	AST_Node_Bool *temp_bool;
+	AST_Node_Rel *temp_rel;
+	AST_Node_Equ *temp_equ;
+	AST_Node_VAR *temp_ref;
+	AST_Node_Const *temp_const;
+	AST_Node_Const *temp_const_left;
+	AST_Node_Const *temp_const_right;
+	AST_Node_Func_Call *temp_func_call;
+
+	/* return type depends on the AST node type */
+	switch (node->type)
+	{
+
+	case BOOL_NODE: /* boolean expression */
+		temp_bool = (AST_Node_Bool *)node;
+		// check if the left side is constant
+
+		/* set datatype again */
+		if (temp_bool->op != OP_NOT)
+		{ /* AND or OR */
+			if (temp_bool->left->type != CONST_NODE || temp_bool->right->type != CONST_NODE)
+			{
+				return 0;
+			}
+			temp_const_left = (AST_Node_Const *)temp_bool->left;
+			temp_const_right = (AST_Node_Const *)temp_bool->right;
+			if (temp_const_right->const_type != BOOL_TYPE || temp_const_left->const_type != BOOL_TYPE)
+			{
+				return 0;
+			}
+			if (temp_bool->op == OP_AND)
+			{
+				return !(temp_const_left->val.ival && temp_const_right->val.ival);
+			}
+			else
+			{
+				return !(temp_const_left->val.ival || temp_const_right->val.ival);
+			}
+		}
+		else
+		{ /* NOT */
+			if (temp_bool->left->type != CONST_NODE)
+			{
+				return 0;
+			}
+
+			temp_const_left = (AST_Node_Const *)temp_bool->left;
+			if (temp_const_left->const_type != BOOL_TYPE)
+			{
+				return 0;
+			}
+			return (temp_const_left->val.ival);
+		}
+
+		break;
+
+	case REL_NODE: /* relational expression */
+		temp_rel = (AST_Node_Rel *)node;
+		if (temp_rel->left->type != CONST_NODE || temp_rel->right->type != CONST_NODE)
+		{
+			return 0;
+		}
+
+		temp_const_left = (AST_Node_Const *)temp_rel->left;
+
+		temp_const_right = (AST_Node_Const *)temp_rel->right;
+
+		if (temp_const_left->const_type == INT_TYPE || temp_const_left->const_type == REAL_TYPE)
+		{
+
+			if (temp_const_right->const_type == INT_TYPE || temp_const_right->const_type == REAL_TYPE)
+			{
+				float left;
+				float right;
+
+				if (temp_const_left->const_type == INT_TYPE)
+				{
+					left = temp_const_left->val.ival;
+				}
+				else
+				{
+					left = temp_const_left->val.fval;
+				}
+				if (temp_const_right->const_type == INT_TYPE)
+				{
+					right = temp_const_right->val.ival;
+				}
+				else
+				{
+					right = temp_const_right->val.fval;
+				}
+				switch (temp_rel->op)
+				{
+				case LESS:
+
+					return !(left < right);
+					break;
+				case LESS_EQUAL:
+					return !(left <= left);
+					break;
+				case GREATER:
+					return !(left > right);
+					break;
+				case GREATER_EQUAL:
+					return !(left >= right);
+					break;
+				default:
+					break;
+				}
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else if (temp_const_left->const_type == CHAR_TYPE && temp_const_right->const_type == CHAR_TYPE)
+		{
+			char left = temp_const_left->val.cval;
+			char right = temp_const_right->val.cval;
+			switch (temp_rel->op)
+			{
+			case LESS:
+				return !(left < right);
+				break;
+			case LESS_EQUAL:
+				return !(left <= left);
+				break;
+			case GREATER:
+				return !(left > right);
+				break;
+			case GREATER_EQUAL:
+				return !(left >= right);
+				break;
+			default:
+				break;
+			}
+		}
+
+		else if (temp_const_left->const_type == BOOL_TYPE && temp_const_right->const_type == BOOL_TYPE)
+		{
+			int left = temp_const_left->val.ival;
+			int right = temp_const_right->val.ival;
+			switch (temp_rel->op)
+			{
+			case LESS:
+				return !(left < right);
+				break;
+			case LESS_EQUAL:
+				return !(left <= left);
+				break;
+			case GREATER:
+				return !(left > right);
+				break;
+			case GREATER_EQUAL:
+				return !(left >= right);
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+		break;
+
+	case EQU_NODE: /* equality expression */
+		temp_equ = (AST_Node_Equ *)node;
+		if (node->left->type != CONST_NODE || node->right->type != CONST_NODE)
+		{
+			return 0;
+		}
+		temp_const_left = (AST_Node_Const *)temp_equ->left;
+		temp_const_right = (AST_Node_Const *)temp_equ->right;
+		if (temp_const_left->const_type == INT_TYPE || temp_const_left->const_type == REAL_TYPE)
+		{
+			if (temp_const_right->const_type == INT_TYPE || temp_const_right->const_type == REAL_TYPE)
+			{
+				float left;
+				float right;
+				if (temp_const_left->const_type == INT_TYPE)
+				{
+					left = temp_const_left->val.ival;
+				}
+				else
+				{
+					left = temp_const_left->val.fval;
+				}
+				if (temp_const_right->const_type == INT_TYPE)
+				{
+					right = temp_const_right->val.ival;
+				}
+				else
+				{
+					right = temp_const_right->val.fval;
+				}
+				switch (temp_equ->op)
+				{
+				case EQUAL:
+					return !(left == right);
+					break;
+				case NOT_EQUAL:
+					return !(left != right);
+					break;
+				default:
+					break;
+				}
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else if (temp_const_left->const_type == CHAR_TYPE && temp_const_right->const_type == CHAR_TYPE)
+		{
+			char left = temp_const_left->val.cval;
+			char right = temp_const_right->val.cval;
+			switch (temp_equ->op)
+			{
+			case EQUAL:
+				return !(left == right);
+				break;
+			case NOT_EQUAL:
+				return !(left != right);
+				break;
+			default:
+				break;
+			}
+		}
+		else if (temp_const_left->const_type == STR_TYPE && temp_const_right->const_type == STR_TYPE)
+		{
+			char *left = temp_const_left->val.sval;
+			char *right = temp_const_right->val.sval;
+			switch (temp_equ->op)
+			{
+			case EQUAL:
+				return !(strcmp(left, right) == 0);
+				break;
+			case NOT_EQUAL:
+				return !(strcmp(left, right) != 0);
+				break;
+			default:
+				break;
+			}
+		}
+		else if (temp_const_left->const_type == BOOL_TYPE && temp_const_right->const_type == BOOL_TYPE)
+		{
+			int left = temp_const_left->val.ival;
+			int right = temp_const_right->val.ival;
+			switch (temp_equ->op)
+			{
+			case EQUAL:
+				return !(left == right);
+				break;
+			case NOT_EQUAL:
+				return !(left != right);
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			return 0;
+		}
+
+		break;
+
+	case CONST_NODE: /* constant */
+		temp_const = (AST_Node_Const *)node;
+		if (temp_const->const_type == BOOL_TYPE)
+		{
+			return temp_const->val.ival == 0;
+		}
+		else if (temp_const->const_type == INT_TYPE)
+		{
+			return (temp_const->val.ival == 0);
+		}
+
+		else
+		{
+			return 0;
+		}
+		break;
+	default: /* wrong choice case */
+		return 0;
+	}
 }
 
 int expression_data_type(AST_Node *node)

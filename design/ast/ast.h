@@ -5,13 +5,13 @@ typedef enum Node_Type
 	BASIC_NODE, // no special usage (for roots only)
 	// declarations
 	DECLARATIONS, // declarations
-	DECL_NODE,	// declaration
-	CONST_NODE, // constant
+	DECL_NODE,		// declaration
+	CONST_NODE,		// constant
 	// statements
-	IF_NODE,			 // if statement
-	ELSIF_NODE,		 // else if branch  why there is no ELSE_NODE????????
-	FOR_NODE,			 // for statement
-	
+	IF_NODE,		// if statement
+	ELSIF_NODE, // else if branch  why there is no ELSE_NODE????????
+	FOR_NODE,		// for statement
+
 	WHILE_NODE,		 // while statement
 	DO_UNTIL_NODE, // do while statement
 	ASSIGN_NODE,	 // assigment
@@ -24,13 +24,13 @@ typedef enum Node_Type
 	EQU_NODE,		 // equality expression
 	VAR_NODE,		 // identifier in expression
 	// functions
-	FUNC_DECLS,   // function declarations
+	FUNC_DECLS,	 // function declarations
 	FUNC_DECL,	 // function declaration
-	RET_TYPE,     // function return type
-  DECL_PARAMS,  // function parameters
+	RET_TYPE,		 // function return type
+	DECL_PARAMS, // function parameters
 	RETURN_NODE, // return statement of functions
-	FUNC_CALL,		 // function call
-  CALL_PARAMS,  // function call parameters
+	FUNC_CALL,	 // function call
+	CALL_PARAMS, // function call parameters
 
 	// statements
 	STATEMENTS, // statements
@@ -99,22 +99,25 @@ typedef struct AST_Node
 	struct AST_Node *left;	// left child
 	struct AST_Node *right; // right child
 } AST_Node;
-typedef struct AST_Node_Decl_Params{
+typedef struct AST_Node_Decl_Params
+{
 	enum Node_Type type; // node type
 
 	// parameters
 	Prameter *parameters;
 	int num_of_pars;
-}AST_Node_Decl_Params;
-typedef struct AST_Node_Declarations{
-    enum Node_Type type; // node type
+} AST_Node_Decl_Params;
+typedef struct AST_Node_Declarations
+{
+	enum Node_Type type; // node type
 
-    // declarations
-    struct AST_Node **declarations;
-    int declaration_count;
-}AST_Node_Declarations;
+	// declarations
+	struct AST_Node **declarations;
+	int declaration_count;
+} AST_Node_Declarations;
 
-typedef struct AST_Node_Func_Decl{
+typedef struct AST_Node_Func_Decl
+{
 	enum Node_Type type; // node type
 
 	// return type
@@ -127,21 +130,23 @@ typedef struct AST_Node_Func_Decl{
 	struct AST_Node *declarations;
 	struct AST_Node *statements;
 	struct AST_Node *return_node;
-}AST_Node_Func_Decl;
-typedef struct AST_Node_Func_Declarations{
-    enum Node_Type type; // node type
+} AST_Node_Func_Decl;
+typedef struct AST_Node_Func_Declarations
+{
+	enum Node_Type type; // node type
 
-    // declarations
-    struct AST_Node **func_declarations;
-    int func_declaration_count;
-}AST_Node_Func_Declarations;
-typedef struct AST_Node_Ret_Type{
+	// declarations
+	struct AST_Node **func_declarations;
+	int func_declaration_count;
+} AST_Node_Func_Declarations;
+typedef struct AST_Node_Ret_Type
+{
 	enum Node_Type type; // node type
 
 	// return type
 	int ret_type;
 
-}AST_Node_Ret_Type;
+} AST_Node_Ret_Type;
 
 /* Declarations */
 typedef struct AST_Node_Decl
@@ -290,13 +295,14 @@ typedef struct AST_Node_Func_Call
 
 } AST_Node_Func_Call;
 
-typedef struct AST_Node_Call_Params{
+typedef struct AST_Node_Call_Params
+{
 	enum Node_Type type; // node type
 
 	// call parameters
 	AST_Node **params;
 	int num_of_pars;
-}AST_Node_Call_Params;
+} AST_Node_Call_Params;
 
 /* Expressions */
 typedef struct AST_Node_Arithm
@@ -307,7 +313,7 @@ typedef struct AST_Node_Arithm
 	enum Arithm_op op;
 	// data type of result
 	int data_type;
-	
+
 	struct AST_Node *left;	// left child
 	struct AST_Node *right; // right child
 } AST_Node_Arithm;
@@ -320,7 +326,7 @@ typedef struct AST_Node_Bool
 	enum Bool_op op;
 	// data type of result
 	int data_type;
-	
+
 	struct AST_Node *left;	// left child
 	struct AST_Node *right; // right child
 } AST_Node_Bool;
@@ -331,9 +337,9 @@ typedef struct AST_Node_Rel
 
 	// operator
 	enum Rel_op op;
-  // data type of result
+	// data type of result
 	int data_type;
-	
+
 	struct AST_Node *left;	// left child
 	struct AST_Node *right; // right child
 } AST_Node_Rel;
@@ -346,7 +352,7 @@ typedef struct AST_Node_Equ
 	enum Equ_op op;
 	// data type of result
 	int data_type;
-	
+
 	struct AST_Node *left;	// left child
 	struct AST_Node *right; // right child
 } AST_Node_Equ;
@@ -389,7 +395,7 @@ int expression_data_type(AST_Node *node);
 /* Statements */
 AST_Node *new_ast_if_node(AST_Node *condition, AST_Node *if_branch, AST_Node **elsif_branches,
 													int elseif_count, AST_Node *else_branch);
-													
+
 AST_Node *new_ast_elsif_node(AST_Node *condition, AST_Node *elsif_branch);
 AST_Node *new_ast_for_node(AST_Node *initialize, AST_Node *condition, AST_Node *increment, AST_Node *for_branch);
 AST_Node *new_ast_while_node(AST_Node *condition, AST_Node *while_branch);
@@ -410,7 +416,7 @@ AST_Node *new_ast_var_node(ListNode *entry);
 /* Functions */
 AST_Node *new_ast_func_decl_node(int ret_type, ListNode *entry); // function declaration
 AST_Node *new_ast_return_node(int ret_type, AST_Node *ret_val);	 // function return
-AST_Node *new_ast_ret_type_node(int ret_type); 
+AST_Node *new_ast_ret_type_node(int ret_type);
 AST_Node *new_ast_decl_params_node(Prameter *parameters, int num_of_pars, Prameter param);
 
 AST_Node *new_statements_node(AST_Node **statements, int statement_count, AST_Node *statement);
@@ -419,3 +425,4 @@ AST_Node *new_ast_call_params_node(AST_Node **params, int num_of_pars, AST_Node 
 /* Tree Traversal */
 void ast_print_node(AST_Node *node); // print information of node
 void ast_traversal(AST_Node *node);	 // tree traversal (for testing right now)
+int is_always_false(AST_Node *node);

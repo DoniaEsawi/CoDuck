@@ -196,7 +196,14 @@ void set_type(char *name, int stype, int inf_type)
         l->inf_type = inf_type;
     }
 }
-
+void set_constant(char *name, int val)
+{
+    /* lookup entry */
+    ListNode *l = lookup(name);
+    //    printf("setting type of %s to %d\n", name, stype);
+    /* set "main" type */
+    l->is_constant = val;
+}
 int get_type(char *name)
 {
     /* lookup entry */
@@ -213,6 +220,12 @@ int get_type(char *name)
         return l->inf_type;
     }
     printf("getting type of %s\n", name);
+}
+int isConst(char *name)
+{
+    /* lookup entry */
+    ListNode *l = lookup(name);
+    return l->is_constant;
 }
 
 ListNode *lookup_scope(char *name, int scope)
