@@ -144,3 +144,4 @@ void incr_scope(int lineno);   // go to next scope
 void check_undeclared_variables();
 void set_constant(char *name, int val);
 int isConst(char *name);
+Value get_value(char *name);

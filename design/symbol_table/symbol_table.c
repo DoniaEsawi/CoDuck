@@ -221,6 +221,13 @@ int get_type(char *name)
     }
     printf("getting type of %s\n", name);
 }
+Value get_value(char *name)
+{
+    /* lookup entry */
+    ListNode *l = lookup(name);
+
+    return l->val;
+}
 int isConst(char *name)
 {
     /* lookup entry */

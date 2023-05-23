@@ -37,7 +37,10 @@ print("hello world\n");
 integer j = 0;
 char f;
 char o;
-o = f;
+// o = f;
+string sss;
+string t = sss;
+
 char g;
 g = 'a';
 string test;
