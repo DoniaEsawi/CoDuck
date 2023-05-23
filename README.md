@@ -20,25 +20,92 @@
 - [x] check the symbol table format (scopes)
 - [x] print the scope symbol table as a table in the output file
 - [ ] test the semantic analyzer more
-- [ ] edit the error messages to be more indicative (super easy)
+- [x] edit the error messages to be more indicative (super easy)
+
+# Table of Contents
+
+- [CoDuck](#coduck)
+- [TODO](#todo)
+- [Table of Contents](#table-of-contents)
+- [program structure](#program-structure)
+- [Some limitations:](#some-limitations)
+- [Symbol table](#symbol-table)
+- [Language specs](#language-specs)
+  - [Tokens](#tokens)
+    - [types keywords](#types-keywords)
+    - [conditional statement keywords](#conditional-statement-keywords)
+    - [loops keywords](#loops-keywords)
+    - [funciton keywords](#funciton-keywords)
+    - [enums](#enums)
+    - [operators](#operators)
+    - [symbols](#symbols)
+    - [Other tokens](#other-tokens)
+    - [Comments](#comments)
+    - [Grammar design](#grammar-design)
+      - [Declarations](#declarations)
+        - [Variables](#variables)
+        - [Constants](#constants)
+      - [Expressions](#expressions)
+      - [Assignments](#assignments)
+      - [If-statement](#if-statement)
+      - [Swicth...case](#swicthcase)
+      - [while-loops](#while-loops)
+      - [Do Until loops](#do-until-loops)
+      - [for-statements](#for-statements)
+      - [Functions](#functions)
+      - [enums](#enums-1)
+- [How To Run](#how-to-run)
+- [Resources](#resources)
+  - [Links](#links)
+    - [C Operator Precedence](#c-operator-precedence)
+    - [C Grammar](#c-grammar)
 
 # program structure
 
-1. // declarations
-1. // statements
-1. // return;
 1. // optional function declarations
+1. // statements
+1. // end;
 
 # Some limitations:
 
 1. in for loops declaration (i=0; i<1; i++) is valid, but (int i=0; i<1; i++) is not
-1. inside functions body, the syntax must be the following:
+1. In case of initialization in the same line of declaration, only constants are allowed. i.e. integer x = 5; is valid, but integer x = y; is not
+1. There's no bit-wise logical operations
 
-- // optional declarations
-- // optional statements
-- // optional return
+# Symbol table
 
-3. There's no bit-wise logical operations
+- Global scope table is printed after parsing
+- for each new scope, we create a new symboltable and we print it while exiting the scope
+
+1. Global Symbol Table structure
+
+```
+==================================================================================
+                                   Scope Symbol Table
+------------ -------------- ------------ --------------------------- ------- ----------
+Name         Type            Value       Parent Declared in          Scope   Line Numbers
+------------ -------------- ------------ --------------------------- ------- ----------
+a            INT            0            2                           1        4
+b            INT            8            2                           1        5      6
+j            INT            2            2                           1        3      10     15     22     27
+==================================================================================
+
+
+```
+
+1. Block Symbol Table structure
+
+```
+=====================================================================
+                       Main Symbol Table
+------------ -------------- ------------ ------- -------------------
+Name         Type            Value        Scope  Line Numbers
+------------ -------------- ------------ ------- -------------------
+test         STRING         (null)         0     48
+coduck       INT            1              0     34
+func1        func ret INT   0              0     2
+===================================================================
+```
 
 # Language specs
 
@@ -236,15 +303,6 @@ for(var; cond; postfix;){
 }
 ```
 
-### Block structure
-
-| Scope                    | Meaning                                                                                                                                                                                                                                                                         |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| File Scope               | Scope of a Identifier starts at the beginning of the file and ends at the end of the file. It refers to only those Identifiers that are declared outside of all functions. The Identifiers of File scope are visible all over the file Identifiers having file scope are global |
-| Block Scope              | Scope of a Identifier begins at opening of the block / ‘{‘ and ends at the end of the block / ‘}’. Identifiers with block scope are local to their block                                                                                                                        |
-| Function Prototype Scope | Identifiers declared in function prototype are visible within the prototype                                                                                                                                                                                                     |
-| Function scope           | Function scope begins at the opening of the function and ends with the closing of it. Function scope is applicable to labels only. A label declared is used as a target to goto statement and both goto and label statement must be in same function                            |
-
 ### Functions
 
 ```golang
@@ -270,25 +328,39 @@ y= 1
 };
 ```
 
+## Quadruples
+
+| Quadruple  | Quadruple Description | 
+| :-------------- |:----------------:|
+| push J          | used for the variables declarations (i.e int J;) |
+| Add,Sub,Mul,<,> | used for the addtion of the two previous operands (i.e J = 1 + 2 will be 1 , 2, ADD) |
+| store J         | used for the store of the previous value in the variable J (i.e J = 1 + 2 will be 1 , 2, ADD, store J)|
+| if false goto # | if condition false goto the else part at line (#)|
+
 ## How To Run
 
-#### to run the test cases:
+cd to the project directory "design/tests"
+
+- Run the following command to compile the code
 
 ```bash
-## add a test case in design\tests\parser
-## to run them using a bash script:
-cd design
-./run.sh
+bison -d  parser.y
+flex lex.l
+gcc -o compiler parser.tab.c lex.yy.c
+rm lex.yy.c parser.tab.c
 ```
 
-#### another option to run the code
+- to run a test file, run the following command
 
 ```bash
-bison -d parser.y  // compiling parser
-flex lexer.l  // compiling lexer
-gcc -o compiler parser.tab.c lex.yy.c -lm // combining them into one file
-rm lex.yy.c parser.tab.c  // removing "garbage"
-./compiler input_file // running for "input_file"
+.\compiler test_file_name symbol_table_file_name revisit_queue_file_name
+
+```
+
+example:
+
+```bash
+.\compiler full_example.kak  symbol_table_full_example.out revisit_queue_full_example.out
 ```
 
 ## Resources
@@ -302,3 +374,7 @@ https://en.cppreference.com/w/c/language/operator_precedence
 #### C Grammar
 
 http://marvin.cs.uidaho.edu/Teaching/CS445/c-Grammar.pdf
+
+```
+
+```
