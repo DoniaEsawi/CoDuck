@@ -28,6 +28,12 @@
     void add_case(AST_Node *case_node);
     // for functions
     AST_Node_Func_Decl *temp_function;
+    void gencode(char* x);
+    // void gencode_rel(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op);
+    void gencode_math(ListNode* parent, ListNode* arg1, ListNode* arg2, const char* op);
+    char * ICG[1000];
+    int nextinstr = 0;
+    int temp_var_number = 0;
     // define output file
     FILE *yyout;
 
@@ -151,6 +157,12 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
             set_constant(temp->names[i]->name, 0);
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                char* push = "push ";
+                char* temp_name = temp->names[i]->name;
+                char* temp_str = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
+                strcpy(temp_str, push);
+                strcat(temp_str, temp_name);
+                gencode(temp_str);
             }else{
                if (temp->data_type== INT_TYPE){
                 if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
@@ -300,6 +312,10 @@ var_ref: variable
 expression: expression ADD_OP expression 
 { 
 	    $$ = new_ast_arithm_node(ADD, $1, $3);
+
+      AST_Node_Arithm *temp = (AST_Node_Arithm*) $$;
+
+      gencode_math($$, temp->left, temp->right, "ADD");
 }
 | expression SUB_OP expression
 { 
@@ -1004,6 +1020,66 @@ argument: argument COMMA expression
 
 %%
 
+
+void gencode(char* x)
+{
+	char* instruction;
+  ICG[nextinstr] = (char*) malloc(strlen(x) * sizeof(char));
+  // copy instruction
+  strcpy(ICG[nextinstr], x);
+
+  nextinstr++;
+}
+
+
+// void gencode_rel(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op)
+// {
+// 	lhs->data_type = arg1->data_type;
+
+// 	lhs->truelist = {nextinstr};
+// 	lhs->falselist = {nextinstr + 1};
+
+// 	std::string code;
+
+// 	code = string("if ") + arg1->addr + op + arg2->addr + string(" goto _");
+// 	gencode(code);
+
+// 	code = string("goto _");
+// 	gencode(code);
+// }
+
+void gencode_math(Ast_Node* parent, Ast_Node* arg1, Ast_Node* arg2, const char* op)
+{
+	// parent->name = "t" + to_string(temp_var_number);
+  strcpy(parent->name, 't');
+  strcpy(parent->name, to_string(temp_var_number));
+
+  // generate sting of instruction
+  char* expr = (char*) malloc(strlen(parent->name) + strlen(arg1->name) + strlen(arg2->name) + strlen(op) + 1);
+  strcpy(expr, parent->name);
+  strcat(expr, " = ");
+  strcat(expr, arg1->name);
+  strcat(expr, op);
+  strcat(expr, arg2->name);
+
+	temp_var_number++;
+
+	gencode(expr);
+}
+
+void displayICG()
+{
+  // open file in c
+  FILE *outfile;
+  outfile = fopen("ICG.txt", "w");
+	for(int i=0; i<nextinstr;i++)
+  {
+    fprintf(outfile, "%d: %s\n", i, ICG[i]);
+  }
+	fclose(outfile);
+}
+
+
 void yyerror ()
 {
   fprintf(stderr, "Syntax error at line %d\n", lineno);
@@ -1110,6 +1186,8 @@ int main (int argc, char *argv[]){
     // yyout = fopen(argv[2], "w");
     dump_symboltable(yyout);
     fclose(yyout);
+
+    displayICG();
 
     // revisit queue dump
     yyout = fopen(argv[3], "w");
