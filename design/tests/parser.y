@@ -390,6 +390,30 @@ expression: expression ADD_OP expression
 	    }
 | var_ref 
 { 
+    // get the variable node
+    AST_Node_VAR *temp = (AST_Node_VAR*) $1;
+    // check if it's a char or string
+    if( temp->entry->stype == STR_TYPE || temp->entry->stype == CHAR_TYPE){
+      // get the value of the variable
+      Value val = get_value(temp->entry->name);
+      // check if it's a string and sval is NULL
+      if(temp->entry->stype == STR_TYPE && temp->entry->val.sval == NULL){
+        // error : variable used without being initialized
+        fprintf(stderr, "Error: variable %s used without being initialized at line %d\n",
+          temp->entry->name, lineno);
+          exit(1);
+      }
+      else if (temp->entry->stype == CHAR_TYPE && temp->entry->val.cval == NULL){
+        // error : variable used without being initialized
+        fprintf(stderr, "Error: variable %s used without being initialized at line %d\n",
+          temp->entry->name, lineno);
+          exit(1);
+      }
+    }
+    else{
+      $$ = $1; /* just pass information */
+    }
+  
     $$ = $1; /* just pass information */
 }
   | value
