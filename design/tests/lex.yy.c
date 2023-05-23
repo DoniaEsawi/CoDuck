@@ -1253,50 +1253,56 @@ YY_RULE_SETUP
 case 62:
 YY_RULE_SETUP
 #line 133 "lex.l"
-{  yylval.val.ival = atoi(yytext); 
-yylval.val.fval = atof(yytext);
+{  
+    yylval.val.ival = atoi(yytext); 
+// yylval.val.fval = atof(yytext);
 ret("CONST_INT"); return CONST_INT; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 136 "lex.l"
+#line 137 "lex.l"
 { yylval.val.fval = atof(yytext);
  yylval.val.ival = atoi(yytext); 
  ret("CONST_FLOAT"); return CONST_FLOAT; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 139 "lex.l"
-{ yylval.val.cval = yytext[0]; ret("CONST_CHAR"); return CONST_CHAR; }
+#line 140 "lex.l"
+{ yylval.val.cval = yytext[1]; 
+printf("lexeeeer ");
+printf("%c\n",yytext[1]);
+// printf("%s\n",yytext[1]);
+// printf("%s\n",yytext[2]);
+ret("CONST_CHAR"); return CONST_CHAR; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 140 "lex.l"
+#line 146 "lex.l"
 { yylval.val.sval = malloc(yyleng * sizeof(char)); 
                    strcpy(yylval.val.sval, yytext); ret("STRING_LITERAL"); return STRING_LITERAL; }
 	YY_BREAK
 case 66:
 /* rule 66 can match eol */
 YY_RULE_SETUP
-#line 143 "lex.l"
+#line 149 "lex.l"
 {lineno++;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 146 "lex.l"
+#line 152 "lex.l"
 
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 148 "lex.l"
+#line 154 "lex.l"
 { yyerror("Unknown character"); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 151 "lex.l"
+#line 157 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1299 "lex.yy.c"
+#line 1305 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(MULTILINE_COMMENT):
 	yyterminate();
@@ -2302,7 +2308,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 151 "lex.l"
+#line 157 "lex.l"
 
 
 

@@ -22,6 +22,10 @@
 	void add_elseif(AST_Node *elsif);
 	AST_Node **elsifs;
 	int elseif_count = 0;
+  AST_Node **cases;
+    AST_Node *default_case;
+    int case_count = 0;
+    void add_case(AST_Node *case_node);
     // for functions
     AST_Node_Func_Decl *temp_function;
     void gencode(char* x);
@@ -102,6 +106,7 @@
 %type <par>  parameter
 %type <node> return_type
 %type <node> func_call arguments argument
+%type <node> switch_statement case default
 %start program
 
 /* expression priorities and rules */
@@ -664,6 +669,9 @@ assignment: var_ref ASSIGN_OP expression
   if($3->type==CONST_NODE)
   {
     AST_Node_Const *temp2 = (AST_Node_Const*) $3;
+    if (type1 == REAL_TYPE && type2 == INT_TYPE){
+      temp2->val.fval = (float)temp2->val.ival;
+    }
     set_value(temp->entry->name, temp2->val);
   }
 }
@@ -698,13 +706,64 @@ do_statement: DO tail UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON
 }
 ;
 
-switch_statement: SWITCH LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET cases RIGHT_CURLY_BRACKET ;
+switch_statement: SWITCH {
+  // on the start of each switch, reset the cases and default
+  cases = NULL;
+  default_case = NULL;
+  case_count = 0;
+ } LEFT_PAREN expression RIGHT_PAREN LEFT_CURLY_BRACKET 
+ {
+  incr_scope(lineno);
+ }
+ cases RIGHT_CURLY_BRACKET 
+ {
+    hide_scope(yyout);
+    $$ = new_ast_switch_node($4, cases, case_count, default_case);
+ }
+ ;
 
-cases: cases case | case |  cases default ;
+cases: cases case 
+{
+  add_case($2);
+}
+| case{
+  add_case($1);
+} |  cases default;
 
-default: DEFAULT COLON statements;
+default: DEFAULT COLON {
+  incr_scope(lineno);
+} statements
+{
+  hide_scope(yyout);
+    // get the statements node of the default
+    AST_Node_Statements *temp = (AST_Node_Statements*) $4;
+    // get the statements count
+    int count = temp->statement_count;
+    // get the statements
+    AST_Node **statements = temp->statements;
 
-case: CASE expression COLON statements ;
+    // return the default node
+    default_case =new_ast_default_node(statements, count);
+}
+;
+
+case: CASE expression COLON
+{ 
+  incr_scope(lineno);}
+ statements
+{
+  hide_scope(yyout);
+    // get the statements node of the case
+    AST_Node_Statements *temp = (AST_Node_Statements*) $5;
+    // get the statements count
+    int count = temp->statement_count;
+    // get the statements
+    AST_Node **statements = temp->statements;
+
+    // return the case node
+    $$ = new_ast_case_node($2, statements, count);
+}
+ ;
 /* break_statement: BREAK SEMICOLON ;
 
 continue_statement: CONTINUE SEMICOLON ;
@@ -755,7 +814,7 @@ if_statement
 
         | switch_statement 
         {
-		$$ = NULL; /* will do it later ! */
+		$$ = $1; /* will do it later ! */
 	    }
 
         | enum_statement
@@ -1140,6 +1199,21 @@ void add_elseif(AST_Node *elsif){
     elsifs[elseif_count - 1] = elsif;
   }
 }
+void add_case(AST_Node *case_node){
+  // first entry
+  if(case_count == 0){
+    case_count = 1;
+    cases = (AST_Node **) malloc(1 * sizeof(AST_Node));
+    cases[0] = case_node;
+  }
+  // general case
+  else{
+    case_count++;
+    cases = (AST_Node **) realloc(cases, case_count * sizeof(AST_Node));
+    cases[case_count - 1] = case_node;
+  }
+}
+
 int main (int argc, char *argv[]){
     
     // initialize symbol table
