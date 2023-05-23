@@ -8,10 +8,12 @@ typedef enum Node_Type
 	DECL_NODE,		// declaration
 	CONST_NODE,		// constant
 	// statements
-	IF_NODE,		// if statement
-	ELSIF_NODE, // else if branch  why there is no ELSE_NODE????????
-	FOR_NODE,		// for statement
-
+	IF_NODE,			 // if statement
+	ELSIF_NODE,		 // else if branch  why there is no ELSE_NODE????????
+	FOR_NODE,			 // for statement
+	SWITCH_NODE,	 // switch statement
+	CASE_NODE,		 // case statement
+	DEFAULT_NODE,	 // default statement
 	WHILE_NODE,		 // while statement
 	DO_UNTIL_NODE, // do while statement
 	ASSIGN_NODE,	 // assigment
@@ -195,6 +197,42 @@ typedef struct AST_Node_If
 	struct AST_Node *else_branch;
 } AST_Node_If;
 
+typedef struct AST_Node_SWITCH
+{
+	enum Node_Type type; // node type
+
+	// condition
+	struct AST_Node *condition; // variable on which switch is applied
+
+	// cases
+	struct AST_Node **cases;
+	// default case
+	struct AST_Node *default_case;
+	int cases_count;
+
+} AST_Node_SWITCH;
+
+typedef struct AST_Node_Case
+{
+	enum Node_Type type; // node type
+	struct AST_Node *condition;
+	// cases
+	struct AST_Node **statements;
+	// default case
+	int statements_count;
+
+} AST_Node_Case;
+
+typedef struct AST_Node_Default
+{
+	enum Node_Type type; // node type
+
+	// cases
+	struct AST_Node **statements;
+	// default case
+	int statements_count;
+
+} AST_Node_Default;
 typedef struct AST_Node_Elsif
 {
 	enum Node_Type type; // node type
@@ -406,6 +444,17 @@ AST_Node *new_ast_incr_node(ListNode *entry, int incr_type, int pf_type);
 AST_Node *new_ast_func_call_node(ListNode *entry, AST_Node **params, int num_of_pars); // function call
 void set_loop_counter(AST_Node *node);
 
+AST_Node *new_ast_case_node(
+		AST_Node *condition,
+		AST_Node **statements,
+		int statements_count);
+AST_Node *new_ast_switch_node(AST_Node *condition,
+															AST_Node **cases,
+															int cases_count,
+															AST_Node *default_case);
+AST_Node *new_ast_default_node(
+		AST_Node **statements,
+		int statements_count);
 /* Expressions */
 AST_Node *new_ast_arithm_node(enum Arithm_op op, AST_Node *left, AST_Node *right);
 AST_Node *new_ast_bool_node(enum Bool_op op, AST_Node *left, AST_Node *right);

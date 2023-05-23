@@ -9,16 +9,18 @@
 
 - [ ] code generation using stack machines
 - [ ] enums (i don't know :" )
+- [x] switch cases (should be easy)
+- [ ] if variable is not initialized, then warning
+- [ ] if variable is used without being initialized, then error (in char and strings only)
+- [ ] if variable is not used, then warning
 - [x] Check if always false, then warning
-- [ ] test the semantic analyzer more
-- [ ] switch cases (should be easy)
 - [x] do until (easy)
 - [x] handling constant variables checks
 - [x] (Not sure if needed) treating INT as a subtype of REAL (double, floats) "y3ni momken a3mel assignment l variable float b int" in operations only
-- [ ] edit the error messages to be more indicative (super easy)
 - [x] check the symbol table format (scopes)
 - [x] print the scope symbol table as a table in the output file
-- [ ] if variable is not initialized, add default value
+- [ ] test the semantic analyzer more
+- [ ] edit the error messages to be more indicative (super easy)
 
 # program structure
 

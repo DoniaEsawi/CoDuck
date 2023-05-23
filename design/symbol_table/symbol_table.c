@@ -284,7 +284,7 @@ void hide_scope(FILE *output)
                 else if (list->stype == CHAR_TYPE)
                 {
                     fprintf(output, "%-15s", "CHAR");
-                    fprintf(output, "%-13s", list->val.cval);
+                    fprintf(output, "%-13c", list->val.cval);
                 }
                 else if (list->stype == VOID_TYPE)
                 {
@@ -319,7 +319,7 @@ void hide_scope(FILE *output)
                     else if (list->inf_type == CHAR_TYPE)
                     {
                         fprintf(output, "%-6s", "CHAR");
-                        fprintf(output, "%-13s", list->val.cval);
+                        fprintf(output, "%-13c", list->val.cval);
                     }
                     else if (list->inf_type == VOID_TYPE)
                     {
@@ -494,7 +494,7 @@ void dump_symboltable(FILE *output)
                 else if (list->stype == CHAR_TYPE)
                 {
                     fprintf(output, "%-15s", "CHAR");
-                    fprintf(output, "%-15s", list->val.cval);
+                    fprintf(output, "%-15c", list->val.cval);
                 }
                 else if (list->stype == VOID_TYPE)
                 {
@@ -530,7 +530,7 @@ void dump_symboltable(FILE *output)
                     else if (list->inf_type == CHAR_TYPE)
                     {
                         fprintf(output, "%-6s", "CHAR");
-                        fprintf(output, "%-15s", list->val.cval);
+                        fprintf(output, "%-15c", list->val.cval);
                     }
                     else if (list->inf_type == VOID_TYPE)
                     {

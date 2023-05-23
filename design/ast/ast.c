@@ -53,8 +53,8 @@ AST_Node *new_ast_const_node(int const_type, Value val)
 	// set entries
 	v->type = CONST_NODE;
 	v->const_type = const_type;
-
 	v->val = val;
+	printf("new_ast_const_node, const_type: %d, val: %d\n", const_type, val.ival);
 	// // check if sval is null pointer
 	// if (val.sval == NULL)
 	// {
@@ -70,6 +70,57 @@ AST_Node *new_ast_const_node(int const_type, Value val)
 }
 
 /* Statements */
+
+AST_Node *new_ast_switch_node(AST_Node *condition,
+															AST_Node **cases,
+															int cases_count,
+															AST_Node *default_case)
+{
+	// allocate memory
+	AST_Node_SWITCH *v = malloc(sizeof(AST_Node_SWITCH));
+
+	// set entries
+	v->type = SWITCH_NODE;
+	v->condition = condition;
+	v->cases = cases;
+	v->cases_count = cases_count;
+	v->default_case = default_case;
+
+	// return type-casted result
+	return (struct AST_Node *)v;
+}
+
+AST_Node *new_ast_case_node(
+		AST_Node *condition,
+		AST_Node **statements,
+		int statements_count)
+{
+	// allocate memory
+	AST_Node_Case *v = malloc(sizeof(AST_Node_Case));
+
+	// set entries
+	v->type = CASE_NODE;
+	v->statements = statements;
+	v->statements_count = statements_count;
+
+	// return type-casted result
+	return (struct AST_Node *)v;
+}
+AST_Node *new_ast_default_node(
+		AST_Node **statements,
+		int statements_count)
+{
+	// allocate memory
+	AST_Node_Default *v = malloc(sizeof(AST_Node_Default));
+
+	// set entries
+	v->type = DEFAULT_NODE;
+	v->statements = statements;
+	v->statements_count = statements_count;
+
+	// return type-casted result
+	return (struct AST_Node *)v;
+}
 
 AST_Node *new_ast_if_node(AST_Node *condition, AST_Node *if_branch, AST_Node **elsif_branches, int elseif_count, AST_Node *else_branch)
 {
@@ -982,6 +1033,9 @@ void ast_print_node(AST_Node *node)
 	AST_Node_Func_Declarations *temp_func_declarations;
 	AST_Node_Ret_Type *temp_ret_type;
 	AST_Node_Decl_Params *temp_decl_params;
+	AST_Node_SWITCH *temp_switch;
+	AST_Node_Case *temp_case;
+	AST_Node_Default *temp_default;
 	// fprintf(stderr, "Node type: %d\n", node->type);
 	switch (node->type)
 	{
@@ -1132,6 +1186,15 @@ void ast_print_node(AST_Node *node)
 	case RETURN_NODE:
 		temp_return = (struct AST_Node_Return *)node;
 		printf("Return Node of ret_type %d\n", temp_return->ret_type);
+		break;
+	case SWITCH_NODE:
+		printf("Switch Node\n");
+		break;
+	case CASE_NODE:
+		printf("Case Node\n");
+		break;
+	case DEFAULT_NODE:
+		printf("Default Node\n");
 		break;
 	default: /* wrong choice case */
 		fprintf(stderr, "Error in node selection!\n");
