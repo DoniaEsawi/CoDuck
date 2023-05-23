@@ -30,7 +30,7 @@
     AST_Node_Func_Decl *temp_function;
     void gencode(char* x);
     // void gencode_rel(content_t* & lhs, content_t* arg1, content_t* arg2, const string& op);
-    void gencode_math(ListNode* parent, ListNode* arg1, ListNode* arg2, const char* op);
+    // void gencode_math(ListNode* parent, ListNode* arg1, ListNode* arg2, const char* op);
     char * ICG[1000];
     int nextinstr = 0;
     int temp_var_number = 0;
@@ -157,12 +157,6 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
             set_constant(temp->names[i]->name, 0);
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
-                char* push = "push ";
-                char* temp_name = temp->names[i]->name;
-                char* temp_str = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
-                strcpy(temp_str, push);
-                strcat(temp_str, temp_name);
-                gencode(temp_str);
             }else{
                if (temp->data_type== INT_TYPE){
                 if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
@@ -204,7 +198,17 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         }
     }
   |
-  CONST type { declare = 1; } init{ add_to_names($4); declare = 0; } SEMICOLON
+  CONST type { declare = 1; } init
+    { 
+      add_to_names($4); declare = 0; 
+      char* push = "push ";
+      ListNode *entry = (ListNode*) $4;
+      char* temp_name = entry->name;
+      char* temp_str = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
+      strcpy(temp_str, push);
+      strcat(temp_str, temp_name);
+      gencode(temp_str);
+    } SEMICOLON
     {
         int i;
         $$ = new_ast_decl_node($2, names, nc, 1);
@@ -263,6 +267,13 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
 names: names COMMA variable
 	{
 		add_to_names($3);
+    ListNode *entry = (ListNode*) $3;
+    char* temp_name = entry->name;
+    char* push = "push ";
+    char* temp_str = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
+    strcpy(temp_str, push);
+    strcat(temp_str, temp_name);
+    gencode(temp_str);
 	}
 	| names COMMA init
 	{
@@ -271,6 +282,13 @@ names: names COMMA variable
 	| variable
 	{
 		add_to_names($1);
+    ListNode *entry = (ListNode*) $1;
+    char* temp_name = entry->name;
+    char* push = "push ";
+    char* temp_str = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
+    strcpy(temp_str, push);
+    strcat(temp_str, temp_name);
+    gencode(temp_str);
 	}
 	| init
 	{ 
@@ -282,10 +300,77 @@ init: var_init { $$ = $1; };
 
 var_init:  IDENT ASSIGN_OP value
 { 
+	ListNode *entry = (ListNode*) $1;
+  char* temp_name = entry->name;
+  char* push = "push ";
+  char* temp_str1 = (char*) malloc(strlen(push) + strlen(temp_name) + 1);
+  strcpy(temp_str1, push);
+  strcat(temp_str1, temp_name);
+  gencode(temp_str1);
+
 	AST_Node_Const *temp = (AST_Node_Const*) $3;
-  	$1->val = temp->val;
+  $1->val = temp->val;
 	$1->stype = temp->const_type;
 	$$ = $1;
+
+	ListNode *temp_ident = (ListNode*) $1;
+	ListNode *temp_value = (ListNode*) $3;
+  char* store = "store ";
+  char* temp_str ;
+  switch(temp->const_type){
+    case INT_TYPE:
+      temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + sizeof(temp->val.ival));
+      strcpy(temp_str, store);
+      strcat(temp_str, temp_ident->name);
+      char temp_val_str[20];
+      sprintf(temp_val_str, "%d", temp->val.ival); 
+      strcat(temp_str, " ");
+      strcat(temp_str, temp_val_str);
+      gencode(temp_str);
+      break;
+    case REAL_TYPE:
+      temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + sizeof(temp->val.fval));
+      strcpy(temp_str, store);
+      strcat(temp_str, temp_ident->name);
+      char temp_val_str1[20];
+      sprintf(temp_val_str1, "%f", temp->val.fval); 
+      strcat(temp_str, " ");
+      strcat(temp_str, temp_val_str1);
+      gencode(temp_str);
+      break;
+    case CHAR_TYPE:
+      // temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + sizeof(temp->val.cval));
+      // strcpy(temp_str, store);
+      // strcat(temp_str, temp_ident->name);
+      // strcat(temp_str, " ");
+      // char temp_val_str2[20];
+      // sprintf(temp_val_str2, "%c", temp->val.cval); 
+      // strcat(temp_str, temp_val_str2);
+      // gencode(temp_str);
+      printf("blaaaaa %c\n", temp->val.cval);
+      break;
+    case STR_TYPE:
+      // value = temp->val.sval;
+      temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + strlen(temp->val.sval));
+      strcpy(temp_str, store);
+      strcat(temp_str, temp_ident->name);
+      strcat(temp_str, " ");
+      char temp_val_str3[2];
+      sprintf(temp_val_str3, "%s", temp->val.sval); 
+      strcat(temp_str, temp_val_str3);
+      gencode(temp_str); 
+      break;
+    case BOOL_TYPE:
+      temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + sizeof(temp->val.ival));
+      strcpy(temp_str, store);
+      strcat(temp_str, temp_ident->name);
+      char temp_val_str4[20];
+      sprintf(temp_val_str4, "%d", temp->val.ival); 
+      strcat(temp_str, " ");
+      strcat(temp_str, temp_val_str4);
+      gencode(temp_str);
+      break;
+  }
 }
 ;
 
@@ -315,7 +400,7 @@ expression: expression ADD_OP expression
 
       AST_Node_Arithm *temp = (AST_Node_Arithm*) $$;
 
-      gencode_math($$, temp->left, temp->right, "ADD");
+      // gencode_math($$, temp->left, temp->right, "ADD");
 }
 | expression SUB_OP expression
 { 
@@ -1072,24 +1157,24 @@ void gencode(char* x)
 // 	gencode(code);
 // }
 
-void gencode_math(Ast_Node* parent, Ast_Node* arg1, Ast_Node* arg2, const char* op)
-{
-	// parent->name = "t" + to_string(temp_var_number);
-  strcpy(parent->name, 't');
-  strcpy(parent->name, to_string(temp_var_number));
+// void gencode_math(Ast_Node* parent, Ast_Node* arg1, Ast_Node* arg2, const char* op)
+// {
+// 	// parent->name = "t" + to_string(temp_var_number);
+//   strcpy(parent->name, 't');
+//   strcpy(parent->name, to_string(temp_var_number));
 
-  // generate sting of instruction
-  char* expr = (char*) malloc(strlen(parent->name) + strlen(arg1->name) + strlen(arg2->name) + strlen(op) + 1);
-  strcpy(expr, parent->name);
-  strcat(expr, " = ");
-  strcat(expr, arg1->name);
-  strcat(expr, op);
-  strcat(expr, arg2->name);
+//   // generate sting of instruction
+//   char* expr = (char*) malloc(strlen(parent->name) + strlen(arg1->name) + strlen(arg2->name) + strlen(op) + 1);
+//   strcpy(expr, parent->name);
+//   strcat(expr, " = ");
+//   strcat(expr, arg1->name);
+//   strcat(expr, op);
+//   strcat(expr, arg2->name);
 
-	temp_var_number++;
+// 	temp_var_number++;
 
-	gencode(expr);
-}
+// 	gencode(expr);
+// }
 
 void displayICG()
 {
