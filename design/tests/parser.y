@@ -33,6 +33,7 @@
     // void gencode_math(ListNode* parent, ListNode* arg1, ListNode* arg2, const char* op);
     char * ICG[1000];
     int nextinstr = 0;
+    int previous_if = 0;
     int temp_var_number = 0;
     // define output file
     FILE *yyout;
@@ -339,15 +340,14 @@ var_init:  IDENT ASSIGN_OP value
       gencode(temp_str);
       break;
     case CHAR_TYPE:
-      // temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + sizeof(temp->val.cval));
-      // strcpy(temp_str, store);
-      // strcat(temp_str, temp_ident->name);
-      // strcat(temp_str, " ");
-      // char temp_val_str2[20];
-      // sprintf(temp_val_str2, "%c", temp->val.cval); 
-      // strcat(temp_str, temp_val_str2);
-      // gencode(temp_str);
-      printf("blaaaaa %c\n", temp->val.cval);
+      temp_str = (char*) malloc(strlen(store) + strlen(temp_ident->name) + sizeof(temp->val.cval));
+      strcpy(temp_str, store);
+      strcat(temp_str, temp_ident->name);
+      strcat(temp_str, " ");
+      char temp_val_str2[20];
+      sprintf(temp_val_str2, "%c", temp->val.cval); 
+      strcat(temp_str, temp_val_str2);
+      gencode(temp_str);
       break;
     case STR_TYPE:
       // value = temp->val.sval;
@@ -397,47 +397,54 @@ var_ref: variable
 expression: expression ADD_OP expression 
 { 
 	    $$ = new_ast_arithm_node(ADD, $1, $3);
-
-      AST_Node_Arithm *temp = (AST_Node_Arithm*) $$;
-
-      // gencode_math($$, temp->left, temp->right, "ADD");
+      gencode("Add");
 }
 | expression SUB_OP expression
 { 
 	    $$ = new_ast_arithm_node(SUB, $1, $3);
+      gencode("Sub");
 }
 | expression MUL_OP expression
 { 
 	    $$ = new_ast_arithm_node(MUL, $1, $3);
+      gencode("Mul");
 }
 | expression DIV_OP expression
 { 
 	    $$ = new_ast_arithm_node(DIV, $1, $3);
+      gencode("Div");
 }
 | expression MOD_OP expression
 { 
 	    $$ = new_ast_arithm_node(MOD, $1, $3);
+      gencode("Mod");
 }
 /* | expression BIT_LOGIC_OP expression */
 | expression AND_OP expression
 {
     $$ = new_ast_bool_node(OP_AND, $1, $3);
+      gencode("And");
 } 
 | expression OR_OP expression
 {
     $$ = new_ast_bool_node(OP_OR, $1, $3);
+      gencode("Or");
 }   
 | NOT_OP expression
 {
     $$ = new_ast_bool_node(OP_NOT, $2, NULL);
+      gencode("Not");
 }
 | expression EQ_OP expression
 {
 	$$ = new_ast_equ_node($2.ival, $1, $3);
+    gencode("Equal");
+
 }
 | expression REL_OP expression
 {
 	$$ = new_ast_rel_node($2.ival, $1, $3);
+    gencode("Rel");
 }
 | LEFT_PAREN expression RIGHT_PAREN
 {
@@ -445,28 +452,23 @@ expression: expression ADD_OP expression
 }
 | INC_OP IDENT 
 {
-    {
 			$$ = new_ast_incr_node($2, 0, 1);
-    }
+      gencode("Inc");
 }
 | DEC_OP IDENT 
 {
-    {
-            $$ = new_ast_incr_node($2, 1, 1);
-    }
-
+    $$ = new_ast_incr_node($2, 1, 1);
+    gencode("Dec");
 }
 | IDENT INC_OP
 {
-    {
-            $$ = new_ast_incr_node($1, 0, 0);
-    }
+    $$ = new_ast_incr_node($1, 0, 0);
+    gencode("Inc");
 }
 | IDENT DEC_OP
 {
-    {
-            $$ = new_ast_incr_node($1, 1, 0);
-    }
+    $$ = new_ast_incr_node($1, 1, 0);
+    gencode("Dec");
 }
 | func_call
 {
@@ -476,57 +478,112 @@ expression: expression ADD_OP expression
 | var_ref 
 { 
     $$ = $1; /* just pass information */
+    AST_Node_VAR *temp = (AST_Node_VAR*) $1;
+    char* temp_str = (char*) malloc(sizeof(temp->entry->name) + 1);
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%s", temp->entry->name); 
+    strcat(temp_str, temp_val_str);
+    gencode(temp_str);
 }
-  | value
-  {
-    $$ = $1; /* no sign */
+| value
+{
+  $$ = $1; /* no sign */
+  AST_Node_Const * temp = (AST_Node_Const*) $1;
+  char* temp_str;
+  switch(temp->const_type){
+    case INT_TYPE:
+      temp_str = (char*) malloc(sizeof(temp->val.ival));
+      char temp_val_str[20];
+      sprintf(temp_val_str, "%d", temp->val.ival); 
+      strcat(temp_str, temp_val_str);
+      gencode(temp_str);
+      break;
+    case REAL_TYPE:
+      temp_str = (char*) malloc(sizeof(temp->val.fval));
+      char temp_val_str1[20];
+      sprintf(temp_val_str1, "%f", temp->val.fval); 
+      strcat(temp_str, temp_val_str1);
+      gencode(temp_str);
+      break;
+    case CHAR_TYPE:
+      temp_str = (char*) malloc(sizeof(temp->val.cval));
+      char temp_val_str2[20];
+      sprintf(temp_val_str2, "%c", temp->val.cval); 
+      strcat(temp_str, temp_val_str2);
+      gencode(temp_str);
+      break;
+    case STR_TYPE:
+      // value = temp->val.sval;
+      temp_str = (char*) malloc(strlen(temp->val.sval));
+      char temp_val_str3[2];
+      sprintf(temp_val_str3, "%s", temp->val.sval); 
+      strcat(temp_str, temp_val_str3);
+      gencode(temp_str); 
+      break;
+    case BOOL_TYPE:
+      temp_str = (char*) malloc(sizeof(temp->val.ival));
+      char temp_val_str4[20];
+      sprintf(temp_val_str4, "%d", temp->val.ival); 
+      strcat(temp_str, temp_val_str4);
+      gencode(temp_str);
+      break;
   }
-  | SUB_OP value %prec MINUS
-  {
-    
-      AST_Node_Const *temp = (AST_Node_Const*) $2;
+}
+| SUB_OP value %prec MINUS
+{
+  
+    AST_Node_Const *temp = (AST_Node_Const*) $2;
 
-      /* inverse value depending on the constant type */
-      switch(temp->const_type){
-        case INT_TYPE:
-          temp->val.ival *= -1;
-          break;
-        case REAL_TYPE:
-          temp->val.fval *= -1;
-          break;
-        case CHAR_TYPE:
-          /* sign before char error */
-          fprintf(stderr, "Error having sign before character constant!\n");
+    /* inverse value depending on the constant type */
+    switch(temp->const_type){
+      case INT_TYPE:
+        temp->val.ival *= -1;
+        break;
+      case REAL_TYPE:
+        temp->val.fval *= -1;
+        break;
+      case CHAR_TYPE:
+        /* sign before char error */
+        fprintf(stderr, "Error having sign before character constant!\n");
+        exit(1);;
+        break;
+      case STR_TYPE:
+          /* sign before string error */
+          fprintf(stderr, "Error having sign before string constant!\n");
           exit(1);;
           break;
-        case STR_TYPE:
-            /* sign before string error */
-            fprintf(stderr, "Error having sign before string constant!\n");
-            exit(1);;
-            break;
-        case BOOL_TYPE:
-            /* sign before bool error */
-            fprintf(stderr, "Error having sign before bool constant!\n");
-            exit(1);;
-            break;
-      }
+      case BOOL_TYPE:
+          /* sign before bool error */
+          fprintf(stderr, "Error having sign before bool constant!\n");
+          exit(1);;
+          break;
+    }
 
-      $$ = (AST_Node*) temp;
-    
-  }
-
-;
+    $$ = (AST_Node*) temp;
+  
+};
 
 
 
 
 value: CONST_INT  { 
-  $$ = new_ast_const_node(INT_TYPE, $1);  }
-| CONST_FLOAT { $$ = new_ast_const_node(REAL_TYPE, $1); }
-| CONST_CHAR { $$ = new_ast_const_node(CHAR_TYPE, $1); }
-| STRING_LITERAL { $$ = new_ast_const_node(STR_TYPE, $1); }
-| TRUE_TOKEN { $$ = new_ast_const_node(BOOL_TYPE, $1); }
-| FALSE_TOKEN { $$ = new_ast_const_node(BOOL_TYPE, $1); }
+  $$ = new_ast_const_node(INT_TYPE, $1);
+  }
+| CONST_FLOAT { 
+  $$ = new_ast_const_node(REAL_TYPE, $1); 
+  }
+| CONST_CHAR { 
+  $$ = new_ast_const_node(CHAR_TYPE, $1); 
+}
+| STRING_LITERAL { 
+  $$ = new_ast_const_node(STR_TYPE, $1);
+  }
+| TRUE_TOKEN { 
+  $$ = new_ast_const_node(BOOL_TYPE, $1);
+ }
+| FALSE_TOKEN { 
+  $$ = new_ast_const_node(BOOL_TYPE, $1);
+  }
 ;
 
 tail: LEFT_CURLY_BRACKET {
@@ -574,32 +631,48 @@ else_part: ELSE tail
 }
 ;        
 
-if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail {
+if_statement: IF LEFT_PAREN {
+  gencode("if false goto !!");
+  previous_if = nextinstr - 1;
+} expression RIGHT_PAREN tail {
 
-    int is_false=is_always_false($3);
+    int is_false=is_always_false($4);
     if(is_false==1){
       printf("Warning: if statement is always false at line %d\n", parent);
     }
     printf("is false %d\n", is_false);
 
+    ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if])+ sizeof(nextinstr));
+    strcpy(ICG[previous_if], "if false goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr);
+    strcat(ICG[previous_if], temp_val_str);
 }else_if else_part 
   {
-    $$ = new_ast_if_node($3, $5, elsifs, elseif_count, $8);
+    $$ = new_ast_if_node($4, $6, elsifs, elseif_count, $9);
     elseif_count = 0;
     elsifs = NULL;
     printf("is false beforee \n");
 
   }
-| IF LEFT_PAREN expression RIGHT_PAREN tail {
+| IF LEFT_PAREN expression {
+  gencode("if false goto "); 
+  previous_if = nextinstr - 1;
+} RIGHT_PAREN tail {
   int is_false=is_always_false($3);
 
     if(is_false==1){
       printf("Warning: if statement is always false at line %d\n", parent);
     }
-
+    
+    ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if])+ sizeof(nextinstr));
+    strcpy(ICG[previous_if], "if false goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr );
+    strcat(ICG[previous_if], temp_val_str);
 }else_part
 {
-    $$ = new_ast_if_node($3, $5, NULL, 0, $7);
+    $$ = new_ast_if_node($3, $6, NULL, 0, $8);
     
 }
 ;
@@ -617,6 +690,12 @@ assignment: var_ref ASSIGN_OP expression
 {
 	AST_Node_VAR *temp = (AST_Node_VAR*) $1;
 	$$ = new_ast_assign_node(temp->entry, $3);
+  char* temp_str = (char*) malloc(strlen("store ") + sizeof(temp->entry->name) + 1);
+  char temp_val_str[20];
+  sprintf(temp_val_str, "%s", temp->entry->name); 
+  strcat(temp_str, "store ");
+  strcat(temp_str, temp_val_str);
+  gencode(temp_str);
   /* find datatypes */
   int is_const = isConst(temp->entry->name);
   if(is_const == 1){
