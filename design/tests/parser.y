@@ -34,6 +34,7 @@
     char * ICG[1000];
     int nextinstr = 0;
     int previous_if = 0;
+    int begin_for = 0;
     int temp_var_number = 0;
     // define output file
     FILE *yyout;
@@ -460,7 +461,20 @@ expression: expression ADD_OP expression
 | expression REL_OP expression
 {
 	$$ = new_ast_rel_node($2.ival, $1, $3);
-    gencode("Rel");
+  switch($2.ival){
+    case GREATER:			 // > operator
+      gencode(">");
+      break;
+	  case LESS:					 // < operator
+      gencode("<");
+      break;
+	  case GREATER_EQUAL: // >= operator
+      gencode(">=");
+      break;
+	  case LESS_EQUAL:
+      gencode("<=");
+      break;
+  }
 }
 | LEFT_PAREN expression RIGHT_PAREN
 {
@@ -518,7 +532,7 @@ expression: expression ADD_OP expression
     }
   
     $$ = $1; /* just pass information */
-    AST_Node_VAR *temp = (AST_Node_VAR*) $1;
+    // AST_Node_VAR *temp = (AST_Node_VAR*) $1;
     char* temp_str = (char*) malloc(sizeof(temp->entry->name) + 1);
     char temp_val_str[20];
     sprintf(temp_val_str, "%s", temp->entry->name); 
@@ -637,25 +651,43 @@ tail: LEFT_CURLY_BRACKET {
 }
 ;
 
-else_if: ELIF LEFT_PAREN expression RIGHT_PAREN tail
+else_if: ELIF LEFT_PAREN expression RIGHT_PAREN
 {
-    AST_Node *temp = new_ast_elsif_node($3, $5);
+  gencode("if false goto");
+  previous_if = nextinstr - 1;
+} tail
+{
+    AST_Node *temp = new_ast_elsif_node($3, $6);
     add_elseif(temp);
     int is_false=is_always_false($3);
     if(is_false==1){
       printf("Warning: if statement is always false at line %d\n", parent);
     }
 
+    ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if]) + 1 + sizeof(nextinstr));
+    strcpy(ICG[previous_if], "if false goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr);
+    strcat(ICG[previous_if], temp_val_str);
 }
-        | else_if ELIF LEFT_PAREN expression RIGHT_PAREN tail
+| else_if ELIF LEFT_PAREN expression RIGHT_PAREN
 {
-    AST_Node *temp = new_ast_elsif_node($4, $6);
+  gencode("if false goto");
+  previous_if = nextinstr - 1;
+} tail
+{
+    AST_Node *temp = new_ast_elsif_node($4, $7);
     add_elseif(temp);
     int is_false=is_always_false($4);
     if(is_false==1){
       printf("Warning: if statement is always false at line %d\n", parent);
     }
 
+    ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if])+ sizeof(nextinstr));
+    strcpy(ICG[previous_if], "if false goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr);
+    strcat(ICG[previous_if], temp_val_str);
 }
 ;
 
@@ -671,12 +703,12 @@ else_part: ELSE tail
 }
 ;        
 
-if_statement: IF LEFT_PAREN {
-  gencode("if false goto !!");
+if_statement: IF LEFT_PAREN expression {
+  gencode("if false goto");
   previous_if = nextinstr - 1;
-} expression RIGHT_PAREN tail {
+} RIGHT_PAREN tail {
 
-    int is_false=is_always_false($4);
+    int is_false=is_always_false($3);
     if(is_false==1){
       printf("Warning: if statement is always false at line %d\n", parent);
     }
@@ -687,18 +719,24 @@ if_statement: IF LEFT_PAREN {
     char temp_val_str[20];
     sprintf(temp_val_str, "%d", nextinstr);
     strcat(ICG[previous_if], temp_val_str);
+    gencode("goto");
+    previous_if = nextinstr - 1;
 }else_if else_part 
   {
-    $$ = new_ast_if_node($4, $6, elsifs, elseif_count, $9);
+    $$ = new_ast_if_node($3, $6, elsifs, elseif_count, $9);
     elseif_count = 0;
     elsifs = NULL;
     printf("is false beforee \n");
-
+    ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if])+ 1 +sizeof(nextinstr));
+    strcpy(ICG[previous_if], "goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr);
+    strcat(ICG[previous_if], temp_val_str);
   }
-| IF LEFT_PAREN expression {
-  gencode("if false goto "); 
+| IF LEFT_PAREN expression RIGHT_PAREN {
+  gencode("if false goto"); 
   previous_if = nextinstr - 1;
-} RIGHT_PAREN tail {
+} tail {
   int is_false=is_always_false($3);
 
     if(is_false==1){
@@ -708,14 +746,19 @@ if_statement: IF LEFT_PAREN {
     ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if])+ sizeof(nextinstr));
     strcpy(ICG[previous_if], "if false goto ");
     char temp_val_str[20];
-    sprintf(temp_val_str, "%d", nextinstr );
+    sprintf(temp_val_str, "%d", nextinstr + 1);
     strcat(ICG[previous_if], temp_val_str);
+    gencode("goto");
+    previous_if = nextinstr - 1;
 }else_part
 {
     $$ = new_ast_if_node($3, $6, NULL, 0, $8);
-    
-}
-;
+    ICG[previous_if] = (char*) realloc(ICG[previous_if], strlen(ICG[previous_if])+ sizeof(nextinstr));
+    strcpy(ICG[previous_if], "goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr);
+    strcat(ICG[previous_if], temp_val_str);
+};
 
 while_statement: WHILE LEFT_PAREN expression RIGHT_PAREN tail 
 {
@@ -796,16 +839,31 @@ assignment: var_ref ASSIGN_OP expression
 }
 ;
 // optional_declaration: declaration | assignment SEMICOLON| var_ref SEMICOLON;
-for_statement: FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT INC_OP RIGHT_PAREN tail 
+for_statement: FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT INC_OP RIGHT_PAREN
+{
+  gencode("if end loop goto");
+  begin_for = nextinstr - 1;
+} tail 
 {	
     /* create increment node*/
     AST_Node *incr_node;
    
     incr_node = new_ast_incr_node($7, 0, 0);
-    
-
-    $$ = new_ast_for_node($3, $5, incr_node, $10);
+    $$ = new_ast_for_node($3, $5, incr_node, $11);
     set_loop_counter($$);
+
+    ICG[begin_for] = (char*) realloc(ICG[begin_for], strlen(ICG[begin_for]) + 1 + sizeof(nextinstr));
+    strcpy(ICG[begin_for], "if end loop goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr + 1);
+    strcat(ICG[begin_for], temp_val_str);
+    
+    char* goto_str = malloc(sizeof("goto ") + sizeof(begin_for));
+    char temp_begin_for[20];
+    sprintf(temp_begin_for, "%d", begin_for);
+    strcpy(goto_str, "goto ");
+    strcat(goto_str, temp_begin_for);
+    gencode(goto_str);
 }
 | FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT DEC_OP RIGHT_PAREN tail 
 {	
@@ -817,8 +875,8 @@ for_statement: FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT IN
 
     $$ = new_ast_for_node($3, $5, incr_node, $10);
     set_loop_counter($$);
-}
-;
+};
+
 do_statement: DO tail UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON 
 {
     $$ = new_ast_do_node($5, $2);
