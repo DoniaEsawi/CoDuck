@@ -11,6 +11,7 @@
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
+    extern int parent;
     extern int yylex();
     void yyerror();
     // for declaration
@@ -29,6 +30,9 @@
     char * ICG[1000];
     int nextinstr = 0;
     int temp_var_number = 0;
+    // define output file
+    FILE *yyout;
+
 %}
 
 
@@ -108,9 +112,11 @@ statements { ast_traversal($3); }
 END SEMICOLON
 functions_optional { ast_traversal($7); };  */
 program:
-statements { ast_traversal($1); }
+functions_optional { ast_traversal($1); }
+statements { ast_traversal($3); }
 END SEMICOLON
-functions_optional { ast_traversal($5); };
+
+;
 
 
 functions_optional:
@@ -143,7 +149,7 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
 
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
-            // variable
+            set_constant(temp->names[i]->name, 0);
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
                 char* push = "push ";
@@ -152,12 +158,48 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
                 strcpy(temp_str, push);
                 strcat(temp_str, temp_name);
                 gencode(temp_str);
+            }else{
+               if (temp->data_type== INT_TYPE){
+                if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+               }
+              else if (temp->data_type== REAL_TYPE){
+                if(temp->names[i]->stype !=REAL_TYPE&&temp->names[i]->stype !=INT_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+                }
+                else if (temp->data_type== CHAR_TYPE){
+                if(temp->names[i]->stype !=CHAR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== BOOL_TYPE){
+                if(temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== STR_TYPE){
+                if(temp->names[i]->stype !=STR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                
             }
             
         }
     }
   |
-  CONST type { declare = 1; } names { declare = 0; } SEMICOLON
+  CONST type { declare = 1; } init{ add_to_names($4); declare = 0; } SEMICOLON
     {
         int i;
         $$ = new_ast_decl_node($2, names, nc, 1);
@@ -168,17 +210,47 @@ declaration: type {declare = 1; } names {declare = 0; } SEMICOLON
         // declare types of the names
         for(i=0; i < temp->names_count; i++){
             // variable
+            set_constant(temp->names[i]->name, 1);
             if(temp->names[i]->stype == UNDEF){
                 set_type(temp->names[i]->name, temp->data_type, UNDEF);
+            }else{
+               if (temp->data_type== INT_TYPE){
+                if(temp->names[i]->stype !=INT_TYPE && temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+               }
+              else if (temp->data_type== REAL_TYPE){
+                if(temp->names[i]->stype !=REAL_TYPE&&temp->names[i]->stype !=INT_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }else{
+                  set_type(temp->names[i]->name, temp->data_type, UNDEF);
+                }
+                }
+                else if (temp->data_type== CHAR_TYPE){
+                if(temp->names[i]->stype !=CHAR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== BOOL_TYPE){
+                if(temp->names[i]->stype !=BOOL_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                else if (temp->data_type== STR_TYPE){
+                if(temp->names[i]->stype !=STR_TYPE){
+                  printf("Error: type mismatch at line %d\n ", lineno);
+                  exit(1);
+                }
+                }
+                
             }
-            // pointer
-            else if(temp->names[i]->stype == POINTER_TYPE){
-                set_type(temp->names[i]->name, POINTER_TYPE, temp->data_type);
-            }
-            // array
-            else if(temp->names[i]->stype == ARRAY_TYPE){
-                set_type(temp->names[i]->name, ARRAY_TYPE, temp->data_type);
-            }
+            
         }
     }
 ;
@@ -205,8 +277,8 @@ init: var_init { $$ = $1; };
 
 var_init:  IDENT ASSIGN_OP value
 { 
-	AST_Node_Const *temp = (AST_Node_Const*) $$;
-	$1->val = temp->val;
+	AST_Node_Const *temp = (AST_Node_Const*) $3;
+  	$1->val = temp->val;
 	$1->stype = temp->const_type;
 	$$ = $1;
 }
@@ -335,17 +407,17 @@ expression: expression ADD_OP expression
         case CHAR_TYPE:
           /* sign before char error */
           fprintf(stderr, "Error having sign before character constant!\n");
-          exit(1);
+          exit(1);;
           break;
         case STR_TYPE:
             /* sign before string error */
             fprintf(stderr, "Error having sign before string constant!\n");
-            exit(1);
+            exit(1);;
             break;
         case BOOL_TYPE:
             /* sign before bool error */
             fprintf(stderr, "Error having sign before bool constant!\n");
-            exit(1);
+            exit(1);;
             break;
       }
 
@@ -358,7 +430,8 @@ expression: expression ADD_OP expression
 
 
 
-value: CONST_INT  { $$ = new_ast_const_node(INT_TYPE, $1);  }
+value: CONST_INT  { 
+  $$ = new_ast_const_node(INT_TYPE, $1);  }
 | CONST_FLOAT { $$ = new_ast_const_node(REAL_TYPE, $1); }
 | CONST_CHAR { $$ = new_ast_const_node(CHAR_TYPE, $1); }
 | STRING_LITERAL { $$ = new_ast_const_node(STR_TYPE, $1); }
@@ -366,10 +439,14 @@ value: CONST_INT  { $$ = new_ast_const_node(INT_TYPE, $1);  }
 | FALSE_TOKEN { $$ = new_ast_const_node(BOOL_TYPE, $1); }
 ;
 
-tail:{incr_scope();} LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET 
+tail: LEFT_CURLY_BRACKET {
+  // parent = 0;
+  printf("Tail declared at line %d\n", lineno);
+  incr_scope(lineno);} statements RIGHT_CURLY_BRACKET
 { 
       
     $$ = $3; /* just pass information */
+    hide_scope(yyout);
 }
 ;
 
@@ -377,11 +454,21 @@ else_if: ELIF LEFT_PAREN expression RIGHT_PAREN tail
 {
     AST_Node *temp = new_ast_elsif_node($3, $5);
     add_elseif(temp);
+    int is_false=is_always_false($3);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+
 }
         | else_if ELIF LEFT_PAREN expression RIGHT_PAREN tail
 {
     AST_Node *temp = new_ast_elsif_node($4, $6);
     add_elseif(temp);
+    int is_false=is_always_false($4);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+
 }
 ;
 
@@ -397,15 +484,33 @@ else_part: ELSE tail
 }
 ;        
 
-if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail else_if else_part 
+if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail {
+
+    int is_false=is_always_false($3);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+    printf("is false %d\n", is_false);
+
+}else_if else_part 
   {
-    $$ = new_ast_if_node($3, $5, elsifs, elseif_count, $7);
+    $$ = new_ast_if_node($3, $5, elsifs, elseif_count, $8);
     elseif_count = 0;
     elsifs = NULL;
+    printf("is false beforee \n");
+
   }
-| IF LEFT_PAREN expression RIGHT_PAREN tail else_part
+| IF LEFT_PAREN expression RIGHT_PAREN tail {
+  int is_false=is_always_false($3);
+
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", parent);
+    }
+
+}else_part
 {
-    $$ = new_ast_if_node($3, $5, NULL, 0, $6);
+    $$ = new_ast_if_node($3, $5, NULL, 0, $7);
+    
 }
 ;
 
@@ -423,10 +528,18 @@ assignment: var_ref ASSIGN_OP expression
 	AST_Node_VAR *temp = (AST_Node_VAR*) $1;
 	$$ = new_ast_assign_node(temp->entry, $3);
   /* find datatypes */
+  int is_const = isConst(temp->entry->name);
+  if(is_const == 1){
+    fprintf(stderr, "Error: assignment to constant %s at line %d\n",
+      temp->entry->name, lineno);
+    exit(1);;
+  }
   int type1 = get_type(temp->entry->name);
+
 	int type2 = expression_data_type($3);
   /* the last function will give us information about revisits */
   /* contains revisit => add assignment-check to revisit queue */
+  
   if(cont_revisit == 1){	
     /* search if entry exists */
     revisit_queue *q = search_queue(temp->entry->name);
@@ -463,6 +576,11 @@ assignment: var_ref ASSIGN_OP expression
 			lineno
     );
 	}
+  if($3->type==CONST_NODE)
+  {
+    AST_Node_Const *temp2 = (AST_Node_Const*) $3;
+    set_value(temp->entry->name, temp2->val);
+  }
 }
 ;
 // optional_declaration: declaration | assignment SEMICOLON| var_ref SEMICOLON;
@@ -613,19 +731,25 @@ functions:
   {
     AST_Node_Func_Declarations *temp = (AST_Node_Func_Declarations*) $1;
     $$ = new_func_declarations_node(temp->func_declarations, temp->func_declaration_count, $2);
+    hide_scope(yyout);
   }
   | function
   {
     $$ = new_func_declarations_node(NULL, 0, $1);
+    hide_scope(yyout);
   }
 ;
 
-function: { incr_scope(); } function_head function_tail 
+function:  function_head { 
+  printf("Function declared at line %d\n", lineno);
+  incr_scope(lineno); } function_tail 
 { 
     /* perform revisit */
+    printf("before");
 	  revisit(temp_function->entry->name);
-    // hide_scope();
+    printf("after");
     $$ = (AST_Node *) temp_function;
+    
     
 } 
 ;
@@ -754,12 +878,17 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 		if(q->num_of_calls == 0){ /* first call */
 			q->par_types = (int**) malloc(sizeof(int*));
 			q->num_of_pars = (int*) malloc(sizeof(int));
+      q->linenos = (int*) malloc(sizeof(int));
+      q->linenos[0] = lineno;
 		}
 		else{ /* general case */
 			q->par_types = (int**) realloc(q->par_types,
 				(q->num_of_calls + 1) * sizeof(int*));
 			q->num_of_pars = (int*) realloc(q->num_of_pars,
 				(q->num_of_calls + 1) * sizeof(int));
+      q->linenos = (int*) realloc(q->linenos,
+        (q->num_of_calls + 1) * sizeof(int));
+      q->linenos[q->num_of_calls] = lineno;
 		}
 
 		/* add info of function call */
@@ -785,7 +914,7 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 				fprintf(stderr,
 				"Function call of %s has wrong num of parameters!\n",
 				$1->name);
-				exit(1);
+				exit(1);;
 			}
 			/* check if parameters are compatible */
 			int i;
@@ -805,7 +934,7 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 	}
 }
 ;
-;
+
 arguments: argument 
 {
   $$ = $1;
@@ -895,7 +1024,7 @@ void displayICG()
 void yyerror ()
 {
   fprintf(stderr, "Syntax error at line %d\n", lineno);
-  exit(1);
+  exit(1);;
 }
 
 void add_to_names(ListNode *entry){
@@ -937,6 +1066,7 @@ int main (int argc, char *argv[]){
     // parsing
     int flag;
     yyin = fopen(argv[1], "r");
+    yyout = fopen(argv[2], "w");
     flag = yyparse();
     if ( flag == 0 ){
       printf("/*--------------Your program is syntactically correct!-------*/\n");
@@ -971,6 +1101,7 @@ int main (int argc, char *argv[]){
       }
       /* if still not empty -> Warning */
       if(queue != NULL){
+        check_undeclared_variables();
         printf("Warning: Something has not been checked in the revisit queue!\n");
       }
       
@@ -978,7 +1109,7 @@ int main (int argc, char *argv[]){
     func_declare("print", VOID_TYPE, 1, NULL);
 
     // symbol table dump
-    yyout = fopen(argv[2], "w");
+    // yyout = fopen(argv[2], "w");
     dump_symboltable(yyout);
     fclose(yyout);
 

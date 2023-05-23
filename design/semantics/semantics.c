@@ -15,7 +15,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		if (type_1 == INT_TYPE)
 		{
 			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE || type_2 == BOOL_TYPE)
 			{
 				return 1;
 			}
@@ -28,7 +28,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == REAL_TYPE)
 		{
 			// second type INT, REAL or CHAR
-			if (type_2 == INT_TYPE || type_2 == REAL_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE || type_2 == REAL_TYPE || type_2 == BOOL_TYPE)
 			{
 				return 1;
 			}
@@ -41,7 +41,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == CHAR_TYPE)
 		{
 			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == CHAR_TYPE)
 			{
 				return 1;
 			}
@@ -50,6 +50,36 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
+		else if (type_1 == STR_TYPE)
+		{
+			// second type INT or CHAR
+			if (type_2 == STR_TYPE)
+			{
+				return 1;
+			}
+			else
+			{
+				type_error(type_1, type_2, op_type, lineno);
+			}
+		}
+
+		else if (type_1 == BOOL_TYPE)
+		{
+			// second type INT or CHAR
+			if (type_2 == BOOL_TYPE)
+			{
+				return 1;
+			}
+			else
+			{
+				type_error(type_1, type_2, op_type, lineno);
+			}
+		}
+
+		else
+		{
+			type_error(type_1, type_2, op_type, lineno);
+		}
 		break;
 	/* ---------------------------------------------------------- */
 	case ARITHM_OP: /* arithmetic operator */
@@ -57,7 +87,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		if (type_1 == INT_TYPE)
 		{
 			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE)
 			{
 				return INT_TYPE;
 			}
@@ -75,7 +105,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == REAL_TYPE)
 		{
 			// second type INT, REAL or CHAR
-			if (type_2 == INT_TYPE || type_2 == REAL_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE || type_2 == REAL_TYPE)
 			{
 				return REAL_TYPE;
 			}
@@ -84,24 +114,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
-		// first type CHAR
-		else if (type_1 == CHAR_TYPE)
-		{
-			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
-			{
-				return CHAR_TYPE;
-			}
-			// second type REAL
-			else if (type_2 == REAL_TYPE)
-			{
-				return REAL_TYPE;
-			}
-			else
-			{
-				type_error(type_1, type_2, op_type, lineno);
-			}
-		}
+
 		else
 		{
 			type_error(type_1, type_2, op_type, lineno);
@@ -119,11 +132,7 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		{
 			return REAL_TYPE;
 		}
-		// type CHAR
-		else if (type_1 == CHAR_TYPE)
-		{
-			return CHAR_TYPE;
-		}
+
 		else
 		{
 			type_error(type_1, type_2, op_type, lineno);
@@ -132,31 +141,19 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 	/* ---------------------------------------------------------- */
 	case BOOL_OP: /* Boolean operator */
 		// first type INT
-		if (type_1 == INT_TYPE)
+		if (type_1 == BOOL_TYPE)
 		{
 			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == BOOL_TYPE)
 			{
-				return INT_TYPE; // result type is a Boolean value, which in C is represented with an integer value.
+				return BOOL_TYPE; // result type is a Boolean value, which in C is represented with an integer value.
 			}
 			else
 			{
 				type_error(type_1, type_2, op_type, lineno);
 			}
 		}
-		// first type CHAR
-		else if (type_1 == CHAR_TYPE)
-		{
-			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
-			{
-				return CHAR_TYPE;
-			}
-			else
-			{
-				type_error(type_1, type_2, op_type, lineno);
-			}
-		}
+
 		else
 		{
 			type_error(type_1, type_2, op_type, lineno);
@@ -165,14 +162,9 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 	/* ---------------------------------------------------------- */
 	case NOTT_OP: /* special case of NOTOP */
 		// type INT
-		if (type_1 == INT_TYPE)
+		if (type_1 == BOOL_OP)
 		{
-			return INT_TYPE;
-		}
-		// type CHAR
-		else if (type_1 == CHAR_TYPE)
-		{
-			return INT_TYPE;
+			return BOOL_OP;
 		}
 		else
 		{
@@ -185,9 +177,9 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		if (type_1 == INT_TYPE)
 		{
 			// second type INT, REAL or CHAR
-			if (type_2 == INT_TYPE || type_2 == REAL_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE || type_2 == REAL_TYPE)
 			{
-				return INT_TYPE;
+				return BOOL_OP;
 			}
 			else
 			{
@@ -197,9 +189,9 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == REAL_TYPE)
 		{
 			// second type INT, REAL or CHAR
-			if (type_2 == INT_TYPE || type_2 == REAL_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE || type_2 == REAL_TYPE)
 			{
-				return INT_TYPE;
+				return BOOL_OP;
 			}
 			else
 			{
@@ -210,9 +202,34 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == CHAR_TYPE)
 		{
 			// second type INT, REAL or CHAR
-			if (type_2 == INT_TYPE || type_2 == REAL_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == CHAR_TYPE)
 			{
-				return INT_TYPE;
+				return BOOL_OP;
+			}
+			else
+			{
+				type_error(type_1, type_2, op_type, lineno);
+			}
+		}
+		// first type CHAR
+		else if (type_1 == STR_TYPE)
+		{
+			// second type INT, REAL or CHAR
+			if (type_2 == STR_TYPE)
+			{
+				return BOOL_OP;
+			}
+			else
+			{
+				type_error(type_1, type_2, op_type, lineno);
+			}
+		}
+		else if (type_1 == BOOL_TYPE)
+		{
+			// second type INT or CHAR
+			if (type_2 == BOOL_TYPE)
+			{
+				return BOOL_OP;
 			}
 			else
 			{
@@ -230,9 +247,9 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		if (type_1 == INT_TYPE)
 		{
 			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == INT_TYPE || type_2 == REAL_TYPE)
 			{
-				return INT_TYPE;
+				return BOOL_OP;
 			}
 			else
 			{
@@ -242,9 +259,9 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == REAL_TYPE)
 		{
 			// second type REAL
-			if (type_2 == REAL_TYPE)
+			if (type_2 == REAL_TYPE || type_2 == INT_TYPE)
 			{
-				return INT_TYPE;
+				return BOOL_OP;
 			}
 			else
 			{
@@ -255,9 +272,33 @@ int get_result_type(int type_1, int type_2, int op_type, int lineno)
 		else if (type_1 == CHAR_TYPE)
 		{
 			// second type INT or CHAR
-			if (type_2 == INT_TYPE || type_2 == CHAR_TYPE)
+			if (type_2 == CHAR_TYPE)
 			{
-				return INT_TYPE;
+				return BOOL_OP;
+			}
+			else
+			{
+				type_error(type_1, type_2, op_type, lineno);
+			}
+		}
+		else if (type_1 == STR_TYPE)
+		{
+			// second type INT or CHAR
+			if (type_2 == STR_TYPE)
+			{
+				return BOOL_OP;
+			}
+			else
+			{
+				type_error(type_1, type_2, op_type, lineno);
+			}
+		}
+		else if (type_1 == BOOL_TYPE)
+		{
+			// second type INT or CHAR
+			if (type_2 == BOOL_TYPE)
+			{
+				return BOOL_OP;
 			}
 			else
 			{

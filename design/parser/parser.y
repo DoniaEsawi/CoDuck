@@ -366,11 +366,19 @@ else_if: ELIF LEFT_PAREN expression RIGHT_PAREN tail
 {
     AST_Node *temp = new_ast_elsif_node($3, $5);
     add_elseif(temp);
+    int is_false=is_always_false($3);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", lineno);
+    }
 }
         | else_if ELIF LEFT_PAREN expression RIGHT_PAREN tail
 {
     AST_Node *temp = new_ast_elsif_node($4, $6);
     add_elseif(temp);
+    int is_false=is_always_false($4);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", lineno);
+    }
 }
 ;
 
@@ -391,10 +399,26 @@ if_statement: IF LEFT_PAREN expression RIGHT_PAREN tail else_if else_part
     $$ = new_ast_if_node($3, $5, elsifs, elseif_count, $7);
     elseif_count = 0;
     elsifs = NULL;
+    printf("is false beforee \n");
+
+    int is_false=is_always_false($3);
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", lineno);
+    }
+    printf("is false %d\n", is_false);
   }
 | IF LEFT_PAREN expression RIGHT_PAREN tail else_part
 {
     $$ = new_ast_if_node($3, $5, NULL, 0, $6);
+    printf("is false beforee \n");
+    int is_false=is_always_false($3);
+    printf("is false after \n");
+
+    if(is_false==1){
+      printf("Warning: if statement is always false at line %d\n", lineno);
+    }
+    printf("is false %d\n", is_false);
+
 }
 ;
 

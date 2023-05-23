@@ -14,30 +14,7 @@
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-<<<<<<< HEAD
-            "intelliSenseMode": "windows-msvc-x64"
-        },
-        {
-            "name": "linux",
-            "includePath": [
-                "/home/nada/CoDuck/**"
-            ],
-            "defines": [],
-            "compilerPath": "/usr/bin/g++",
-            "cStandard": "c17",
-            "cppStandard": "gnu++14",
-            "intelliSenseMode": "linux-gcc-x64",
-            "compilerPathInCppPropertiesJson": "/usr/bin/gcc",
-            "mergeConfigurations": false,
-            "browse": {
-                "path": [
-                    "${workspaceFolder}/**"
-                ],
-                "limitSymbolsToIncludedHeaders": true
-            }
-=======
             "intelliSenseMode": "gcc-x64"
->>>>>>> 990882282e9c5f3fe6f6d657bf82ffad29607b85
         }
     ],
     "version": 4
