@@ -11,6 +11,7 @@
     extern FILE *yyin;
     extern FILE *yyout;
     extern int lineno;
+    extern int parent;
     extern int yylex();
     void yyerror();
     // for declaration
@@ -23,6 +24,9 @@
 	int elseif_count = 0;
     // for functions
     AST_Node_Func_Decl *temp_function;
+    // define output file
+    FILE *yyout;
+
 %}
 
 
@@ -102,9 +106,11 @@ statements { ast_traversal($3); }
 END SEMICOLON
 functions_optional { ast_traversal($7); };  */
 program:
+
 statements { ast_traversal($1); }
 END SEMICOLON
-functions_optional { ast_traversal($5); };
+functions_optional { ast_traversal($5); }
+;
 
 
 functions_optional:
@@ -193,7 +199,9 @@ init: var_init { $$ = $1; };
 
 var_init:  IDENT ASSIGN_OP value
 { 
-	AST_Node_Const *temp = (AST_Node_Const*) $$;
+	AST_Node_Const *temp = (AST_Node_Const*) $3;
+  
+  printf("temp values is %d", temp->val);
 	$1->val = temp->val;
 	$1->stype = temp->const_type;
 	$$ = $1;
@@ -319,17 +327,17 @@ expression: expression ADD_OP expression
         case CHAR_TYPE:
           /* sign before char error */
           fprintf(stderr, "Error having sign before character constant!\n");
-          exit(1);
+          exit(1);;
           break;
         case STR_TYPE:
             /* sign before string error */
             fprintf(stderr, "Error having sign before string constant!\n");
-            exit(1);
+            exit(1);;
             break;
         case BOOL_TYPE:
             /* sign before bool error */
             fprintf(stderr, "Error having sign before bool constant!\n");
-            exit(1);
+            exit(1);;
             break;
       }
 
@@ -342,7 +350,8 @@ expression: expression ADD_OP expression
 
 
 
-value: CONST_INT  { $$ = new_ast_const_node(INT_TYPE, $1);  }
+value: CONST_INT  { 
+  $$ = new_ast_const_node(INT_TYPE, $1);  }
 | CONST_FLOAT { $$ = new_ast_const_node(REAL_TYPE, $1); }
 | CONST_CHAR { $$ = new_ast_const_node(CHAR_TYPE, $1); }
 | STRING_LITERAL { $$ = new_ast_const_node(STR_TYPE, $1); }
@@ -350,10 +359,14 @@ value: CONST_INT  { $$ = new_ast_const_node(INT_TYPE, $1);  }
 | FALSE_TOKEN { $$ = new_ast_const_node(BOOL_TYPE, $1); }
 ;
 
-tail:{incr_scope();} LEFT_CURLY_BRACKET statements RIGHT_CURLY_BRACKET 
+tail: LEFT_CURLY_BRACKET {
+  // parent = 0;
+  printf("Tail declared at line %d\n", lineno);
+  incr_scope(lineno);} statements RIGHT_CURLY_BRACKET
 { 
       
-    $$ = $2; /* just pass information */
+    $$ = $3; /* just pass information */
+    hide_scope(yyout);
 }
 ;
 
@@ -597,19 +610,25 @@ functions:
   {
     AST_Node_Func_Declarations *temp = (AST_Node_Func_Declarations*) $1;
     $$ = new_func_declarations_node(temp->func_declarations, temp->func_declaration_count, $2);
+    hide_scope(yyout);
   }
   | function
   {
     $$ = new_func_declarations_node(NULL, 0, $1);
+    hide_scope(yyout);
   }
 ;
 
-function: { incr_scope(); } function_head function_tail 
+function:  function_head { 
+  printf("Function declared at line %d\n", lineno);
+  incr_scope(lineno); } function_tail 
 { 
     /* perform revisit */
+    printf("before");
 	  revisit(temp_function->entry->name);
-    // hide_scope();
+    printf("after");
     $$ = (AST_Node *) temp_function;
+    
     
 } 
 ;
@@ -738,12 +757,17 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 		if(q->num_of_calls == 0){ /* first call */
 			q->par_types = (int**) malloc(sizeof(int*));
 			q->num_of_pars = (int*) malloc(sizeof(int));
+      q->linenos = (int*) malloc(sizeof(int));
+      q->linenos[0] = lineno;
 		}
 		else{ /* general case */
 			q->par_types = (int**) realloc(q->par_types,
 				(q->num_of_calls + 1) * sizeof(int*));
 			q->num_of_pars = (int*) realloc(q->num_of_pars,
 				(q->num_of_calls + 1) * sizeof(int));
+      q->linenos = (int*) realloc(q->linenos,
+        (q->num_of_calls + 1) * sizeof(int));
+      q->linenos[q->num_of_calls] = lineno;
 		}
 
 		/* add info of function call */
@@ -769,7 +793,7 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 				fprintf(stderr,
 				"Function call of %s has wrong num of parameters!\n",
 				$1->name);
-				exit(1);
+				exit(1);;
 			}
 			/* check if parameters are compatible */
 			int i;
@@ -789,7 +813,7 @@ func_call: IDENT LEFT_PAREN arguments RIGHT_PAREN
 	}
 }
 ;
-;
+
 arguments: argument 
 {
   $$ = $1;
@@ -819,7 +843,7 @@ argument: argument COMMA expression
 void yyerror ()
 {
   fprintf(stderr, "Syntax error at line %d\n", lineno);
-  exit(1);
+  exit(1);;
 }
 
 void add_to_names(ListNode *entry){
@@ -861,6 +885,7 @@ int main (int argc, char *argv[]){
     // parsing
     int flag;
     yyin = fopen(argv[1], "r");
+    yyout = fopen(argv[2], "w");
     flag = yyparse();
     if ( flag == 0 ){
       printf("/*--------------Your program is syntactically correct!-------*/\n");
@@ -895,6 +920,7 @@ int main (int argc, char *argv[]){
       }
       /* if still not empty -> Warning */
       if(queue != NULL){
+        check_undeclared_variables();
         printf("Warning: Something has not been checked in the revisit queue!\n");
       }
       
@@ -902,7 +928,7 @@ int main (int argc, char *argv[]){
     func_declare("print", VOID_TYPE, 1, NULL);
 
     // symbol table dump
-    yyout = fopen(argv[2], "w");
+    // yyout = fopen(argv[2], "w");
     dump_symboltable(yyout);
     fclose(yyout);
 

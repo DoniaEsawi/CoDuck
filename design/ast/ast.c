@@ -398,6 +398,7 @@ void set_loop_counter(AST_Node *node)
 	{
 		fprintf(stderr, "Variable used in init and incr of for are not the same!\n");
 		exit(1);
+		;
 	}
 
 	/* type-cast back to AST_Node */
@@ -623,6 +624,7 @@ int expression_data_type(AST_Node *node)
 	default: /* wrong choice case */
 		fprintf(stderr, "Error in node selection!\n");
 		exit(1);
+		;
 	}
 }
 
@@ -808,6 +810,7 @@ void ast_print_node(AST_Node *node)
 	default: /* wrong choice case */
 		fprintf(stderr, "Error in node selection!\n");
 		exit(1);
+		;
 	}
 }
 

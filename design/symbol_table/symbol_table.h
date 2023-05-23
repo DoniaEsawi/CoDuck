@@ -47,6 +47,8 @@ typedef struct ListNode
     // int lineno;
     int size_of_st;
     int scope;
+    // parent scope
+    int parent;
     struct Ref *lines;
     // values
     Value val;
@@ -117,8 +119,7 @@ Prameter def_param(int par_type, char *param_name, int passing); // define param
 int func_declare(char *name, int ret_type,
                  int num_of_pars, Prameter *parameters);
 int func_param_check(char *name, int num_of_calls,
-                     int **par_types, int *num_of_pars);
-
+                     int **par_types, int *num_of_pars, int lineno); // check parameters of function calls
 // Type Functions
 void set_type(char *name, int st_type, int inf_type); // set the type of an entry (declaration)
 int get_type(char *name);                             // get the type of an entry
@@ -130,3 +131,13 @@ revisit_queue *search_prev_queue(char *name);
 
 int revisit(char *name);     // revisit entry by also removing it from queue
 void revisit_dump(FILE *of); // dump file
+
+void print_new_scope_symbol_table(FILE *of, int scope); // print the symbol table of the new scope
+
+// void incr_scope(int lineno);
+
+// Scope Management Functions
+void hide_scope(FILE *output); // hide the current scope
+void incr_scope(int lineno);   // go to next scope
+
+void check_undeclared_variables();

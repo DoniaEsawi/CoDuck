@@ -1176,7 +1176,7 @@ yytnamerr (char *yyres, const char *yystr)
       YYPTRDIFF_T yyn = 0;
       char const *yyp = yystr;
 
-      for (;;)
+      for (;)
         switch (*++yyp)
           {
           case '\'':
@@ -1777,7 +1777,7 @@ yyerrorlab:
 yyerrlab1:
   yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
-  for (;;)
+  for (;)
     {
       yyn = yypact[yystate];
       if (!yypact_value_is_default (yyn))

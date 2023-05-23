@@ -10,6 +10,7 @@
 
 int current_scope = 0;
 int declare = 0; // 1: declaring, 0: not
+int parent = 0;  // parent of the current scope
 /* flag variable for function declaring */
 int function_decl = 0; // 1: declaring function, 0: not
 
@@ -41,6 +42,7 @@ void insert(char *name, int lineno, int length, int type)
     // printf("hash value is %d \n", hashval);
     // get the list at the hash value
     ListNode *list = symbol_table[hashval];
+
     while (list != NULL && (strcmp(name, list->name) != 0)) // go to the end of the list
     {
         // printf("name on list: %s, name given: %s\n", list->name, name);
@@ -51,7 +53,7 @@ void insert(char *name, int lineno, int length, int type)
     if (list == NULL) // if the list is empty
     {
         /* check if we are really declaring */
-        if (declare == 1)
+        if (declare == 1 || function_decl == 1)
         {
             /* set up entry */
             list = (ListNode *)malloc(sizeof(ListNode));
@@ -61,12 +63,14 @@ void insert(char *name, int lineno, int length, int type)
             list->lines = (Ref *)malloc(sizeof(Ref));
             list->lines->lineNo = lineno;
             list->lines->next = NULL;
+            list->parent = parent;
             /* add to hashtable */
             list->next = symbol_table[hashval];
             symbol_table[hashval] = list;
+
             // printf("Inserted %s for the first time with linenumber %d!\n", name, lineno);
         }
-        else
+        else // if we are not declaring, we are referencing
         {
             /* add it to check it again later  as function call */
             list = (ListNode *)malloc(sizeof(ListNode));
@@ -77,10 +81,12 @@ void insert(char *name, int lineno, int length, int type)
             list->lines->lineNo = lineno;
             list->lines->next = NULL;
             list->next = symbol_table[hashval];
+            list->parent = parent;
             symbol_table[hashval] = list;
 
             /* Adding identifier to the revisit queue! */
             // printf("** %s added to queue with linenumber %d!\n", name, lineno);
+            printf("Adding %s to queue with linenumber %d!\n", list->name, lineno);
             add_to_queue(list, list->name, PARAM_CHECK);
         }
     }
@@ -88,7 +94,7 @@ void insert(char *name, int lineno, int length, int type)
     else
     {
         // just add line number
-        if (declare == 0)
+        if (declare == 0 && function_decl == 0)
         { // here we refrance for Identifier
             /* find last reference */
             Ref *t = list->lines;
@@ -107,9 +113,18 @@ void insert(char *name, int lineno, int length, int type)
             /* same scope - multiple declaration error! */
             if (list->scope == current_scope)
             {
-                fprintf(stderr,
-                        "A multiple declaration of variable %s at line %d\n",
-                        name, lineno);
+                if (declare == 1)
+                {
+                    fprintf(stderr,
+                            "A multiple declaration of variable %s at line %d\n",
+                            name, lineno);
+                }
+                else if (function_decl == 1)
+                {
+                    fprintf(stderr,
+                            "A multiple declaration of function %s at line %d\n",
+                            name, lineno);
+                }
                 exit(1);
             }
             /* other scope - but function declaration */
@@ -135,6 +150,7 @@ void insert(char *name, int lineno, int length, int type)
                 list->stype = type;
                 list->lines = (Ref *)malloc(sizeof(Ref));
                 list->lines->lineNo = lineno;
+                list->parent = parent;
                 list->lines->next = NULL;
                 /* add to hashtable */
                 list->next = symbol_table[hashval];
@@ -208,12 +224,16 @@ ListNode *lookup_scope(char *name, int scope)
     return list; // if NULL , the token is not in the list
 }
 
-void hide_scope()
+void hide_scope(FILE *output)
 { /* hide the current scope */
     ListNode *list;
     int i;
     // printf("Hiding scope \'%d\':\n", current_scope);
     /* for all the lists */
+    fprintf(output, "------------ -------------- ------ --------------------------- ------------ \n");
+    fprintf(output, "Name         Type           Scope  Parent Declared in          Line Numbers \n");
+    fprintf(output, "------------ -------------- ------ --------------------------- ------------ \n");
+
     for (i = 0; i < HASHTABLESIZE; i++)
     {
         if (symbol_table[i] != NULL)
@@ -222,6 +242,89 @@ void hide_scope()
             /* Find the first item that is from another scope */
             while (list != NULL && list->scope == current_scope)
             {
+                /* Print the item in the table */
+                fprintf(output, "%-13s", list->name);
+                if (list->stype == INT_TYPE)
+                {
+                    fprintf(output, "%-6s", "INT");
+                    fprintf(output, "%-6d", list->val.ival);
+                }
+                else if (list->stype == REAL_TYPE)
+                {
+                    fprintf(output, "%-6s", "REAL");
+                    fprintf(output, "%-6.3f", list->val.fval);
+                }
+
+                else if (list->stype == STR_TYPE)
+                {
+                    fprintf(output, "%-6s", "STRING");
+                    fprintf(output, "%-6s", list->val.sval);
+                }
+                else if (list->stype == CHAR_TYPE)
+                {
+                    fprintf(output, "%-6s", "CHAR");
+                    fprintf(output, "%-6s", list->val.cval);
+                }
+                else if (list->stype == VOID_TYPE)
+                    fprintf(output, "%-6s", "VOID");
+                else if (list->stype == BOOL_TYPE)
+                    fprintf(output, "%-6s", "BOOLEAN");
+
+                else if (list->stype == BOOL_TYPE)
+                {
+                    fprintf(output, "%-15s", "BOOLEAN");
+                }
+
+                // for function type
+                else if (list->stype == FUNCTION_TYPE)
+                {
+                    fprintf(output, "func ret ");
+                    if (list->inf_type == INT_TYPE)
+                    {
+                        fprintf(output, "%-6s", "INT");
+                        fprintf(output, "%-6d", list->val.ival);
+                    }
+                    else if (list->inf_type == REAL_TYPE)
+                    {
+                        fprintf(output, "%-6s", "REAL");
+                        fprintf(output, "%-6.3f", list->val.fval);
+                    }
+
+                    else if (list->inf_type == STR_TYPE)
+                    {
+                        fprintf(output, "%-6s", "STRING");
+                        fprintf(output, "%-6s", list->val.sval);
+                    }
+                    else if (list->inf_type == CHAR_TYPE)
+                    {
+                        fprintf(output, "%-6s", "CHAR");
+                        fprintf(output, "%-6s", list->val.cval);
+                    }
+                    else if (list->inf_type == VOID_TYPE)
+                        fprintf(output, "%-6s", "VOID");
+                    else if (list->inf_type == BOOL_TYPE)
+                        fprintf(output, "%-6s", "BOOLEAN");
+                    else
+                        fprintf(output, "%-4s", "UNDEF");
+                }
+
+                else
+                    fprintf(output, "%-15s", "UNDEF"); // if UNDEF or 0
+                fprintf(output, "   %d   ", list->scope);
+                Ref *temp = list->lines;
+                int l_nos = 0;
+                fprintf(output, "%-15d", list->parent);
+
+                while (temp != NULL)
+                {
+                    fprintf(output, "%-6d ", temp->lineNo);
+                    // i++;
+                    temp = temp->next;
+                    l_nos++;
+                }
+
+                fprintf(output, "\n");
+
                 printf("Hiding %s from scope %d ..\n", list->name, list->scope);
                 list = list->next;
             }
@@ -232,8 +335,11 @@ void hide_scope()
     current_scope--;
 }
 
-void incr_scope()
+void incr_scope(int lineno)
 { /* go to next scope */
+    printf("Incrementing scope in %d\n", lineno);
+    parent = lineno;
+    printf("parent is %d\n", parent);
     current_scope++;
 }
 
@@ -281,7 +387,7 @@ int func_declare(char *name, int ret_type,
 }
 
 int func_param_check(char *name, int num_of_calls,
-                     int **par_types, int *num_of_pars)
+                     int **par_types, int *num_of_pars, int lineno)
 {
     int i, type_1, type_2;
     int j;
@@ -319,6 +425,102 @@ int func_param_check(char *name, int num_of_calls,
 }
 
 void dump_symboltable(FILE *output)
+{
+    fprintf(output, "------------ -------------- ------- ------ ------------\n");
+    fprintf(output, "Name         Type            Value   Scope  Line Numbers\n");
+    fprintf(output, "------------ -------------- ------- ------ ------------\n");
+    for (int i = 0; i < HASHTABLESIZE; i++)
+    {
+        if (symbol_table[i] != NULL)
+        {
+            ListNode *list = symbol_table[i];
+            while (list != NULL)
+            {
+
+                fprintf(output, "%-13s", list->name);
+                if (list->stype == INT_TYPE)
+                {
+                    fprintf(output, "%-6s", "INT");
+                    fprintf(output, "%-6d", list->val.ival);
+                }
+                else if (list->stype == REAL_TYPE)
+                {
+                    fprintf(output, "%-6s", "REAL");
+                    fprintf(output, "%-6.3f", list->val.fval);
+                }
+
+                else if (list->stype == STR_TYPE)
+                {
+                    fprintf(output, "%-6s", "STRING");
+                    fprintf(output, "%-6s", list->val.sval);
+                }
+                else if (list->stype == CHAR_TYPE)
+                {
+                    fprintf(output, "%-6s", "CHAR");
+                    fprintf(output, "%-6s", list->val.cval);
+                }
+                else if (list->stype == VOID_TYPE)
+                    fprintf(output, "%-6s", "VOID");
+                else if (list->stype == BOOL_TYPE)
+                    fprintf(output, "%-6s", "BOOLEAN");
+
+                else if (list->stype == BOOL_TYPE)
+                {
+                    fprintf(output, "%-15s", "BOOLEAN");
+                }
+
+                // for function type
+                else if (list->stype == FUNCTION_TYPE)
+                {
+                    fprintf(output, "func ret ");
+                    if (list->inf_type == INT_TYPE)
+                    {
+                        fprintf(output, "%-6s", "INT");
+                        fprintf(output, "%-6d", list->val.ival);
+                    }
+                    else if (list->inf_type == REAL_TYPE)
+                    {
+                        fprintf(output, "%-6s", "REAL");
+                        fprintf(output, "%-6.3f", list->val.fval);
+                    }
+
+                    else if (list->inf_type == STR_TYPE)
+                    {
+                        fprintf(output, "%-6s", "STRING");
+                        fprintf(output, "%-6s", list->val.sval);
+                    }
+                    else if (list->inf_type == CHAR_TYPE)
+                    {
+                        fprintf(output, "%-6s", "CHAR");
+                        fprintf(output, "%-6s", list->val.cval);
+                    }
+                    else if (list->inf_type == VOID_TYPE)
+                        fprintf(output, "%-6s", "VOID");
+                    else if (list->inf_type == BOOL_TYPE)
+                        fprintf(output, "%-6s", "BOOLEAN");
+                    else
+                        fprintf(output, "%-4s", "UNDEF");
+                }
+
+                else
+                    fprintf(output, "%-15s", "UNDEF"); // if UNDEF or 0
+
+                fprintf(output, "   %d   ", list->scope);
+                Ref *temp = list->lines;
+                while (temp != NULL)
+                {
+                    fprintf(output, "%-6d ", temp->lineNo);
+                    // i++;
+                    temp = temp->next;
+                }
+                fprintf(output, "\n");
+                list = list->next;
+            }
+        }
+    }
+}
+
+void print_new_scope_symbol_table(FILE *output, int scope)
 {
     fprintf(output, "------------ -------------- ------ ------------\n");
     fprintf(output, "Name         Type           Scope  Line Numbers\n");
@@ -399,6 +601,7 @@ void add_to_queue(ListNode *entry, char *name, int type)
         q->st_name = name;
         q->revisit_type = type;
         q->next = NULL;
+        q->linenos = (int *)malloc(sizeof(int));
         /* additional info */
         if (type == PARAM_CHECK)
         {
@@ -471,6 +674,26 @@ revisit_queue *search_prev_queue(char *name)
 
     return q;
 }
+void check_undeclared_variables()
+{
+    revisit_queue *q;
+    /* search for the entry */
+    q = queue;
+    while ((q != NULL))
+    {
+        if (q->revisit_type == PARAM_CHECK && q->num_of_calls == 0)
+        {
+            /*undeclared variable used*/
+            fprintf(stderr, "variable %s used without declaration!\n", q->st_name);
+        }
+        else if (q->revisit_type == PARAM_CHECK && q->num_of_calls != 0)
+        {
+            /*undeclared function callled*/
+            fprintf(stderr, "function %s called without declaration!\n", q->st_name);
+        }
+        q = q->next;
+    }
+}
 // This function will be called when functions get declared, to take care of function calls that has not been checked yet!
 int revisit(char *name)
 {
@@ -488,7 +711,7 @@ int revisit(char *name)
     {
     case PARAM_CHECK:
         /* run parameter check */
-        if (!func_param_check(name, q->num_of_calls, q->par_types, q->num_of_pars))
+        if (!func_param_check(name, q->num_of_calls, q->par_types, q->num_of_pars, q->linenos[0]))
         {
             printf("Successful Parameter Check of %s\n", name);
         }

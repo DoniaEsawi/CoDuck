@@ -16,7 +16,8 @@
 - [ ] handling constant variables checks
 - [ ] (Not sure if needed) treating INT as a subtype of REAL (double, floats) "y3ni momken a3mel assignment l variable float b int" in operations only
 - [ ] edit the error messages to be more indicative (super easy)
-- [ ] check the symbol table format (scopes)
+- [x] check the symbol table format (scopes)
+- [x] print the scope symbol table as a table in the output file
 
 # program structure
 
