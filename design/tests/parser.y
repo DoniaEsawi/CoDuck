@@ -865,7 +865,11 @@ for_statement: FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT IN
     strcat(goto_str, temp_begin_for);
     gencode(goto_str);
 }
-| FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT DEC_OP RIGHT_PAREN tail 
+| FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT DEC_OP
+{
+  gencode("if end loop goto");
+  begin_for = nextinstr - 1;
+} RIGHT_PAREN tail 
 {	
     /* create increment node*/
     AST_Node *incr_node;
@@ -873,8 +877,20 @@ for_statement: FOR LEFT_PAREN assignment SEMICOLON expression SEMICOLON IDENT IN
     incr_node = new_ast_incr_node($7, 1, 0);
     
 
-    $$ = new_ast_for_node($3, $5, incr_node, $10);
+    $$ = new_ast_for_node($3, $5, incr_node, $11);
     set_loop_counter($$);
+    ICG[begin_for] = (char*) realloc(ICG[begin_for], strlen(ICG[begin_for]) + 1 + sizeof(nextinstr));
+    strcpy(ICG[begin_for], "if end loop goto ");
+    char temp_val_str[20];
+    sprintf(temp_val_str, "%d", nextinstr + 1);
+    strcat(ICG[begin_for], temp_val_str);
+    
+    char* goto_str = malloc(sizeof("goto ") + sizeof(begin_for));
+    char temp_begin_for[20];
+    sprintf(temp_begin_for, "%d", begin_for);
+    strcpy(goto_str, "goto ");
+    strcat(goto_str, temp_begin_for);
+    gencode(goto_str);
 };
 
 do_statement: DO tail UNTIL LEFT_PAREN expression RIGHT_PAREN SEMICOLON 
