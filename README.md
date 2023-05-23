@@ -299,6 +299,15 @@ y= 1
 };
 ```
 
+## Quadruples
+
+| Quadruple  | Quadruple Description | 
+| :-------------- |:----------------:|
+| push J          | used for the variables declarations (i.e int J;) |
+| Add             | used for the addtion of the two previous operands (i.e J = 1 + 2 will be 1 , 2, ADD) |
+| store J         | used for the store of the previous value in the variable J (i.e J = 1 + 2 will be 1 , 2, ADD, store J)|
+| if false goto # | if condition false goto the else part at line (#)|
+
 ## How To Run
 
 #### to run the test cases:
