@@ -1,0 +1,42 @@
+0: push j
+1: push a
+2: push b
+3: push b
+4: push c
+5: push b
+6: push c
+7: push coduck
+8: store coduck 1
+9: push coduck
+10: push i
+11: push j
+12: store j 0
+13: push f
+14: push o
+15: push sss
+16: push hhh
+17: push aaaa
+18: store aaaa "hhh"
+19: push g
+20: push test
+21: push cc
+22: push raghad
+23: push z
+24: store z 2
+25: push lll
+26: store lll 1
+27: push donia
+28: store donia 1
+29: push salwa
+30: store salwa 1
+31: push duck
+32: store duck 0
+33: push jjj
+34: push x
+35: push y
+36: push dummy
+37: push switch_var
+38: push RED
+39: push GREEN
+40: push BLUE
+41: push PURPLE

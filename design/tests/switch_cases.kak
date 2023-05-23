@@ -37,10 +37,12 @@ print("hello world\n");
 integer j = 0;
 char f;
 char o;
-// o = f;
+//o = f;
 string sss;
-string t = sss;
-
+string hhh;
+string aaaa = "hhh";
+// aaaa = hhh;
+// char g, i = 0;
 char g;
 g = 'a';
 string test;
@@ -76,6 +78,8 @@ switch (x){ // the parenthesis are optional
       // default statements
       break;
 }
+
+enum color {RED, GREEN, BLUE, PURPLE};
 
 END;
 

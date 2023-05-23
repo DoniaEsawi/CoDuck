@@ -13,6 +13,9 @@ int declare = 0; // 1: declaring, 0: not
 int parent = 0;  // parent of the current scope
 /* flag variable for function declaring */
 int function_decl = 0; // 1: declaring function, 0: not
+int ENUM_decl = 0;
+
+int current_enum_val = 0;
 
 void init_symbol_table()
 {
@@ -53,13 +56,26 @@ void insert(char *name, int lineno, int length, int type)
     if (list == NULL) // if the list is empty
     {
         /* check if we are really declaring */
-        if (declare == 1 || function_decl == 1)
+        if (declare == 1 || function_decl == 1 || ENUM_decl == 1)
         {
             /* set up entry */
             list = (ListNode *)malloc(sizeof(ListNode));
             strcpy(list->name, name);
             list->scope = current_scope;
-            list->stype = type;
+
+            if (ENUM_decl == 1 && declare == 0)
+            {
+                list->stype = ENUM_TYPE;
+            }
+            else if (ENUM_decl == 1 && declare == 1)
+            {
+                list->stype = INT_TYPE;
+                list->val.ival = current_enum_val;
+            }
+            else
+            {
+                list->stype = type;
+            }
             list->lines = (Ref *)malloc(sizeof(Ref));
             list->lines->lineNo = lineno;
             list->lines->next = NULL;
@@ -176,13 +192,22 @@ ListNode *lookup(char *name)
 
     return list; // if NULL , the token is not in the list
 }
-void set_value(char *name, Value val)
+void set_value(char *name, Value val, FILE *output)
 {
     /* lookup entry */
     ListNode *l = lookup(name);
     l->val = val;
+    // fprintf("----------------------------- In Line %d, after setting new value  -------------------------------", l->lines->lineNo);
+    // if (current_scope == 0)
+    // {
+    //     dump_symboltable(output);
+    // }
+    // else
+    // {
+    //     print_scope(output);
+    // }
 }
-void set_type(char *name, int stype, int inf_type)
+void set_type(char *name, int stype, int inf_type, FILE *output)
 {
     /* lookup entry */
     ListNode *l = lookup(name);
@@ -191,10 +216,20 @@ void set_type(char *name, int stype, int inf_type)
     l->stype = stype;
 
     /* if array, pointer or function */
-    if (inf_type != UNDEF)
-    {
-        l->inf_type = inf_type;
-    }
+
+    // if (inf_type != UNDEF)
+    // {
+    //     l->inf_type = inf_type;
+    // }
+    // // fprintf("----------------------------- In Line %d, after setting new type -------------------------------", l->lines->lineNo);
+    // if (current_scope == 0)
+    // {
+    //     dump_symboltable(output);
+    // }
+    // else
+    // {
+    //     print_scope(output);
+    // }
 }
 void set_constant(char *name, int val)
 {
@@ -285,11 +320,24 @@ void hide_scope(FILE *output)
 
                 else if (list->stype == STR_TYPE)
                 {
+                    if (list->val.sval == NULL)
+                    {
+                        // get the line number of the declaration
+                        // Ref *temp = list->lines;
+
+                        // print warning
+                        fprintf(stderr, "Warning: String %s is declared at line no %d but not initialized!\n", list->name, list->lines->lineNo);
+                    }
                     fprintf(output, "%-15s", "STRING");
                     fprintf(output, "%-13s", list->val.sval);
                 }
                 else if (list->stype == CHAR_TYPE)
                 {
+                    if (list->val.cval == NULL)
+                    {
+                        // print warning
+                        fprintf(stderr, "Warning: Char %s is declared at line no %d but not initialized!\n", list->name, list->lines->lineNo);
+                    }
                     fprintf(output, "%-15s", "CHAR");
                     fprintf(output, "%-13c", list->val.cval);
                 }
@@ -375,6 +423,151 @@ void hide_scope(FILE *output)
     fprintf(output, "==================================================================================================================================\n");
 
     current_scope--;
+}
+
+void print_scope(FILE *output)
+{ /* hide the current scope */
+    ListNode *list;
+    int i;
+    // printf("Hiding scope \'%d\':\n", current_scope);
+    /* for all the lists */
+    fprintf(output, "==================================================================================================================================\n");
+    fprintf(output, "                                   Scope Symbol Table                                    \n");
+    fprintf(output, "------------ -------------- ------------ --------------------------- ------- -----------------------------------------------------\n");
+    fprintf(output, "Name         Type            Value       Parent Declared in          Scope   Line Numbers\n");
+    fprintf(output, "------------ -------------- ------------ --------------------------- ------- -----------------------------------------------------\n");
+
+    for (i = 0; i < HASHTABLESIZE; i++)
+    {
+        if (symbol_table[i] != NULL)
+        {
+            list = symbol_table[i];
+            /* Find the first item that is from another scope */
+            while (list != NULL && list->scope == current_scope)
+            {
+                /* Print the item in the table */
+                fprintf(output, "%-13s", list->name);
+                if (list->stype == INT_TYPE)
+                {
+                    fprintf(output, "%-15s", "INT");
+                    fprintf(output, "%-13d", list->val.ival);
+                }
+                else if (list->stype == REAL_TYPE)
+                {
+                    fprintf(output, "%-15s", "REAL");
+                    fprintf(output, "%-13.3f", list->val.fval);
+                }
+
+                else if (list->stype == STR_TYPE)
+                {
+                    if (list->val.sval == NULL)
+                    {
+                        // get the line number of the declaration
+                        // Ref *temp = list->lines;
+
+                        // print warning
+                        fprintf(stderr, "Warning: String %s is declared at line no %d but not initialized!\n", list->name, list->lines->lineNo);
+                    }
+                    fprintf(output, "%-15s", "STRING");
+                    fprintf(output, "%-13s", list->val.sval);
+                }
+                else if (list->stype == CHAR_TYPE)
+                {
+                    if (list->val.cval == NULL)
+                    {
+                        // print warning
+                        fprintf(stderr, "Warning: Char %s is declared at line no %d but not initialized!\n", list->name, list->lines->lineNo);
+                    }
+                    fprintf(output, "%-15s", "CHAR");
+                    fprintf(output, "%-13c", list->val.cval);
+                }
+                else if (list->stype == VOID_TYPE)
+                {
+                    fprintf(output, "%-15s", "VOID");
+                    fprintf(output, "%-13s", " ");
+                }
+                else if (list->stype == BOOL_TYPE)
+                {
+                    fprintf(output, "%-15s", "BOOLEAN");
+                    fprintf(output, "%-13d", list->val.ival);
+                }
+                else if (list->stype == ENUM_TYPE)
+                {
+                    fprintf(output, "%-15s", "ENUM");
+                    fprintf(output, "%-13s", " ");
+                }
+                // for function type
+                else if (list->stype == FUNCTION_TYPE)
+                {
+                    fprintf(output, "func ret ");
+                    if (list->inf_type == INT_TYPE)
+                    {
+                        fprintf(output, "%-6s", "INT");
+                        fprintf(output, "%-13d", list->val.ival);
+                    }
+                    else if (list->inf_type == REAL_TYPE)
+                    {
+                        fprintf(output, "%-6s", "REAL");
+                        fprintf(output, "%-13.3f", list->val.fval);
+                    }
+
+                    else if (list->inf_type == STR_TYPE)
+                    {
+                        fprintf(output, "%-6s", "STRING");
+                        fprintf(output, "%-13s", list->val.sval);
+                    }
+                    else if (list->inf_type == CHAR_TYPE)
+                    {
+                        fprintf(output, "%-6s", "CHAR");
+                        fprintf(output, "%-13c", list->val.cval);
+                    }
+                    else if (list->inf_type == VOID_TYPE)
+                    {
+                        fprintf(output, "%-15s", "VOID");
+                        fprintf(output, "%-13s", " ");
+                    }
+                    else if (list->inf_type == BOOL_TYPE)
+                    {
+                        fprintf(output, "%-6s", "BOOLEAN");
+                        fprintf(output, "%-13d", list->val.ival);
+                    }
+                    else
+                    {
+                        fprintf(output, "%-6s", "UNDEF");
+                        fprintf(output, "%-13s", " ");
+                    }
+                }
+
+                else
+                {
+                    fprintf(output, "%-15s", "UNDEF"); // if UNDEF or 0
+                    fprintf(output, "%-13s", " ");
+                }
+                fprintf(output, "%-28d", list->parent);
+                fprintf(output, "%-9d", list->scope);
+                Ref *temp = list->lines;
+                int l_nos = 0;
+
+                while (temp != NULL)
+                {
+                    fprintf(output, "%-6d ", temp->lineNo);
+                    // i++;
+                    temp = temp->next;
+                    l_nos++;
+                }
+
+                fprintf(output, "\n");
+
+                // printf("Hiding %s from scope %d ..\n", list->name, list->scope);
+                // list = list->next;
+            }
+            /* Set the list equal to that item */
+            // symbol_table[i] = list;
+        }
+    }
+    fprintf(output, "==================================================================================================================================\n");
+
+    // current_scope--;
 }
 
 void incr_scope(int lineno)
@@ -495,11 +688,23 @@ void dump_symboltable(FILE *output)
 
                 else if (list->stype == STR_TYPE)
                 {
+                    // check if value is null
+                    if (list->val.sval == NULL)
+                    {
+                        // print warning
+                        fprintf(stderr, "Warning: String %s is declared at line %d but not initialized!\n", list->name, list->lines->lineNo);
+                    }
+
                     fprintf(output, "%-15s", "STRING");
                     fprintf(output, "%-15s", list->val.sval);
                 }
                 else if (list->stype == CHAR_TYPE)
                 {
+                    if (list->val.cval == NULL)
+                    {
+                        // print warning
+                        fprintf(stderr, "Warning: Char %s is declared at line %d but not initialized!\n", list->name, list->lines->lineNo);
+                    }
                     fprintf(output, "%-15s", "CHAR");
                     fprintf(output, "%-15c", list->val.cval);
                 }
@@ -512,6 +717,11 @@ void dump_symboltable(FILE *output)
                 {
                     fprintf(output, "%-15s", "BOOLEAN");
                     fprintf(output, "%-15d", list->val.ival);
+                }
+                else if (list->stype == ENUM_TYPE)
+                {
+                    fprintf(output, "%-15s", "ENUM");
+                    fprintf(output, "%-15s", " ");
                 }
 
                 // for function type
